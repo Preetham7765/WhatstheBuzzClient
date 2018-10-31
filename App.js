@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {StyleSheet, View, StatusBar, Platform} from 'react-native';
+import {StyleSheet, Text, View, StatusBar, Platform} from 'react-native';
 import ActionBar from 'react-native-action-bar';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import UserMap from './components/UserMap';
@@ -10,7 +10,7 @@ export default class App extends React.Component {
 
     state = {
         userLocation: null,
-        nearbyEvents: null,
+        nearbyTopics: null,
         errMessage: null
     }
 
@@ -20,47 +20,68 @@ export default class App extends React.Component {
 
             if (Platform.OS === 'android' && !Constants.isDevice) {
                 this.setState({
-                  errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+                    errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
                 });
-              } else {
-                Permissions.askAsync(Permissions.LOCATION)
-                .then((reponse)=> {
-                    if(reponse.status !== 'granted'){
-                        this.setState({errMessage: 'Permission to access location denied'});
-                    }    
-                })
-                .catch((error) => {
-                    this.setState({errMessage: 'Permission to access location denied'}); 
-                });
-
-                Location.getCurrentPositionAsync({})
-                .then((response) => {
-                    console.log(response);
-                    this.setState({userLocation: response})
-                .catch((error) => {
-                    console.log("Error" ,error);
-                })
-                });
-
-            }
+            } else {
+                this._getLocationAsync();
+            }    
         }
 
     }
 
+
+    _getLocationAsync = async () => {
+        console.log("getting status");
+        let isLocationEnbaled = false;
+        do {
+           let { status } = await Permissions.askAsync(Permissions.LOCATION);
+           if (status !== 'granted') {
+            this.setState({
+              errorMessage: 'Permission to access location was denied',
+            });
+          }
+            let location = null;
+            try{
+                location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+            }
+            catch(error){
+                this.setState({
+                    errorMessage: 'Please turn on your location',
+                  });
+                isLocationEnbaled = false;
+                continue;
+            }
+            console.log("got location");
+            isLocationEnbaled = true;
+            this.setState({ userLocation: location });
+
+        }while(!isLocationEnbaled);
+        
+    }
+
     render() {
-        return (
-            <View style={styles.container}>
-                <MyStatusBar backgroundColor="#5E8D48" barStyle="default" />
-                <ActionBar
-                    containerStyle={styles.bar}
-                    title={'Whats the buzz'}
-                    leftIconName={'Menu'}
-                    leftBadge={''}
-                />
-                <UserMap userLocation={this.state.userLocation}/>
-                <FloatingAction />
-            </View>
-        );
+        let text= "Loading....";
+
+        if(this.state.errMessage){
+            text = this.state.errMessage;
+        }else if(this.state.userLocation){
+            return (
+                <View style={styles.container}>
+                    <MyStatusBar backgroundColor="#5E8D48" barStyle="default" />
+                    <ActionBar
+                        containerStyle={styles.bar}
+                        title={'Whats the buzz'}
+                        leftIconName={'Menu'}
+                        leftBadge={''}
+                    />
+                    <UserMap userLocation={this.state.userLocation}/>
+                    <FloatingAction />
+                </View>
+            );
+        }
+        return (<View>
+                    <Text style={{alignContent: 'center'}}>{text}</Text>
+                </View> );
     }
 }
 

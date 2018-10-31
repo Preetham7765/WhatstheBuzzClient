@@ -2,8 +2,6 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
-
-
 const usersMap = (props) => {
 
     let userLocationMarker = null;
@@ -15,7 +13,6 @@ const usersMap = (props) => {
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421};
         userLocationMarker = <MapView.Marker coordinate= {userLocation}/>
-
         console.log(userLocation);
     }
 
