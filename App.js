@@ -7,7 +7,7 @@ import {
     Platform} from 'react-native';
 import ActionBar from 'react-native-action-bar';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import UserMap from './views/UserMap';
+import UserMap from './components/UserMap';
 import { FloatingAction } from 'react-native-floating-action';
 
 const MyStatusBar = ({backgroundColor, ...props}) => (
@@ -17,10 +17,6 @@ const MyStatusBar = ({backgroundColor, ...props}) => (
 );
 
 export default class App extends React.Component {
-    state = {
-        userLocation: null
-    }
-
 
     render() {
         return (
@@ -32,9 +28,7 @@ export default class App extends React.Component {
                     leftIconName={'Menu'}
                     leftBadge={''}
                 />
-                <View style={styles.content}>
-                    <UserMap userLocation={this.state.userLocation}/>
-                </View>
+                <UserMap />
                 <FloatingAction />
             </View>
         );
