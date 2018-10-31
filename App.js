@@ -1,22 +1,51 @@
 import React, {Fragment} from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    StatusBar,
-    Platform} from 'react-native';
+import {StyleSheet, View, StatusBar, Platform} from 'react-native';
 import ActionBar from 'react-native-action-bar';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import UserMap from './components/UserMap';
 import { FloatingAction } from 'react-native-floating-action';
-
-const MyStatusBar = ({backgroundColor, ...props}) => (
-    <View style={[styles.statusBar, { backgroundColor }]}>
-        <StatusBar translucent backgroundColor={backgroundColor} {...props} />
-    </View>
-);
+import {Constants, Location, Permissions} from 'expo';
 
 export default class App extends React.Component {
+
+    state = {
+        userLocation: null,
+        nearbyEvents: null,
+        errMessage: null
+    }
+
+    componentWillMount() {
+
+        if(!this.state.userLocation && !this.state.errMessage){
+
+            if (Platform.OS === 'android' && !Constants.isDevice) {
+                this.setState({
+                  errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+                });
+              } else {
+                Permissions.askAsync(Permissions.LOCATION)
+                .then((reponse)=> {
+                    if(reponse.status !== 'granted'){
+                        this.setState({errMessage: 'Permission to access location denied'});
+                    }    
+                })
+                .catch((error) => {
+                    this.setState({errMessage: 'Permission to access location denied'}); 
+                });
+
+                Location.getCurrentPositionAsync({})
+                .then((response) => {
+                    console.log(response);
+                    this.setState({userLocation: response})
+                .catch((error) => {
+                    console.log("Error" ,error);
+                })
+                });
+
+            }
+        }
+
+    }
 
     render() {
         return (
@@ -28,12 +57,19 @@ export default class App extends React.Component {
                     leftIconName={'Menu'}
                     leftBadge={''}
                 />
-                <UserMap />
+                <UserMap userLocation={this.state.userLocation}/>
                 <FloatingAction />
             </View>
         );
     }
 }
+
+
+const MyStatusBar = ({backgroundColor, ...props}) => (
+    <View style={[styles.statusBar, { backgroundColor }]}>
+        <StatusBar translucent backgroundColor={backgroundColor} {...props} />
+    </View>
+);
 
 const STATUSBAR_HEIGHT = getStatusBarHeight();
 const APPBAR_HEIGHT = Platform.OS === 'ios' ? 40 : 60;
