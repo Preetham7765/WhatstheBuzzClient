@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import {View} from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
+import Styles from './Styles';
 
-const usersMap = (props) => {
+const mapScreen = (props) => {
 
     let userLocationMarker = null;
     let userLocation= null;
@@ -17,9 +18,9 @@ const usersMap = (props) => {
     }
 
     return(
-        <View style={styles.mapContainer}>
+        <View style={Styles.mapContainer}>
             <MapView
-                style={styles.map}
+                style={Styles.map}
                 initialRegion={{
                     latitude: 39.172975,
                     longitude: -86.52297,
@@ -33,20 +34,4 @@ const usersMap = (props) => {
     );
 }
 
-
-const styles = StyleSheet.create({
-    mapContainer: {
-        width:'100%',
-    },
-    map: {
-        width: '100%',
-        height: '100%'
-    },
-    tooltipView:{
-        padding: 10,
-        backgroundColor:"#fff"
-    },
-});
-
-
-export default usersMap;
+export default mapScreen;
