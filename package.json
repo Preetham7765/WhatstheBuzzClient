@@ -20,7 +20,8 @@
     "react-native-floating-action": "^1.13.0",
     "react-native-maps": "^0.22.0",
     "react-native-status-bar-height": "^2.1.0",
-    "react-navigation": "^2.18.2"
+    "react-navigation": "^2.18.2",
+    "tcomb-form-native": "^0.6.20"
   },
   "description": "Project structure",
   "version": "1.0.0",

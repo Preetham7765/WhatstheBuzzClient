@@ -4,8 +4,8 @@ import UsersMap from './UsersMap';
 
 class Layout extends React.Component {
 
-    createNewTopic = () => {
-        console.log("Creating new topic");
+    createNewTopic = (userLocation) => {
+        console.log("Creating new topic ", userLocation);
         this.props.navigation.navigate('NewTopic');
     }
 

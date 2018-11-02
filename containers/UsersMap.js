@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Platform } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { Constants, Location, Permissions } from 'expo';
-import Aux from '../hoc/Aux';
+import Aux from '../hoc/Auxi';
 import MapScreen from '../components/MapScreen/MapScreen';
 import ErrorScreen from '../components/ErrorScreen/ErrorScreen';
 
@@ -35,20 +35,25 @@ class UsersMap extends React.Component{
     }
 
     _getLocationAsync = async () => {
-        console.log("getting status");
+        
         let isLocationEnbaled = false;
         do {
+            
            let { status } = await Permissions.askAsync(Permissions.LOCATION);
+           
            if (status !== 'granted') {
-            this.setState({
-              errorMessage: 'Permission to access location was denied',
-            });
-          }
+                this.setState({
+                errorMessage: 'Permission to access location was denied',
+                });
+            }
+            
             let location = null;
             try{
-                location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+
+                location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
             }
             catch(error){
+                console.log("error");
                 this.setState({
                     errorMessage: 'Please turn on your location',
                   });
@@ -72,8 +77,8 @@ class UsersMap extends React.Component{
         else if(this.state.userLocation){
             return (
                     <Aux>
-                        <MapScreen userLocation={this.state.userLocation}/>
-                        <FloatingAction onPressMain={this.props.newTopic} />
+                        <MapScreen userLocation={this.state.userLocation} />
+                        <FloatingAction onPressMain={() => this.props.newTopic(this.state.userLocation)} />
                     </Aux>
             );
         }
