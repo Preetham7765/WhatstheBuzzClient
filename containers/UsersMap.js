@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Button, Platform } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { Constants, Location, Permissions } from 'expo';
 import Aux from '../hoc/Aux';
@@ -12,6 +12,11 @@ class UsersMap extends React.Component{
         userLocation: null,
         nearbyTopics: null,
         errMessage: null
+    }
+
+    constructor(props) {
+        super(props);
+        this.props = props;
     }
 
     componentWillMount() {
@@ -60,6 +65,7 @@ class UsersMap extends React.Component{
 
     render() {
         let text= "Loading....";
+
         if(this.state.errMessage){
             text = this.state.errMessage;
         }
@@ -67,7 +73,7 @@ class UsersMap extends React.Component{
             return (
                     <Aux>
                         <MapScreen userLocation={this.state.userLocation}/>
-                        <FloatingAction />
+                        <FloatingAction onPressMain={this.props.newTopic} />
                     </Aux>
             );
         }
