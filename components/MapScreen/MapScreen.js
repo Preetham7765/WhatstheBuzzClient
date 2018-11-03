@@ -26,18 +26,23 @@ const mapScreen = (props) => {
     }
 
     if(props.topicData){
-        data = props.topicData;
-        topicMarkers = data.map(
-            (object, i)=>
-                <Marker coordinate={object} key={i}>
-                    <Callout tooltip>
-                        <View style={Styles.tooltipView}>
-                            <Text>{object.title}</Text>
-                        </View>
-                    </Callout>
 
-                </Marker>);
+        console.log(props.topicData);
+        topicMarkers = props.topicData.map((object, i)=>{
 
+            let topicCordinates = {  latitude: parseFloat(object.location[0]),
+                                    longitude:  parseFloat(object.location[1])
+                                }; 
+
+            return (<Marker coordinate={topicCordinates} key={i}>
+                <Callout tooltip>
+                    <View style={Styles.tooltipView}>
+                        <Text>{object.title}</Text>
+                    </View>
+                </Callout>
+
+            </Marker>);
+        });
     }
 
     return(

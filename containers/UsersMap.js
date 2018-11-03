@@ -37,7 +37,7 @@ class UsersMap extends React.Component{
 
     state = {
         userLocation: null,
-        nearbyTopics: null,
+        nearbyTopics: [],
         errMessage: null
     }
 
@@ -46,7 +46,7 @@ class UsersMap extends React.Component{
         this.props = props;
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         if(!this.state.userLocation && !this.state.errMessage){
 
@@ -56,6 +56,12 @@ class UsersMap extends React.Component{
                 });
             } else {
                 this._getLocationAsync();
+                this._getTopicsDataAsync();
+                /*.then((location) => {
+                    if(!location)
+                        this._getTopicsDataAsync();
+                })
+                .catch(err => {console.log("Error occured while getting user location")});*/
             }
         }
 
@@ -63,15 +69,19 @@ class UsersMap extends React.Component{
 
     _getTopicsDataAsync = async() => {
 
-        const response = fetch('http://localhost:5000/api/topics', {
-            method: 'GET',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        let response = null;
 
-        this.setState({nearbyTopics: response.json});
+        try {
+
+            response = await fetch('http://localhost:5000/api/topics', {method: 'GET'});
+            console.log("Rsponse from server", response.json());
+            this.setState({nearbyTopics: response.json()});
+        }
+        catch(error) {
+            console.log("Rsponse from server", response);
+            console.log("Could not fetch nearby topics");
+
+        }        
     }
 
     _getLocationAsync = async () => {
@@ -105,6 +115,8 @@ class UsersMap extends React.Component{
             this.setState({ userLocation: location });
 
         }while(!isLocationEnbaled); 
+
+        // return location;
         
     }
 
@@ -117,7 +129,7 @@ class UsersMap extends React.Component{
         else if(this.state.userLocation){
             return (
                     <Aux>
-                        <MapScreen userLocation={this.state.userLocation} topicData={data}/>
+                        <MapScreen userLocation={this.state.userLocation} topicData={this.state.nearbyTopics}/>
                         <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.props.newTopic(this.state.userLocation)} />
                     </Aux>
             );
