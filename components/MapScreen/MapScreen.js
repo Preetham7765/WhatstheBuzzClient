@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, Animated} from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView from 'react-native-map-clustering';
+import { Marker, Callout } from 'react-native-maps';
 import Styles from './Styles';
 
 const mapScreen = (props) => {
@@ -15,12 +16,12 @@ const mapScreen = (props) => {
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421};
         userLocationMarker =
-            <MapView.Marker coordinate= {userLocation}>
+            <Marker coordinate= {userLocation}>
                 <Animated.View style={[Styles.markerWrap]}>
                     <Animated.View style={[Styles.ring]} />
                     <View style={Styles.marker} />
                 </Animated.View>
-            </MapView.Marker>
+            </Marker>
         console.log(userLocation);
     }
 
@@ -28,20 +29,21 @@ const mapScreen = (props) => {
         data = props.topicData;
         topicMarkers = data.map(
             (object, i)=>
-                <MapView.Marker coordinate={object} key={i}>
+                <Marker coordinate={object} key={i}>
                     <Callout tooltip>
                         <View style={Styles.tooltipView}>
                             <Text>{object.title}</Text>
                         </View>
                     </Callout>
 
-                </MapView.Marker>);
+                </Marker>);
 
     }
 
     return(
         <View style={Styles.mapContainer}>
             <MapView
+                clustering = {true}
                 style={Styles.map}
                 initialRegion={userLocation}
                 region = {userLocation}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Platform } from 'react-native';
-import { FloatingAction } from 'react-native-floating-action';
+import ActionButton from 'react-native-action-button';
 import { Constants, Location, Permissions } from 'expo';
 import Aux from '../hoc/Auxi';
 import MapScreen from '../components/MapScreen/MapScreen';
@@ -118,7 +118,7 @@ class UsersMap extends React.Component{
             return (
                     <Aux>
                         <MapScreen userLocation={this.state.userLocation} topicData={data}/>
-                        <FloatingAction onPressMain={() => this.props.newTopic(this.state.userLocation)} />
+                        <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.props.newTopic(this.state.userLocation)} />
                     </Aux>
             );
         }
