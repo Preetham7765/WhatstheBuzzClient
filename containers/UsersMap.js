@@ -1,11 +1,38 @@
 import React from 'react';
 import { Button, Platform } from 'react-native';
-import { FloatingAction } from 'react-native-floating-action';
+import ActionButton from 'react-native-action-button';
 import { Constants, Location, Permissions } from 'expo';
 import Aux from '../hoc/Auxi';
 import MapScreen from '../components/MapScreen/MapScreen';
 import ErrorScreen from '../components/ErrorScreen/ErrorScreen';
 
+
+const data = [
+    {
+        id: 1,
+        latitude: 39.173598,
+        longitude: -86.5245202,
+        title: "wpoeriu"
+    },
+    {
+        id: 2,
+        latitude: 39.172363,
+        longitude: -86.5243053,
+        title: "wwt74tr"
+    },
+    {
+        id: 3,
+        latitude: 39.172833,
+        longitude: -86.5232433,
+        title: "ahsdvja shydvcnsdghub bshe gvfysbdcbj sygd chbsdhg ah syhs hguydg"
+    },
+    {
+        id: 4,
+        latitude: 39.172351,
+        longitude: -86.5247833,
+        title: "abc",
+    },
+];
 class UsersMap extends React.Component{
 
     state = {
@@ -29,9 +56,22 @@ class UsersMap extends React.Component{
                 });
             } else {
                 this._getLocationAsync();
-            }    
+            }
         }
 
+    }
+
+    _getTopicsDataAsync = async() => {
+
+        const response = fetch('http://localhost:5000/api/topics', {
+            method: 'GET',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        this.setState({nearbyTopics: response.json});
     }
 
     _getLocationAsync = async () => {
@@ -77,8 +117,8 @@ class UsersMap extends React.Component{
         else if(this.state.userLocation){
             return (
                     <Aux>
-                        <MapScreen userLocation={this.state.userLocation} />
-                        <FloatingAction onPressMain={() => this.props.newTopic(this.state.userLocation)} />
+                        <MapScreen userLocation={this.state.userLocation} topicData={data}/>
+                        <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.props.newTopic(this.state.userLocation)} />
                     </Aux>
             );
         }
