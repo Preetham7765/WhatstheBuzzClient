@@ -69,19 +69,30 @@ class UsersMap extends React.Component{
 
     _getTopicsDataAsync = async() => {
 
-        let response = null;
+        // let response = null;
 
         try {
 
-            response = await fetch('http://localhost:5000/api/topics', {method: 'GET'});
-            console.log("Rsponse from server", response.json());
-            this.setState({nearbyTopics: response.json()});
+            await fetch('https://sheltered-coast-22714.herokuapp.com/api/topics',
+                { method: 'GET',
+                    mode:'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(response => {
+                    this.setState({nearbyTopics: response});
+                });
+            // console.log("Response from server trty", response.json());
+
         }
         catch(error) {
             console.log("Rsponse from server", response);
             console.log("Could not fetch nearby topics");
 
-        }        
+        }
     }
 
     _getLocationAsync = async () => {
