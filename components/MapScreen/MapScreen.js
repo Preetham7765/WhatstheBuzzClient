@@ -22,7 +22,6 @@ const mapScreen = (props) => {
                     <View style={Styles.marker} />
                 </Animated.View>
             </Marker>
-        console.log(userLocation);
     }
 
     if(props.topicData.length > 0){
@@ -31,7 +30,7 @@ const mapScreen = (props) => {
 
             let topicCordinates = {  latitude: parseFloat(object.location[0]),
                                     longitude:  parseFloat(object.location[1])
-                                }; 
+                                };
 
             return (<Marker coordinate={topicCordinates} key={i}>
                 <Callout tooltip>
