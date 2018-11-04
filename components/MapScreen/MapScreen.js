@@ -9,7 +9,7 @@ const mapScreen = (props) => {
     let userLocationMarker = null;
     let userLocation= null;
     let data = null;
-    let topicMarkers = null;
+    let topicMarkers = [];
     if(props.userLocation){
         userLocation = {latitude:props.userLocation.coords.latitude,
                         longitude:props.userLocation.coords.longitude,
@@ -25,8 +25,7 @@ const mapScreen = (props) => {
         console.log(userLocation);
     }
 
-    if(props.topicData){
-
+    if(props.topicData.length > 0){
         console.log(props.topicData);
         topicMarkers = props.topicData.map((object, i)=>{
 

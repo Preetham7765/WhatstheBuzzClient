@@ -17,12 +17,14 @@ const Topic = t.struct({
         toTime: t.Date,
         description: t.maybe(t.String)
 });
+
 let formatDate = (date) =>{
     return Moment(date).format('LL');
 }
 let formatTime = (time) =>{
     return Moment(time).format('LT');
 }
+
 const options = {
     fields: {
         title: {
@@ -86,10 +88,26 @@ class NewTopicScreen extends React.Component {
 
     createTopicHandler = () => {
         let value = this._form.getValue();
-        if(value){
+        if(value && this.state.userLocation !== null){
             console.log("Creating new topic");
             // send data to server
+            const newTopicData = {
+                author: this.state.author,
+                title: this.state.value.title,
+                description: this.state.value.description,
+                location: [this.state.userLocation.latitude, this.state.userLocation.longitude]
+            }
 
+            fetch("http://192.168.43.223:5000/api/topics", {
+                method:'POST',
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                },
+                body: JSON.stringify(newTopicData)
+            })
+            .then((response) => {console.log("Response from server ", response)});
+
+            this.props.navigation.navigate('Home');
             //navigate to maps page
         }
     }

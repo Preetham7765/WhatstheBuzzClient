@@ -67,13 +67,13 @@ class UsersMap extends React.Component{
 
     }
 
-    _getTopicsDataAsync = async() => {
+    _getTopicsDataAsync = () => {
 
         let response = null;
 
-        try {
+        /*try {
 
-            response = await fetch('http://localhost:5000/api/topics', {method: 'GET'});
+            response = await fetch('http://localhost:5000/api/topics');
             console.log("Rsponse from server", response.json());
             this.setState({nearbyTopics: response.json()});
         }
@@ -81,7 +81,21 @@ class UsersMap extends React.Component{
             console.log("Rsponse from server", response);
             console.log("Could not fetch nearby topics");
 
-        }        
+        } */       
+
+        fetch('http://192.168.43.223:5000/api/topics')
+        .then( response => {
+            response.json()
+            .then(response => {
+                console.log("response", response);
+                this.setState({nearbyTopics: response});
+            })
+               
+        })
+        .catch((error) => {
+            console.log("Rsponse from server", error);
+            console.log("Could not fetch nearby topics");
+        });
     }
 
     _getLocationAsync = async () => {
@@ -99,11 +113,10 @@ class UsersMap extends React.Component{
             
             let location = null;
             try{
-
+                console.log("waiting for location");
                 location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
             }
             catch(error){
-                console.log("error");
                 this.setState({
                     errorMessage: 'Please turn on your location',
                   });
