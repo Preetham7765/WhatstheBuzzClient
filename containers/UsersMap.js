@@ -1,16 +1,43 @@
 import React from 'react';
 import { Button, Platform } from 'react-native';
-import { FloatingAction } from 'react-native-floating-action';
+import ActionButton from 'react-native-action-button';
 import { Constants, Location, Permissions } from 'expo';
-import Aux from '../hoc/Aux';
+import Aux from '../hoc/Auxi';
 import MapScreen from '../components/MapScreen/MapScreen';
 import ErrorScreen from '../components/ErrorScreen/ErrorScreen';
 
+
+const data = [
+    {
+        id: 1,
+        latitude: 39.173598,
+        longitude: -86.5245202,
+        title: "wpoeriu"
+    },
+    {
+        id: 2,
+        latitude: 39.172363,
+        longitude: -86.5243053,
+        title: "wwt74tr"
+    },
+    {
+        id: 3,
+        latitude: 39.172833,
+        longitude: -86.5232433,
+        title: "ahsdvja shydvcnsdghub bshe gvfysbdcbj sygd chbsdhg ah syhs hguydg"
+    },
+    {
+        id: 4,
+        latitude: 39.172351,
+        longitude: -86.5247833,
+        title: "abc",
+    },
+];
 class UsersMap extends React.Component{
 
     state = {
         userLocation: null,
-        nearbyTopics: null,
+        nearbyTopics: [],
         errMessage: null
     }
 
@@ -19,7 +46,7 @@ class UsersMap extends React.Component{
         this.props = props;
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         if(!this.state.userLocation && !this.state.errMessage){
 
@@ -29,26 +56,54 @@ class UsersMap extends React.Component{
                 });
             } else {
                 this._getLocationAsync();
-            }    
+                this._getTopicsDataAsync();
+                /*.then((location) => {
+                    if(!location)
+                        this._getTopicsDataAsync();
+                })
+                .catch(err => {console.log("Error occured while getting user location")});*/
+            }
         }
 
     }
 
+    _getTopicsDataAsync = async() => {
+
+        let response = null;
+
+        try {
+
+            response = await fetch('http://localhost:5000/api/topics', {method: 'GET'});
+            console.log("Rsponse from server", response.json());
+            this.setState({nearbyTopics: response.json()});
+        }
+        catch(error) {
+            console.log("Rsponse from server", response);
+            console.log("Could not fetch nearby topics");
+
+        }        
+    }
+
     _getLocationAsync = async () => {
-        console.log("getting status");
+        
         let isLocationEnbaled = false;
         do {
+            
            let { status } = await Permissions.askAsync(Permissions.LOCATION);
+           
            if (status !== 'granted') {
-            this.setState({
-              errorMessage: 'Permission to access location was denied',
-            });
-          }
+                this.setState({
+                errorMessage: 'Permission to access location was denied',
+                });
+            }
+            
             let location = null;
             try{
-                location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+
+                location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
             }
             catch(error){
+                console.log("error");
                 this.setState({
                     errorMessage: 'Please turn on your location',
                   });
@@ -60,6 +115,8 @@ class UsersMap extends React.Component{
             this.setState({ userLocation: location });
 
         }while(!isLocationEnbaled); 
+
+        // return location;
         
     }
 
@@ -72,8 +129,8 @@ class UsersMap extends React.Component{
         else if(this.state.userLocation){
             return (
                     <Aux>
-                        <MapScreen userLocation={this.state.userLocation}/>
-                        <FloatingAction onPressMain={this.props.newTopic} />
+                        <MapScreen userLocation={this.state.userLocation} topicData={this.state.nearbyTopics}/>
+                        <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.props.newTopic(this.state.userLocation)} />
                     </Aux>
             );
         }
