@@ -54,10 +54,8 @@ class UsersMap extends React.Component{
                 this.setState({
                     errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
                 });
-            } else {
-                
+            } else {                
                 this._getLocationAsync();
-
             }
         }
 
@@ -66,7 +64,6 @@ class UsersMap extends React.Component{
     _getTopicsDataAsync = async () => {
 
         try {
-
             const response = await fetch('https://sheltered-coast-22714.herokuapp.com/api/topics',
                             { method: 'GET',
                                 mode:'cors',
@@ -86,37 +83,37 @@ class UsersMap extends React.Component{
 
     _getLocationAsync = async () => {
 
-        let isLocationEnbaled = false;
+        let isLocationEnbaled = true;
 
         do {
             let { status } = await Permissions.askAsync(Permissions.LOCATION);
         
             if (status !== 'granted') {
                 this.setState({errMessage:"Permission to get location not obtained"});
+                isLocationEnbaled = false;
                 continue; // should close the app here
             }
             
-            let location = null;
+
             try{
                 console.log("waiting for location");
-                location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-                let respJson = await this._getTopicsDataAsync();
-                this.setState({ userLocation: location , nearbyTopics: respJson});
-                console.log("got location");
-                isLocationEnbaled = true;
+                Location.watchPositionAsync({ enableHighAccuracy: true },
+                    async coords =>  {
+                        console.log(coords);
+                        let respJson = await this._getTopicsDataAsync();
+                        this.setState({ userLocation: coords , nearbyTopics: respJson});
+                    });
             }
             catch(error){
                 this.setState({errMessage:error.message});
             }
 
         }while(!isLocationEnbaled);
-        
-        
+
     }
 
     render() {
         let text= "Loading....";
-
         if(this.state.errMessage){
             text = this.state.errMessage;
         }
