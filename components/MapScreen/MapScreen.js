@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 import MapView from 'react-native-map-clustering';
-import { Marker, Callout } from 'react-native-maps';
+import { Marker, Callout, Circle } from 'react-native-maps';
 import Styles from './Styles';
 
 const mapScreen = (props) => {
@@ -41,6 +41,11 @@ const mapScreen = (props) => {
                 initialRegion={userLocation}
                 region = {userLocation}
                 showsUserLocation={true}>
+            <Circle 
+                center = {userLocation}
+                radius = {3000}
+                fillColor = { 'rgba(230,238,255,0.5)'}            
+                />
                 {topicMarkers}
             </MapView>
         </View>
