@@ -54,75 +54,66 @@ class UsersMap extends React.Component{
                 this.setState({
                     errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
                 });
-            } else {
+            } else {                
                 this._getLocationAsync();
-                this._getTopicsDataAsync();
-                /*.then((location) => {
-                    if(!location)
-                        this._getTopicsDataAsync();
-                })
-                .catch(err => {console.log("Error occured while getting user location")});*/
             }
         }
 
     }
 
-    _getTopicsDataAsync = async() => {
-
-        let response = null;
+    _getTopicsDataAsync = async () => {
 
         try {
+            const response = await fetch('https://sheltered-coast-22714.herokuapp.com/api/topics',
+                            { method: 'GET',
+                                mode:'cors',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+            const respJson = response.json();
+            return respJson;
 
-            response = await fetch('http://localhost:5000/api/topics', {method: 'GET'});
-            console.log("Rsponse from server", response.json());
-            this.setState({nearbyTopics: response.json()});
         }
         catch(error) {
-            console.log("Rsponse from server", response);
-            console.log("Could not fetch nearby topics");
-
-        }        
+            throw error;
+        }
     }
 
     _getLocationAsync = async () => {
-        
-        let isLocationEnbaled = false;
+
+        let isLocationEnbaled = true;
+
         do {
-            
-           let { status } = await Permissions.askAsync(Permissions.LOCATION);
-           
-           if (status !== 'granted') {
-                this.setState({
-                errorMessage: 'Permission to access location was denied',
-                });
+            let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        
+            if (status !== 'granted') {
+                this.setState({errMessage:"Permission to get location not obtained"});
+                isLocationEnbaled = false;
+                continue; // should close the app here
             }
             
-            let location = null;
-            try{
 
-                location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+            try{
+                console.log("waiting for location");
+                Location.watchPositionAsync({ enableHighAccuracy: true },
+                    async coords =>  {
+                        console.log(coords);
+                        let respJson = await this._getTopicsDataAsync();
+                        this.setState({ userLocation: coords , nearbyTopics: respJson});
+                    });
             }
             catch(error){
-                console.log("error");
-                this.setState({
-                    errorMessage: 'Please turn on your location',
-                  });
-                isLocationEnbaled = false;
-                continue;
+                this.setState({errMessage:error.message});
             }
-            console.log("got location");
-            isLocationEnbaled = true;
-            this.setState({ userLocation: location });
 
-        }while(!isLocationEnbaled); 
+        }while(!isLocationEnbaled);
 
-        // return location;
-        
     }
 
     render() {
         let text= "Loading....";
-
         if(this.state.errMessage){
             text = this.state.errMessage;
         }
