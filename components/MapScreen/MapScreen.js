@@ -16,11 +16,10 @@ const mapScreen = (props) => {
     }
 
     if(props.topicData.length > 0){
-        console.log(props.topicData);
+        
         topicMarkers = props.topicData.map((object, i)=>{
-
-            let topicCordinates = {  latitude: parseFloat(object.location[0]),
-                                    longitude:  parseFloat(object.location[1])
+            let topicCordinates = {  latitude: parseFloat(object.loc.coordinates[1]),
+                                    longitude:  parseFloat(object.loc.coordinates[0])
                                 };
 
             return (<Marker coordinate={topicCordinates} key={i}>

@@ -11,7 +11,7 @@ class Layout extends React.Component {
 
     createNewTopic = (userLocation) => {
         console.log("Creating new topic ", userLocation);
-        this.props.navigation.navigate('NewTopic');
+        this.props.navigation.navigate('NewTopic', {'userLocation': userLocation});
     }
 
     /*registerUser = () =>{
