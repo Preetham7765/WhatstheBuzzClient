@@ -14,6 +14,12 @@ class Layout extends React.Component {
         this.props.navigation.navigate('NewTopic', {'userLocation': userLocation});
     }
 
+    // TODO: should take buzz id and then fetch content from server 
+    showDiscussionWindow = () => {
+        console.log("Navigate to discussion window");
+        this.props.navigation.navigate('ScreenThread', {});
+    }
+
     /*registerUser = () =>{
         console.log("Register User");
         this.props.navigation.navigate('Register');
@@ -27,7 +33,8 @@ class Layout extends React.Component {
     render() {
         return (
             <View>
-                <UsersMap newTopic = {this.createNewTopic}/>
+                <UsersMap newTopic = {this.createNewTopic}
+                          discussion = {this.showDiscussionWindow}/>
                {/* <Login login = {this.login}/>*/}
             </View>);
     }

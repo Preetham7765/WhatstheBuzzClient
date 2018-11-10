@@ -6,6 +6,8 @@ import Styles from './Styles';
 
 const mapScreen = (props) => {
 
+    console.log("props", props.onClick);
+
     let userLocation= null;
     let topicMarkers = [];
     if(props.userLocation){
@@ -23,7 +25,7 @@ const mapScreen = (props) => {
                                 };
 
             return (<Marker coordinate={topicCordinates} key={i}>
-                    <Callout tooltip>
+                    <Callout onPress = {props.onClick} tooltip>
                         <View style={Styles.tooltipView}>
                             <Text>{object.title}</Text>
                         </View>
@@ -42,7 +44,7 @@ const mapScreen = (props) => {
                 showsUserLocation={true}>
             <Circle 
                 center = {userLocation}
-                radius = {3000}
+                radius = {4000}
                 fillColor = { 'rgba(230,238,255,0.5)'}            
                 />
                 {topicMarkers}
