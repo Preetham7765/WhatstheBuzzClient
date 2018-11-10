@@ -11,7 +11,8 @@ class UsersMap extends React.Component{
     state = {
         userLocation: null,
         nearbyTopics: [],
-        errMessage: null
+        errMessage: null,
+        needsFetching: false
     }
 
     constructor(props) {
@@ -29,9 +30,17 @@ class UsersMap extends React.Component{
                 });
             } else {                
                 this._getLocationAsync();
+                this.setState({needsFetching : false});
             }
         }
 
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if(this.state.needsFetching != prevState.needsFetching){
+            this._getTopicsDataAsync();
+            this.setState({needsFetching : false});
+        }
     }
 
     _getTopicsDataAsync = async (coords) => {
