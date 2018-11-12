@@ -1,9 +1,9 @@
 import React from 'react';
-import { View } from 'react-native';
-import UsersMap from './UsersMap';
-import Login from './Login';
+import {StyleSheet, View } from 'react-native';
+import UsersMap from '../containers/UsersMap';
+import Login from '../containers/Login';
 
-class Layout extends React.Component {
+class MapScreen extends React.Component {
 
     state = {
         userLoggedIn: false,
@@ -33,4 +33,4 @@ class Layout extends React.Component {
     }
 }
 
-export default Layout;
+export default MapScreen;
