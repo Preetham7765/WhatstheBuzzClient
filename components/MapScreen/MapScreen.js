@@ -1,10 +1,12 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 import MapView from 'react-native-map-clustering';
-import { Marker, Callout } from 'react-native-maps';
+import { Marker, Callout, Circle } from 'react-native-maps';
 import Styles from './Styles';
 
 const mapScreen = (props) => {
+
+    console.log("props", props.onClick);
 
     let userLocation= null;
     let topicMarkers = [];
@@ -16,15 +18,14 @@ const mapScreen = (props) => {
     }
 
     if(props.topicData.length > 0){
-        console.log(props.topicData);
+        
         topicMarkers = props.topicData.map((object, i)=>{
-
-            let topicCordinates = {  latitude: parseFloat(object.location[0]),
-                                    longitude:  parseFloat(object.location[1])
+            let topicCordinates = {  latitude: parseFloat(object.loc.coordinates[1]),
+                                    longitude:  parseFloat(object.loc.coordinates[0])
                                 };
 
             return (<Marker coordinate={topicCordinates} key={i}>
-                    <Callout tooltip>
+                    <Callout onPress = {props.onClick} tooltip>
                         <View style={Styles.tooltipView}>
                             <Text>{object.title}</Text>
                         </View>
@@ -41,6 +42,11 @@ const mapScreen = (props) => {
                 initialRegion={userLocation}
                 region = {userLocation}
                 showsUserLocation={true}>
+            <Circle 
+                center = {userLocation}
+                radius = {4000}
+                fillColor = { 'rgba(230,238,255,0.5)'}            
+                />
                 {topicMarkers}
             </MapView>
         </View>

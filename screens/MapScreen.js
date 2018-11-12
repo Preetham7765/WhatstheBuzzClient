@@ -11,7 +11,13 @@ class MapScreen extends React.Component {
 
     createNewTopic = (userLocation) => {
         console.log("Creating new topic ", userLocation);
-        this.props.navigation.navigate('NewTopic');
+        this.props.navigation.navigate('NewTopic', {'userLocation': userLocation});
+    }
+
+    // TODO: should take buzz id and then fetch content from server 
+    showDiscussionWindow = () => {
+        console.log("Navigate to discussion window");
+        this.props.navigation.navigate('ScreenThread', {});
     }
 
     /*registerUser = () =>{
@@ -27,7 +33,8 @@ class MapScreen extends React.Component {
     render() {
         return (
             <View>
-                <UsersMap newTopic = {this.createNewTopic}/>
+                <UsersMap newTopic = {this.createNewTopic}
+                          discussion = {this.showDiscussionWindow}/>
                {/* <Login login = {this.login}/>*/}
             </View>);
     }

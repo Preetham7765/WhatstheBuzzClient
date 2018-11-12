@@ -6,39 +6,13 @@ import Aux from '../hoc/Auxi';
 import MapScreen from '../components/MapScreen/MapScreen';
 import ErrorScreen from '../components/ErrorScreen/ErrorScreen';
 
-
-const data = [
-    {
-        id: 1,
-        latitude: 39.173598,
-        longitude: -86.5245202,
-        title: "wpoeriu"
-    },
-    {
-        id: 2,
-        latitude: 39.172363,
-        longitude: -86.5243053,
-        title: "wwt74tr"
-    },
-    {
-        id: 3,
-        latitude: 39.172833,
-        longitude: -86.5232433,
-        title: "ahsdvja shydvcnsdghub bshe gvfysbdcbj sygd chbsdhg ah syhs hguydg"
-    },
-    {
-        id: 4,
-        latitude: 39.172351,
-        longitude: -86.5247833,
-        title: "abc",
-    },
-];
 class UsersMap extends React.Component{
 
     state = {
         userLocation: null,
         nearbyTopics: [],
-        errMessage: null
+        errMessage: null,
+        needsFetching: false
     }
 
     constructor(props) {
@@ -56,27 +30,32 @@ class UsersMap extends React.Component{
                 });
             } else {                
                 this._getLocationAsync();
+                this.setState({needsFetching : false});
             }
         }
 
     }
 
-    _getTopicsDataAsync = async () => {
+    componentDidUpdate(prevProps, prevState){
+        if(this.state.needsFetching != prevState.needsFetching){
+            this._getTopicsDataAsync();
+            this.setState({needsFetching : false});
+        }
+    }
 
+    _getTopicsDataAsync = async (coords) => {
         try {
-            const response = await fetch('https://sheltered-coast-22714.herokuapp.com/api/topics',
-                            { method: 'GET',
-                                mode:'cors',
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'Content-Type': 'application/json'
-                                }
-                            });
+            console.log("sending response");
+            const url = `http://192.168.43.223:5000/api/topics?latitude=${coords.coords.latitude}&longitude=${coords.coords.longitude}`
+            console.log(url);
+            const response = await fetch(url);
+            console.log("got response");
             const respJson = response.json();
             return respJson;
 
         }
         catch(error) {
+            console.log("error");
             throw error;
         }
     }
@@ -86,25 +65,31 @@ class UsersMap extends React.Component{
         let isLocationEnbaled = true;
 
         do {
-            let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        
-            if (status !== 'granted') {
-                this.setState({errMessage:"Permission to get location not obtained"});
-                isLocationEnbaled = false;
-                continue; // should close the app here
-            }
-            
-
             try{
+                let { status } = await Permissions.askAsync(Permissions.LOCATION);
+            
+                if (status !== 'granted') {
+                    this.setState({errMessage:"Permission to get location not obtained"});
+                    isLocationEnbaled = false;
+                    continue; // should close the app here
+                }
                 console.log("waiting for location");
                 Location.watchPositionAsync({ enableHighAccuracy: true },
                     async coords =>  {
                         console.log(coords);
-                        let respJson = await this._getTopicsDataAsync();
+                        let respJson;
+                        try {
+                            respJson = await this._getTopicsDataAsync(coords);
+                        }
+                        catch(error) {
+                            this.setState({errMessage:error.message});            
+                        }
+                        console.log("setting state");
                         this.setState({ userLocation: coords , nearbyTopics: respJson});
                     });
             }
             catch(error){
+                console.log(error);
                 this.setState({errMessage:error.message});
             }
 
@@ -120,7 +105,9 @@ class UsersMap extends React.Component{
         else if(this.state.userLocation){
             return (
                     <Aux>
-                        <MapScreen userLocation={this.state.userLocation} topicData={this.state.nearbyTopics}/>
+                        <MapScreen userLocation={this.state.userLocation} 
+                                   topicData={this.state.nearbyTopics}
+                                   onClick = {this.props.discussion}/>
                         <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.props.newTopic(this.state.userLocation)} />
                     </Aux>
             );

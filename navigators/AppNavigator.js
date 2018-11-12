@@ -1,9 +1,9 @@
 import { createSwitchNavigator } from 'react-navigation';
-import {StyleSheet, Platform } from 'react-native';
 import MapScreen from '../screens/MapScreen';
 import NewTopicScreen from '../containers/NewTopicScreen/NewTopicScreen';
-import Login from '../containers/Login';
 import MainTabNavigator from './MainTabNavigator';
+import Login from '../containers/Login';
+import ThreadView from '../containers/Discussion/ThreadView/ThreadView'
 
 // const appNavigator = createStackNavigator(
 //
@@ -23,7 +23,8 @@ export default createSwitchNavigator({
     Main: MainTabNavigator,
     Map: MapScreen,
         NewTopic: NewTopicScreen,
-        Login: Login
+        Login: Login,
+    ScreenThread : ThreadView
     }
 );
 
