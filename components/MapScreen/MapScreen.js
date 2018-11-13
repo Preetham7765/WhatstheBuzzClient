@@ -1,12 +1,10 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import MapView from 'react-native-map-clustering';
-import { Marker, Callout, Circle } from 'react-native-maps';
+import MapViewCluster from 'react-native-map-clustering';
+import MapView , {Callout, Circle } from 'react-native-maps';
 import Styles from './Styles';
 
 const mapScreen = (props) => {
-
-    console.log("props", props.onClick);
 
     let userLocation= null;
     let topicMarkers = [];
@@ -24,23 +22,24 @@ const mapScreen = (props) => {
                                     longitude:  parseFloat(object.loc.coordinates[0])
                                 };
 
-            return (<Marker coordinate={topicCordinates} key={i}>
+            return (<MapView.Marker coordinate={topicCordinates} key={object._id}>
                     <Callout onPress = {props.onClick} tooltip>
                         <View style={Styles.tooltipView}>
                             <Text>{object.title}</Text>
                         </View>
                 </Callout>
-            </Marker>);
+            </MapView.Marker>);
         });
     }
-
+    console.log("rendering map", topicMarkers.length);
     return(
         <View style={Styles.mapContainer}>
             <MapView
                 clustering = {true}
                 style={Styles.map}
-                initialRegion={userLocation}
                 region = {userLocation}
+                showsCompass={true}
+                showsPointsOfInterest = {false}
                 showsUserLocation={true}>
             <Circle 
                 center = {userLocation}

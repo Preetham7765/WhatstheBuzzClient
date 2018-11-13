@@ -6,12 +6,12 @@ import Login from '../containers/Login';
 export default class MapScreen extends React.Component {
 
     state = {
-        userLoggedIn: false,
+        userLoggedIn: false,  
     }
 
-    createNewTopic = (userLocation) => {
+    createNewTopic = (userLocation, refreshMap) => {
         console.log("Creating new topic ", userLocation);
-        this.props.navigation.navigate('NewTopic', {'userLocation': userLocation});
+        this.props.navigation.navigate('NewTopic', {'userLocation': userLocation, 'refresh': refreshMap});
     }
 
     // TODO: should take buzz id and then fetch content from server 
