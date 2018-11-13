@@ -20,6 +20,20 @@ class UsersMap extends React.Component{
         this.props = props;
     }
 
+    refreshMap = () => {
+        Location.getCurrentPositionAsync()
+        .then (coords => {
+            return this._getTopicsDataAsync(coords)            
+        })
+        .then( (respJson) => {
+            console.log("response in refresh", respJson);
+            if(respJson.length != this.state.nearbyTopics.length){
+                this.setState({nearbyTopics: respJson});
+            }
+        })
+        .catch((error)=> {console.log("Error while refreshing", error);});
+    }
+
     componentDidMount() {
 
         if(!this.state.userLocation && !this.state.errMessage){
@@ -30,26 +44,16 @@ class UsersMap extends React.Component{
                 });
             } else {                
                 this._getLocationAsync();
-                this.setState({needsFetching : false});
             }
         }
 
-    }
-
-    componentDidUpdate(prevProps, prevState){
-        if(this.state.needsFetching != prevState.needsFetching){
-            this._getTopicsDataAsync();
-            this.setState({needsFetching : false});
-        }
     }
 
     _getTopicsDataAsync = async (coords) => {
         try {
             console.log("sending response");
             const url = `http://192.168.43.223:5000/api/topics?latitude=${coords.coords.latitude}&longitude=${coords.coords.longitude}`
-            console.log(url);
             const response = await fetch(url);
-            console.log("got response");
             const respJson = response.json();
             return respJson;
 
@@ -85,7 +89,7 @@ class UsersMap extends React.Component{
                             this.setState({errMessage:error.message});            
                         }
                         console.log("setting state");
-                        this.setState({ userLocation: coords , nearbyTopics: respJson});
+                        this.setState({ userLocation: coords , nearbyTopics: respJson, errMessage: null});
                     });
             }
             catch(error){
@@ -103,12 +107,13 @@ class UsersMap extends React.Component{
             text = this.state.errMessage;
         }
         else if(this.state.userLocation){
+            console.log("calling render", this.state.nearbyTopics.length);
             return (
                     <Aux>
                         <MapScreen userLocation={this.state.userLocation} 
                                    topicData={this.state.nearbyTopics}
                                    onClick = {this.props.discussion}/>
-                        <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.props.newTopic(this.state.userLocation)} />
+                        <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.props.newTopic(this.state.userLocation, this.refreshMap)} />
                     </Aux>
             );
         }

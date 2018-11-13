@@ -88,7 +88,7 @@ class NewTopicScreen extends React.Component {
 
             console.log("newTopicData", newTopicData);
 
-            fetch("http://192.168.1.128:5000/api/topics", {
+            fetch("http://192.168.43.223:5000/api/topics", {
                 method:'POST',
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",
@@ -108,6 +108,13 @@ class NewTopicScreen extends React.Component {
         this.setState({value});
 
     }
+
+    componentWillUnmount = () => {
+       const refresh = this.props.navigation.getParam('refresh', null);
+       console.log(refresh);
+       refresh(); 
+    }
+
     render() {
 
         return (
@@ -119,12 +126,14 @@ class NewTopicScreen extends React.Component {
                     value = {this.state.value}
                     onChange = {this.onChangeHandler}
                     style = {{flex: 1}}/>
-                <Button title = "Create New Topic" onPress = {this.createTopicHandler} />
+                <Button title = "Create New Post" onPress = {this.createTopicHandler} />
                 <KeyboardSpacer/>
             </ScrollView>
             
         );
     }
+
+    Com
 } 
 
 export default NewTopicScreen;
