@@ -15,7 +15,7 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
-export default class DemoScreen extends React.Component {
+export default class UserScreen extends React.Component {
     constructor(){
         super();
         this.state = {

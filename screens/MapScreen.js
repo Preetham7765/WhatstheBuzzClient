@@ -3,7 +3,7 @@ import {StyleSheet, View } from 'react-native';
 import UsersMap from '../containers/UsersMap';
 import Login from '../containers/Login';
 
-class MapScreen extends React.Component {
+export default class MapScreen extends React.Component {
 
     state = {
         userLoggedIn: false,
@@ -39,5 +39,3 @@ class MapScreen extends React.Component {
             </View>);
     }
 }
-
-export default MapScreen;
