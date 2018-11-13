@@ -132,6 +132,6 @@ class NewTopicScreen extends React.Component {
             
         );
     }
-} 
+}
 
 export default NewTopicScreen;
