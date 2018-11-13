@@ -84,12 +84,12 @@ class UsersMap extends React.Component{
                         let respJson;
                         try {
                             respJson = await this._getTopicsDataAsync(coords);
+                            console.log("setting state");
+                            this.setState({ userLocation: coords , nearbyTopics: respJson, errMessage: null});
                         }
                         catch(error) {
-                            this.setState({errMessage:error.message});            
+                            this.setState({errMessage:error.message}); 
                         }
-                        console.log("setting state");
-                        this.setState({ userLocation: coords , nearbyTopics: respJson, errMessage: null});
                     });
             }
             catch(error){
@@ -107,7 +107,7 @@ class UsersMap extends React.Component{
             text = this.state.errMessage;
         }
         else if(this.state.userLocation){
-            console.log("calling render", this.state.nearbyTopics.length);
+            //console.log("calling render", this.state.nearbyTopics.length);
             return (
                     <Aux>
                         <MapScreen userLocation={this.state.userLocation} 
