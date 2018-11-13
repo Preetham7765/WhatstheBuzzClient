@@ -1,4 +1,4 @@
-import { createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 import MapScreen from '../screens/MapScreen';
 import NewTopicScreen from '../containers/NewTopicScreen/NewTopicScreen';
 import MainTabNavigator from './MainTabNavigator';
@@ -17,11 +17,11 @@ import ThreadView from '../containers/Discussion/ThreadView/ThreadView'
 //     }
 //
 // );
-export default createSwitchNavigator({
+export default createStackNavigator({
     // You could add another route here for authentication.
     // Read more at https://reactnavigation.org/docs/en/auth-flow.html
     Main: MainTabNavigator,
-    Map: MapScreen,
+    // Map: MapScreen,
         NewTopic: NewTopicScreen,
         Login: Login,
     ScreenThread : ThreadView

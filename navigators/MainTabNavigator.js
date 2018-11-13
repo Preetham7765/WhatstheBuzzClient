@@ -11,6 +11,8 @@ import UserScreen from '../screens/UserScreen';
 
 const MapStack = createStackNavigator({
     Map: MapScreen,
+},{
+    headerMode: 'none',
 });
 
 MapStack.navigationOptions = {
@@ -24,7 +26,7 @@ MapStack.navigationOptions = {
                     : 'map-md'
             }
         />
-    ),
+    )
 };
 
 // const Stack = createStackNavigator({
@@ -57,6 +59,8 @@ MapStack.navigationOptions = {
 
 const UserStack = createStackNavigator({
     User: UserScreen,
+},{
+    headerMode: 'none',
 });
 
 UserStack.navigationOptions = {
