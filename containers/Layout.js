@@ -27,8 +27,8 @@ class Layout extends React.Component {
     render() {
         return (
             <View>
-                <UsersMap newTopic = {this.createNewTopic}/>
-               {/* <Login login = {this.login}/>*/}
+                {/*<UsersMap newTopic = {this.createNewTopic}/>*/}
+               <Login login = {this.login}/>
             </View>);
     }
 }

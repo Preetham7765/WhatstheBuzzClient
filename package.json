@@ -18,6 +18,7 @@
     "react": "16.3.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
     "react-native-action-bar": "^2.0.5",
+    "react-native-collapsingtoolbar": "^1.0.3",
     "react-native-floating-action": "^1.13.0",
     "react-native-maps": "^0.22.0",
     "react-native-modal-datetime-picker": "^6.0.0",
