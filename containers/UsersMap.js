@@ -52,7 +52,7 @@ class UsersMap extends React.Component{
     _getTopicsDataAsync = async (coords) => {
         try {
             console.log("sending response");
-            const url = `http://192.168.43.223:5000/api/topics?latitude=${coords.coords.latitude}&longitude=${coords.coords.longitude}`
+            const url = `http://172.20.10.6:5000/api/topics?latitude=${coords.coords.latitude}&longitude=${coords.coords.longitude}`
             const response = await fetch(url);
             const respJson = response.json();
             return respJson;
