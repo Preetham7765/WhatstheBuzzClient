@@ -1,89 +1,132 @@
-import React from 'react';
-import { Button, Platform } from 'react-native';
-import { FloatingAction } from 'react-native-floating-action';
-import { Constants, Location, Permissions } from 'expo';
-import Aux from '../hoc/Auxi';
-import MapScreen from '../components/MapScreen/MapScreen';
-import ErrorScreen from '../components/ErrorScreen/ErrorScreen';
+import React from "react";
+import { Button, Platform } from "react-native";
+import ActionButton from "react-native-action-button";
+import { Constants, Location, Permissions } from "expo";
+import Aux from "../hoc/Auxi";
+import MapScreen from "../components/MapScreen/MapScreen";
+import ErrorScreen from "../components/ErrorScreen/ErrorScreen";
 
-class UsersMap extends React.Component{
+class UsersMap extends React.Component {
+  state = {
+    userLocation: null,
+    nearbyTopics: [],
+    errMessage: null,
+    needsFetching: false
+  };
 
-    state = {
-        userLocation: null,
-        nearbyTopics: null,
-        errMessage: null
-    }
+  constructor(props) {
+    super(props);
+    this.props = props;
+  }
 
-    constructor(props) {
-        super(props);
-        this.props = props;
-    }
-
-    componentWillMount() {
-
-        if(!this.state.userLocation && !this.state.errMessage){
-
-            if (Platform.OS === 'android' && !Constants.isDevice) {
-                this.setState({
-                    errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-                });
-            } else {
-                this._getLocationAsync();
-            }    
+  refreshMap = () => {
+    Location.getCurrentPositionAsync()
+      .then(coords => {
+        return this._getTopicsDataAsync(coords);
+      })
+      .then(respJson => {
+        console.log("response in refresh", respJson);
+        if (respJson.length != this.state.nearbyTopics.length) {
+          this.setState({ nearbyTopics: respJson });
         }
+      })
+      .catch(error => {
+        console.log("Error while refreshing", error);
+      });
+  };
 
+  componentDidMount() {
+    if (!this.state.userLocation && !this.state.errMessage) {
+      if (Platform.OS === "android" && !Constants.isDevice) {
+        this.setState({
+          errorMessage:
+            "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"
+        });
+      } else {
+        this._getLocationAsync();
+      }
     }
+  }
 
-    _getLocationAsync = async () => {
-        
-        let isLocationEnbaled = false;
-        do {
-            
-           let { status } = await Permissions.askAsync(Permissions.LOCATION);
-           
-           if (status !== 'granted') {
-                this.setState({
-                errorMessage: 'Permission to access location was denied',
-                });
-            }
-            
-            let location = null;
-            try{
-
-                location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-            }
-            catch(error){
-                console.log("error");
-                this.setState({
-                    errorMessage: 'Please turn on your location',
-                  });
-                isLocationEnbaled = false;
-                continue;
-            }
-            console.log("got location");
-            isLocationEnbaled = true;
-            this.setState({ userLocation: location });
-
-        }while(!isLocationEnbaled); 
-        
+  _getTopicsDataAsync = async coords => {
+    try {
+      console.log("sending response");
+      const url = `http://192.168.43.200:5000/api/topics?latitude=${
+        coords.coords.latitude
+      }&longitude=${coords.coords.longitude}`;
+      const response = await fetch(url);
+      const respJson = response.json();
+      return respJson;
+    } catch (error) {
+      console.log("error");
+      throw error;
     }
+  };
 
-    render() {
-        let text= "Loading....";
+  _getLocationAsync = async () => {
+    let isLocationEnbaled = true;
 
-        if(this.state.errMessage){
-            text = this.state.errMessage;
+    do {
+      try {
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+
+        if (status !== "granted") {
+          this.setState({
+            errMessage: "Permission to get location not obtained"
+          });
+          isLocationEnbaled = false;
+          continue; // should close the app here
         }
-        else if(this.state.userLocation){
-            return (
-                    <Aux>
-                        <MapScreen userLocation={this.state.userLocation} />
-                        <FloatingAction onPressMain={() => this.props.newTopic(this.state.userLocation)} />
-                    </Aux>
-            );
-        }
-        return <ErrorScreen errorMessage = {text} />
+        console.log("waiting for location");
+        Location.watchPositionAsync(
+          { enableHighAccuracy: true },
+          async coords => {
+            console.log(coords);
+            let respJson;
+            try {
+              respJson = await this._getTopicsDataAsync(coords);
+              console.log("setting state");
+              this.setState({
+                userLocation: coords,
+                nearbyTopics: respJson,
+                errMessage: null
+              });
+            } catch (error) {
+              this.setState({ errMessage: error.message });
+            }
+          }
+        );
+      } catch (error) {
+        console.log(error);
+        this.setState({ errMessage: error.message });
+      }
+    } while (!isLocationEnbaled);
+  };
+
+  render() {
+    let text = "Loading....";
+    if (this.state.errMessage) {
+      text = this.state.errMessage;
+    } else if (this.state.userLocation) {
+      //console.log("calling render", this.state.nearbyTopics.length);
+      return (
+        <Aux>
+          <MapScreen
+            userLocation={this.state.userLocation}
+            topicData={this.state.nearbyTopics}
+            onClick={this.props.discussion}
+          />
+          <ActionButton
+            buttonColor="rgba(231,76,60,1)"
+            onPress={() =>
+              this.props.newTopic(this.state.userLocation, this.refreshMap)
+            }
+          />
+        </Aux>
+      );
     }
+    return <ErrorScreen errorMessage={text} />;
+  }
 }
 
-export default UsersMap; 
+export default UsersMap;
