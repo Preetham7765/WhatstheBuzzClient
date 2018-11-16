@@ -19,7 +19,7 @@ class UsersMap extends React.Component {
     this.props = props;
   }
 
-  componentDidUpdate = () => {
+  refresh = () => {
     Location.getCurrentPositionAsync()
       .then(coords => {
         return this._getTopicsDataAsync(coords);
@@ -46,6 +46,14 @@ class UsersMap extends React.Component {
         this._getLocationAsync();
       }
     }
+
+    this.subs = [
+      this.props.navigation.addListener('willFocus', () => console.log('will focus')),
+      this.props.navigation.addListener('willBlur', () => console.log('will blur')),
+      this.props.navigation.addListener('didFocus', () => this.refresh()),
+      this.props.navigation.addListener('didBlur', () => console.log('did blur')),
+    ];
+
   }
 
   componentWillUnmount() {
