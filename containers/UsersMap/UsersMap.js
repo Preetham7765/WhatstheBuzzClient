@@ -2,9 +2,9 @@ import React from "react";
 import { Button, Platform } from "react-native";
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
-import Aux from "../hoc/Auxi";
-import MapScreen from "../components/MapScreen/MapScreen";
-import ErrorScreen from "../components/ErrorScreen/ErrorScreen";
+import Aux from "../../hoc/Auxi";
+import MapScreen from "../../components/MapScreen/MapScreen";
+import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
 
 class UsersMap extends React.Component {
   state = {
@@ -19,7 +19,7 @@ class UsersMap extends React.Component {
     this.props = props;
   }
 
-  refreshMap = () => {
+  componentDidUpdate = () => {
     Location.getCurrentPositionAsync()
       .then(coords => {
         return this._getTopicsDataAsync(coords);
@@ -48,10 +48,16 @@ class UsersMap extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.subs.forEach((sub) => {
+      sub.remove();
+    });
+  }
+
   _getTopicsDataAsync = async coords => {
     try {
       console.log("sending response");
-      const url = `http://192.168.43.200:5000/api/topics?latitude=${
+      const url = `http://192.168.1.128:5000/api/topics?latitude=${
         coords.coords.latitude
       }&longitude=${coords.coords.longitude}`;
       const response = await fetch(url);
@@ -103,6 +109,16 @@ class UsersMap extends React.Component {
     } while (!isLocationEnbaled);
   };
 
+  createNewTopic = (userLocation) => {
+    console.log("Creating new topic ", userLocation);
+  }
+
+// TODO: should take buzz id and then fetch content from server 
+  showDiscussionWindow = () => {
+    console.log("Navigate to discussion window");
+    this.props.navigation.navigate('ScreenThread', {});
+  }
+
   render() {
     let text = "Loading....";
     if (this.state.errMessage) {
@@ -114,12 +130,12 @@ class UsersMap extends React.Component {
           <MapScreen
             userLocation={this.state.userLocation}
             topicData={this.state.nearbyTopics}
-            onClick={this.props.discussion}
+            onClick={this.showDiscussionWindow}
           />
           <ActionButton
             buttonColor="rgba(231,76,60,1)"
             onPress={() =>
-              this.props.newTopic(this.state.userLocation, this.refreshMap)
+              this.props.navigation.navigate('NewTopic', {'userLocation': this.state.userLocation})
             }
           />
         </Aux>

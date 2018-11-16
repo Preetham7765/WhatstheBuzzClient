@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
 import ActionBar from "react-native-action-bar";
+import Styles from './Styles';
 
 class Login extends React.Component {
   static navigationOptions = {
@@ -32,7 +33,7 @@ class Login extends React.Component {
     };
     //console.log("Registering new user1");
 
-    fetch("http://192.168.43.200:5000/api/users/login", {
+    fetch("http://192.168.1.128:5000/api/users/login", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -64,13 +65,13 @@ class Login extends React.Component {
     const { navigate } = this.props.navigation;
     const { username, password } = this.state;
     return (
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
+      <View style={Styles.container}>
+        <View style={Styles.inputContainer}>
           <TextInput
             value={this.state.username}
             onChangeText={username => this.setState({ username })}
             placeholder={"Username"}
-            style={styles.input}
+            style={Styles.input}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
@@ -80,7 +81,7 @@ class Login extends React.Component {
             placeholder={"Password"}
             secureTextEntry={true}
             underlineColorAndroid="transparent"
-            style={styles.input}
+            style={Styles.input}
           />
           <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
             <Button
@@ -89,7 +90,7 @@ class Login extends React.Component {
               onPress={this.onLogin.bind(this)}
             />
           </View>
-          <Text style={styles.titleText}>{"OR"}</Text>
+          <Text style={Styles.titleText}>{"OR"}</Text>
           <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
             <Button
               title={"Register"}
@@ -106,39 +107,3 @@ class Login extends React.Component {
 }
 
 export default Login;
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    //justifyContent: 'center',
-    backgroundColor: "#ecf0f1",
-    width: "100%"
-  },
-  inputContainer: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#ecf0f1",
-    width: "100%"
-  },
-  input: {
-    width: "80%",
-    margin: 15,
-    height: 40,
-    padding: 10,
-    //borderColor: '#7a42f4',
-    borderWidth: 1
-  },
-
-  statusBar: {
-    height: 24
-  },
-  toolbarContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 8,
-    height: 56,
-    flex: 1
-  }
-});

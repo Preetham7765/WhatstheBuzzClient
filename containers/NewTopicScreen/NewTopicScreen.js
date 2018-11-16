@@ -88,7 +88,7 @@ class NewTopicScreen extends React.Component {
 
             console.log("newTopicData", newTopicData);
 
-            fetch("http://192.168.43.223:5000/api/topics", {
+            fetch("http://192.168.1.128:5000/api/topics", {
                 method:'POST',
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",
@@ -98,7 +98,7 @@ class NewTopicScreen extends React.Component {
             .then((response) => {console.log("Response from server ", response)})
             .catch((error) => {console.log(error)});
 
-            this.props.navigation.navigate('Home');
+            this.props.navigation.navigate('Main');
             //navigate to maps page
         }
     }
@@ -110,9 +110,9 @@ class NewTopicScreen extends React.Component {
     }
 
     componentWillUnmount = () => {
-       const refresh = this.props.navigation.getParam('refresh', null);
-       console.log(refresh);
-       refresh(); 
+    //    const refresh = this.props.navigation.getParam('refresh', null);
+    //    console.log(refresh);
+    //    refresh(); 
     }
 
     render() {

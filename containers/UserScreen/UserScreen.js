@@ -13,7 +13,9 @@ import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Ic
 
 import { WebBrowser } from 'expo';
 
-import { MonoText } from '../components/StyledText';
+import { MonoText } from '../../components/StyledText';
+
+import Styles from './Styles';
 
 export default class UserScreen extends React.Component {
     constructor(){
@@ -33,9 +35,7 @@ export default class UserScreen extends React.Component {
 
     render() {
         return (
-            <ScrollView style={styles.container}>
-
-
+            <ScrollView style={Styles.container}>
                 <Container>
                     <Content>
                         <Card>
@@ -50,8 +50,8 @@ export default class UserScreen extends React.Component {
                                     <Text note>Level {this.state.level}</Text>
                                     </Body>
                                 </Left>
-                                <View style={styles.container}>
-                                    <ProgressViewIOS style={styles.progressView} progress={.5}/>
+                                <View style={Styles.container}>
+                                    <ProgressViewIOS style={Styles.progressView} progress={.5}/>
                                 </View>
                             </CardItem>
                             <CardItem>
@@ -81,31 +81,9 @@ export default class UserScreen extends React.Component {
                 </Container>
                 <Image
                     source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2000px-React-icon.svg.png'}}
-                    style={styles.image}>
+                    style={Styles.image}>
                 </Image>
             </ScrollView>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    image: {
-        height: 100,
-        borderRadius: 50,
-        width: 100,
-        borderWidth: 4,
-        borderColor: '#d6d7da'
-    },
-    container: {
-        flex: 1,
-        paddingTop: 15,
-        backgroundColor: '#fff'
-    },
-    container2: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    progressView: {
-        marginTop: 20,
-    }
-});

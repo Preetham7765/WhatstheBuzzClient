@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
+import Styles from "./Styles";
 
 class Register extends React.Component {
   static navigationOptions = {
@@ -47,13 +48,13 @@ class Register extends React.Component {
       password.length > 0 &&
       password === confirmPassword > 0;
     return (
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
+      <View style={Styles.container}>
+        <View style={Styles.inputContainer}>
           <TextInput
             value={this.state.firstName}
             onChangeText={firstName => this.setState({ firstName })}
             placeholder={"First Name"}
-            style={styles.input}
+            style={Styles.input}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
@@ -61,7 +62,7 @@ class Register extends React.Component {
             value={this.state.lastName}
             onChangeText={lastName => this.setState({ lastName })}
             placeholder={"Last Name"}
-            style={styles.input}
+            style={Styles.input}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
@@ -69,7 +70,7 @@ class Register extends React.Component {
             value={this.state.username}
             onChangeText={username => this.setState({ username })}
             placeholder={"Username"}
-            style={styles.input}
+            style={Styles.input}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
@@ -79,7 +80,7 @@ class Register extends React.Component {
             placeholder={"Password"}
             secureTextEntry={true}
             underlineColorAndroid="transparent"
-            style={styles.input}
+            style={Styles.input}
           />
           <TextInput
             value={this.state.confirmPassword}
@@ -87,7 +88,7 @@ class Register extends React.Component {
             placeholder={"Confirm Password"}
             secureTextEntry={true}
             underlineColorAndroid="transparent"
-            style={styles.input}
+            style={Styles.input}
           />
           <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
             <Button
@@ -151,39 +152,3 @@ class Register extends React.Component {
 }
 
 export default Register;
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    //justifyContent: 'center',
-    backgroundColor: "#ecf0f1",
-    width: "100%"
-  },
-  inputContainer: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    //justifyContent: 'center',
-    backgroundColor: "#ecf0f1",
-    width: "100%"
-  },
-  input: {
-    width: "80%",
-    margin: 15,
-    height: 40,
-    padding: 10,
-    //borderColor: '#7a42f4',
-    borderWidth: 1
-  },
-
-  statusBar: {
-    height: 24
-  },
-  toolbarContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 8,
-    height: 56,
-    flex: 1
-  }
-});
