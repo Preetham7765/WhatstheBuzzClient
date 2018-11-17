@@ -88,7 +88,7 @@ class NewTopicScreen extends React.Component {
 
             console.log("newTopicData", newTopicData);
 
-            fetch("http://192.168.1.128:5000/api/topics", {
+            fetch("http://192.168.1.94:5000/api/topics", {
                 method:'POST',
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",

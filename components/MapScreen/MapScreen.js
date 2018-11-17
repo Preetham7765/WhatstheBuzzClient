@@ -23,7 +23,7 @@ const mapScreen = (props) => {
                                 };
 
             return (<MapView.Marker coordinate={topicCordinates} key={object._id}>
-                    <Callout onPress = {props.onClick} tooltip>
+                    <Callout onPress = {()=>props.onClick(object._id)} tooltip>
                         <View style={Styles.tooltipView}>
                             <Text>{object.title}</Text>
                         </View>

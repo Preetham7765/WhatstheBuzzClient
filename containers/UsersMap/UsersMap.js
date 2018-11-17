@@ -65,7 +65,7 @@ class UsersMap extends React.Component {
   _getTopicsDataAsync = async coords => {
     try {
       console.log("sending response");
-      const url = `http://192.168.1.128:5000/api/topics?latitude=${
+      const url = `http://192.168.1.94:5000/api/topics?latitude=${
         coords.coords.latitude
       }&longitude=${coords.coords.longitude}`;
       const response = await fetch(url);
@@ -122,9 +122,9 @@ class UsersMap extends React.Component {
   }
 
 // TODO: should take buzz id and then fetch content from server 
-  showDiscussionWindow = () => {
-    console.log("Navigate to discussion window");
-    this.props.navigation.navigate('ScreenThread', {});
+  showDiscussionWindow = (topicId) => {
+    console.log("Navigate to discussion window got topic ", topicId);
+    this.props.navigation.navigate('ScreenThread', {'topicId': topicId});
   }
 
   render() {

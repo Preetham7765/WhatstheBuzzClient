@@ -33,7 +33,7 @@ class Login extends React.Component {
     };
     //console.log("Registering new user1");
 
-    fetch("http://192.168.1.128:5000/api/users/login", {
+    fetch("http://192.168.1.94:5000/api/users/login", {
       method: "POST",
       mode: "cors",
       headers: {
