@@ -11,83 +11,6 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import Aux from '../../../hoc/Auxi';
 
 
-const data =[
-    {
-        commentCtr: 10,
-        authorName:'Chris',
-        commentDesc: 'ABC',
-    },
-    {
-        commentCtr: 20,
-        authorName:'Li',
-        commentDesc: 'DEF',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chetan',
-        commentDesc: 'XYZ',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chris',
-        commentDesc: 'ABC',
-    },
-    {
-        commentCtr: 20,
-        authorName:'Li',
-        commentDesc: 'DEF',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chetan',
-        commentDesc: 'XYZ',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chris',
-        commentDesc: 'ABC',
-    },
-    {
-        commentCtr: 20,
-        authorName:'Li',
-        commentDesc: 'DEF',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chetan',
-        commentDesc: 'XYZ',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chris',
-        commentDesc: 'ABC',
-    },
-    {
-        commentCtr: 20,
-        authorName:'Li',
-        commentDesc: 'DEF',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chetan',
-        commentDesc: 'XYZ',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chris',
-        commentDesc: 'ABC',
-    },
-    {
-        commentCtr: 20,
-        authorName:'Li',
-        commentDesc: 'DEF',
-    },
-    {
-        commentCtr: 10,
-        authorName:'Chetan',
-        commentDesc: 'XYZ',
-    },
-];
 export default class ThreadView extends React.Component{
 
     state = {
@@ -101,7 +24,7 @@ export default class ThreadView extends React.Component{
         const authorId =  messages[0].user._id;
         const comment = messages[0].text;
         
-        const url = 'http://192.168.1.112:5000/api/comments';
+        const url = 'http://192.168.43.114:5000/api/comments';
         const newComment = {
             authorId: authorId,
             topicId: this.props.navigation.getParam('topicId', null),
@@ -162,7 +85,7 @@ export default class ThreadView extends React.Component{
 
     componentDidMount() {
         // fetch results from server. props will have the id of the buzz/event
-        const url = `http://192.168.1.112:5000/api/comments/${this.props.navigation.getParam('topicId', null)}`;
+        const url = `http://192.168.43.114:5000/api/comments/${this.props.navigation.getParam('topicId', null)}`;
         fetch(url)
         .then( (response) => {
             return response.json();
