@@ -6,6 +6,8 @@ import Aux from "../../hoc/Auxi";
 import MapScreen from "../../components/MapScreen/MapScreen";
 import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
 
+import SERVER_URL from '../../constants/Config';
+
 class UsersMap extends React.Component {
   state = {
     userLocation: null,
@@ -65,7 +67,7 @@ class UsersMap extends React.Component {
   _getTopicsDataAsync = async coords => {
     try {
       console.log("sending response");
-      const url = `http://192.168.43.114:5000/api/topics?latitude=${
+      const url = `${SERVER_URL}/api/topics?latitude=${
         coords.coords.latitude
       }&longitude=${coords.coords.longitude}`;
       const response = await fetch(url);

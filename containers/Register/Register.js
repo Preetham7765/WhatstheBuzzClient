@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
 import Styles from "./Styles";
 
+import SERVER_URL from '../../constants/Config';
+
 class Register extends React.Component {
   static navigationOptions = {
     title: "Whats the Buzz!",
@@ -125,7 +127,7 @@ class Register extends React.Component {
       };
       console.log("Registering new user1", newUser);
 
-      fetch("http://192.168.43.200:5000/api/users/register", {
+      fetch(`${SERVER_URL}/api/users/register`, {
         method: "POST",
         headers: {
           Accept: "application/json",

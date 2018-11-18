@@ -10,6 +10,7 @@ import CommentWindow from '../CommentWindow/CommentWindow';
 import { GiftedChat } from 'react-native-gifted-chat';
 import Aux from '../../../hoc/Auxi';
 
+import SERVER_URL from '../../../constants/Config';
 
 export default class ThreadView extends React.Component{
 
@@ -24,7 +25,7 @@ export default class ThreadView extends React.Component{
         const authorId =  messages[0].user._id;
         const comment = messages[0].text;
         
-        const url = 'http://192.168.43.114:5000/api/comments';
+        const url = `${SERVER_URL}/api/comments`;
         const newComment = {
             authorId: authorId,
             topicId: this.props.navigation.getParam('topicId', null),
@@ -85,7 +86,7 @@ export default class ThreadView extends React.Component{
 
     componentDidMount() {
         // fetch results from server. props will have the id of the buzz/event
-        const url = `http://192.168.43.114:5000/api/comments/${this.props.navigation.getParam('topicId', null)}`;
+        const url = `${SERVER_URL}/api/comments/${this.props.navigation.getParam('topicId', null)}`;
         fetch(url)
         .then( (response) => {
             return response.json();
