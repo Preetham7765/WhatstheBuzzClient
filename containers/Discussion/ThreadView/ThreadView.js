@@ -98,9 +98,12 @@ export default class ThreadView extends React.Component{
     onSendNewComment = (messages= []) => {
 
         // send the data to the server.
-        /*const url = 'http://192.168.1.94:5000/api/comments';
+        const authorId =  messages[0].user._id;
+        const comment = messages[0].text;
+        
+        const url = 'http://192.168.1.112:5000/api/comments';
         const newComment = {
-            author: 'Chris',
+            authorId: authorId,
             topicId: this.props.navigation.getParam('topicId', null),
             comment: comment
         }
@@ -112,21 +115,23 @@ export default class ThreadView extends React.Component{
             },
             body: JSON.stringify(newComment)
         })
-        .then((reponse) => { console.log("Sent new comment Successfully")})
+        .then((response) => { 
+            console.log("Sent new comment Successfully",response);
+            this.setState(previousState => ({
+                messages: GiftedChat.append(previousState.messages, messages),
+            }));
+        })
         .catch((error) => {
-            console.log("Error new comment send failed");
-        });*/
+            console.log("Error new comment send failed", error);
+        });
 
-        this.setState(previousState => ({
-            messages: GiftedChat.append(previousState.messages, messages),
-          }));
     }
 
     renderMessage(props) {
         const { currentMessage: { text: currText, user : {name : authorname} } } = props;
 
         return <CommentView 
-                author = {authorname}
+                authorName = {authorname}
                 commentDesc = {currText}
                 commentCtr = {10}
                 />
@@ -144,7 +149,8 @@ export default class ThreadView extends React.Component{
                     keyboardShouldPersistTaps = {'always'}
                     onSend={messages => this.onSendNewComment(messages)}
                     user={{
-                        _id: 1,
+                        _id: "5bda0840335d2283c0d5d0ef",
+                        name: "Chris"
                     }}
                     renderMessage={this.renderMessage}
                 />
@@ -156,21 +162,33 @@ export default class ThreadView extends React.Component{
 
     componentDidMount() {
         // fetch results from server. props will have the id of the buzz/event
+        const url = `http://192.168.1.112:5000/api/comments/${this.props.navigation.getParam('topicId', null)}`;
+        fetch(url)
+        .then( (response) => {
+            return response.json();
+        })
+        .then( (respJson) => {
 
-        this.setState({
-            messages: [
-              {
-                _id: 1,
-                text: 'Hello developer',
-                createdAt: new Date(),
-                user: {
-                  _id: 2,
-                  name: 'React Native',
-                  avatar: 'https://placeimg.com/140/140/any',
-                },
-              },
-            ],
-          })
+            console.log(respJson);
+            this.setState({messages: [... respJson]});
+
+
+        });
+
+        // this.setState({
+        //     messages: [
+        //       {
+        //         _id: 1,
+        //         text: 'Hello developer',
+        //         createdAt: new Date(),
+        //         user: {
+        //           _id: 2,
+        //           name: 'React Native',
+        //           avatar: 'https://placeimg.com/140/140/any',
+        //         },
+        //       },
+        //     ],
+        //   })
     }
 
 }

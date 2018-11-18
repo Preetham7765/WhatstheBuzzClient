@@ -65,7 +65,7 @@ class UsersMap extends React.Component {
   _getTopicsDataAsync = async coords => {
     try {
       console.log("sending response");
-      const url = `http://192.168.1.94:5000/api/topics?latitude=${
+      const url = `http://192.168.1.112:5000/api/topics?latitude=${
         coords.coords.latitude
       }&longitude=${coords.coords.longitude}`;
       const response = await fetch(url);
@@ -77,6 +77,9 @@ class UsersMap extends React.Component {
     }
   };
 
+  /*
+  * needs a look again
+  */
   _getLocationAsync = async () => {
     let isLocationEnbaled = true;
 
@@ -92,7 +95,7 @@ class UsersMap extends React.Component {
           continue; // should close the app here
         }
         console.log("waiting for location");
-        Location.watchPositionAsync(
+        let retLocation = await Location.watchPositionAsync(
           { enableHighAccuracy: true },
           async coords => {
             console.log(coords);
@@ -105,14 +108,16 @@ class UsersMap extends React.Component {
                 nearbyTopics: respJson,
                 errMessage: null
               });
-            } catch (error) {
+             } catch (error) {
               this.setState({ errMessage: error.message });
             }
-          }
-        );
+        });
+        console.log("relocation", retLocation); 
       } catch (error) {
         console.log(error);
         this.setState({ errMessage: error.message });
+        isLocationEnbaled = false;
+
       }
     } while (!isLocationEnbaled);
   };
@@ -123,7 +128,7 @@ class UsersMap extends React.Component {
 
 // TODO: should take buzz id and then fetch content from server 
   showDiscussionWindow = (topicId) => {
-    console.log("Navigate to discussion window got topic ", topicId);
+
     this.props.navigation.navigate('ScreenThread', {'topicId': topicId});
   }
 
