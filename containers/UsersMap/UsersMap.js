@@ -6,6 +6,8 @@ import Aux from "../../hoc/Auxi";
 import MapScreen from "../../components/MapScreen/MapScreen";
 import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
 
+import SERVER_URL from '../../constants/Config';
+
 class UsersMap extends React.Component {
   state = {
     userLocation: null,
@@ -65,7 +67,7 @@ class UsersMap extends React.Component {
   _getTopicsDataAsync = async coords => {
     try {
       console.log("sending response");
-      const url = `http://192.168.1.128:5000/api/topics?latitude=${
+      const url = `${SERVER_URL}/api/topics?latitude=${
         coords.coords.latitude
       }&longitude=${coords.coords.longitude}`;
       const response = await fetch(url);
@@ -77,6 +79,9 @@ class UsersMap extends React.Component {
     }
   };
 
+  /*
+  * needs a look again
+  */
   _getLocationAsync = async () => {
     let isLocationEnbaled = true;
 
@@ -92,7 +97,7 @@ class UsersMap extends React.Component {
           continue; // should close the app here
         }
         console.log("waiting for location");
-        Location.watchPositionAsync(
+        let retLocation = await Location.watchPositionAsync(
           { enableHighAccuracy: true },
           async coords => {
             console.log(coords);
@@ -105,14 +110,16 @@ class UsersMap extends React.Component {
                 nearbyTopics: respJson,
                 errMessage: null
               });
-            } catch (error) {
+             } catch (error) {
               this.setState({ errMessage: error.message });
             }
-          }
-        );
+        });
+        console.log("relocation", retLocation); 
       } catch (error) {
         console.log(error);
         this.setState({ errMessage: error.message });
+        isLocationEnbaled = false;
+
       }
     } while (!isLocationEnbaled);
   };
@@ -122,9 +129,9 @@ class UsersMap extends React.Component {
   }
 
 // TODO: should take buzz id and then fetch content from server 
-  showDiscussionWindow = () => {
-    console.log("Navigate to discussion window");
-    this.props.navigation.navigate('ScreenThread', {});
+  showDiscussionWindow = (topicId) => {
+
+    this.props.navigation.navigate('ScreenThread', {'topicId': topicId});
   }
 
   render() {

@@ -3,6 +3,8 @@ import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
 import ActionBar from "react-native-action-bar";
 import Styles from './Styles';
 
+import SERVER_URL from '../../constants/Config';
+
 class Login extends React.Component {
   static navigationOptions = {
     title: "Whats the Buzz!",
@@ -33,7 +35,7 @@ class Login extends React.Component {
     };
     //console.log("Registering new user1");
 
-    fetch("http://192.168.1.128:5000/api/users/login", {
+    fetch(`${SERVER_URL}/api/users/login`, {
       method: "POST",
       mode: "cors",
       headers: {

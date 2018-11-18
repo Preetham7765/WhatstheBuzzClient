@@ -4,6 +4,8 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Styles, { formStyles} from './Styles';
 import t from 'tcomb-form-native';
 
+
+import SERVER_URL from '../../constants/Config';
 // create an onsubmit handler 
 
 // we need to current location of the user to be sent
@@ -88,7 +90,7 @@ class NewTopicScreen extends React.Component {
 
             console.log("newTopicData", newTopicData);
 
-            fetch("http://192.168.1.128:5000/api/topics", {
+            fetch(`${SERVER_URL}/api/topics`, {
                 method:'POST',
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",

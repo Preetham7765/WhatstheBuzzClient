@@ -21,10 +21,10 @@ export default class CommentView extends React.Component{
             <View styles={Styles.container}>
                 <View style={Styles.card}>
                     <View style = {{flex : 1}}>
-                        <Vote voteNumber={this.props.param.commentCtr} />
+                        <Vote voteNumber={this.props.commentCtr} />
                     </View>
                     <View style = {{flex : 8}}>
-                        <CommentText authorName={this.props.param.authorName} commentDesc={this.props.param.commentDesc}/>
+                        <CommentText authorName={this.props.authorName} commentDesc={this.props.commentDesc}/>
                     </View>
                 </View>
             </View>
