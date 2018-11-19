@@ -17,7 +17,7 @@ class Register extends React.Component {
     // true means invalid, so our conditions got reversed
     return {
       firstName: firstName.length > 0,
-      lastName: lastName.length > 0,
+        lastName: lastName.length > 0,
       username: username.length > 0,
       password: password.length > 0
     };
@@ -28,9 +28,6 @@ class Register extends React.Component {
     this.state = {
       firstName: "",
       lastName: "",
-      username: "",
-      password: ""
-      //confirmPassword:'',
     };
   }
 
