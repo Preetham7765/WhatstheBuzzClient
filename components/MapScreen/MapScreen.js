@@ -1,53 +1,51 @@
 import React from 'react';
-import {View, Text, Animated} from 'react-native';
-import MapView from 'react-native-map-clustering';
-import { Marker, Callout } from 'react-native-maps';
+import {View, Text} from 'react-native';
+import MapViewCluster from 'react-native-map-clustering';
+import MapView , {Callout, Circle } from 'react-native-maps';
 import Styles from './Styles';
 
 const mapScreen = (props) => {
 
-    let userLocationMarker = null;
     let userLocation= null;
-    let data = null;
-    let topicMarkers = null;
+    let topicMarkers = [];
     if(props.userLocation){
         userLocation = {latitude:props.userLocation.coords.latitude,
                         longitude:props.userLocation.coords.longitude,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421};
-        userLocationMarker =
-            <Marker coordinate= {userLocation}>
-                <Animated.View style={[Styles.markerWrap]}>
-                    <Animated.View style={[Styles.ring]} />
-                    <View style={Styles.marker} />
-                </Animated.View>
-            </Marker>
-        console.log(userLocation);
     }
 
-    if(props.topicData){
-        data = props.topicData;
-        topicMarkers = data.map(
-            (object, i)=>
-                <Marker coordinate={object} key={i}>
-                    <Callout tooltip>
+    if(props.topicData.length > 0){
+        
+        topicMarkers = props.topicData.map((object, i)=>{
+            let topicCordinates = {  latitude: parseFloat(object.loc.coordinates[1]),
+                                    longitude:  parseFloat(object.loc.coordinates[0])
+                                };
+
+            return (<MapView.Marker coordinate={topicCordinates} key={object._id}>
+                    <Callout onPress = {()=>props.onClick(object._id)} tooltip>
                         <View style={Styles.tooltipView}>
                             <Text>{object.title}</Text>
                         </View>
-                    </Callout>
-
-                </Marker>);
-
+                </Callout>
+            </MapView.Marker>);
+        });
     }
-
+    console.log("rendering map", topicMarkers.length);
     return(
         <View style={Styles.mapContainer}>
             <MapView
                 clustering = {true}
                 style={Styles.map}
-                initialRegion={userLocation}
-                region = {userLocation}>
-                {userLocationMarker}
+                region = {userLocation}
+                showsCompass={true}
+                showsPointsOfInterest = {false}
+                showsUserLocation={true}>
+            <Circle 
+                center = {userLocation}
+                radius = {4000}
+                fillColor = { 'rgba(230,238,255,0.5)'}            
+                />
                 {topicMarkers}
             </MapView>
         </View>

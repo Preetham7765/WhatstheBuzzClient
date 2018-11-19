@@ -1,18 +1,21 @@
-import { createStackNavigator } from 'react-navigation';
-import Layout from '../containers/Layout';
-import NewTopicScreen from '../components/NewTopicScreen/NewTopicScreen';
+import { createStackNavigator } from "react-navigation";
+import NewTopicScreen from "../containers/NewTopicScreen/NewTopicScreen";
+import MainTabNavigator from "./MainTabNavigator";
+import Login from "../containers/Login/Login";
+import Register from "../containers/Register/Register";
+import ThreadView from "../containers/Discussion/ThreadView/ThreadView";
 
-const appNavigator = createStackNavigator(
-
-    {
-        Home: Layout,
-        NewTopic: NewTopicScreen
-
-    },
-    {
-        initialRouteName: 'Home'
-    }
-
+export default createStackNavigator(
+  {
+    // You could add another route here for authentication.
+    // Read more at https://reactnavigation.org/docs/en/auth-flow.html
+    Main: MainTabNavigator,
+    NewTopic: NewTopicScreen,
+    Login: Login,
+    Register: Register,
+    ScreenThread: ThreadView
+  },
+  {
+    initialRouteName: "Login"
+  }
 );
-
-export default appNavigator;
