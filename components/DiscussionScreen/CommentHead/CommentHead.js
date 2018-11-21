@@ -15,11 +15,10 @@ export default class CommentHead extends React.Component {
 				<View style = {{flex : 1}}>
 					<Vote voteNumber = {998} />
 				</View>
-
 				<View style = {Styles.headContent}>
 					<Text style = {Styles.title}> {this.props.title}</Text>
 					<ScrollView>
-						<Text style = {Styles.decription}>{this.props.description}</Text>
+						<Text style = {Styles.description}>{this.props.description}</Text>
 					</ScrollView>
 					<View style = {Styles.eventInfo}>
 						<Text>{this.props.time}</Text>
