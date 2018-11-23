@@ -32,6 +32,7 @@
     "react-native-modal-datetime-picker": "^6.0.0",
     "react-native-status-bar-height": "^2.1.0",
     "react-navigation": "^2.18.2",
+    "socket.io-client": "^2.1.1",
     "tcomb-form-native": "^0.6.20"
   },
   "description": "Project structure",

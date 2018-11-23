@@ -31,7 +31,6 @@ const mapScreen = (props) => {
             </MapView.Marker>);
         });
     }
-    console.log("rendering map", topicMarkers.length);
     return(
         <View style={Styles.mapContainer}>
             <MapView

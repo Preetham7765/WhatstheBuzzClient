@@ -13,7 +13,7 @@ class UsersMap extends React.Component {
     userLocation: null,
     nearbyTopics: [],
     errMessage: null,
-    needsFetching: false
+    isMounted: false
   };
 
   constructor(props) {
@@ -22,12 +22,15 @@ class UsersMap extends React.Component {
   }
 
   refresh = () => {
+
+    if (!this.state.isMounted)
+      return;
+
     Location.getCurrentPositionAsync()
       .then(coords => {
         return this._getTopicsDataAsync(coords);
       })
       .then(respJson => {
-        console.log("response in refresh", respJson);
         if (respJson.length != this.state.nearbyTopics.length) {
           this.setState({ nearbyTopics: respJson });
         }
@@ -62,6 +65,8 @@ class UsersMap extends React.Component {
     this.subs.forEach((sub) => {
       sub.remove();
     });
+
+    this.setState({ isMounted: false });
   }
 
   _getTopicsDataAsync = async coords => {
@@ -69,7 +74,7 @@ class UsersMap extends React.Component {
       console.log("sending response");
       const url = `${SERVER_URL}/api/topics?latitude=${
         coords.coords.latitude
-      }&longitude=${coords.coords.longitude}`;
+        }&longitude=${coords.coords.longitude}`;
       const response = await fetch(url);
       const respJson = response.json();
       return respJson;
@@ -108,16 +113,16 @@ class UsersMap extends React.Component {
               this.setState({
                 userLocation: coords,
                 nearbyTopics: respJson,
-                errMessage: null
+                errMessage: null,
+                isMounted: true
               });
-             } catch (error) {
-              this.setState({ errMessage: error.message });
+            } catch (error) {
+              this.setState({ errMessage: error.message, isMounted: true });
             }
-        });
-        console.log("relocation", retLocation); 
+          });
+        console.log("relocation", retLocation);
       } catch (error) {
-        console.log(error);
-        this.setState({ errMessage: error.message });
+        this.setState({ errMessage: error.message, isMounted: true });
         isLocationEnbaled = false;
 
       }
@@ -128,10 +133,10 @@ class UsersMap extends React.Component {
     console.log("Creating new topic ", userLocation);
   }
 
-// TODO: should take buzz id and then fetch content from server 
+  // TODO: should take buzz id and then fetch content from server 
   showDiscussionWindow = (topicId) => {
 
-    this.props.navigation.navigate('ScreenThread', {'topicId': topicId});
+    this.props.navigation.navigate('ScreenThread', { 'topicId': topicId });
   }
 
   render() {
@@ -150,7 +155,7 @@ class UsersMap extends React.Component {
           <ActionButton
             buttonColor="rgba(231,76,60,1)"
             onPress={() =>
-              this.props.navigation.navigate('NewTopic', {'userLocation': this.state.userLocation})
+              this.props.navigation.navigate('NewTopic', { 'userLocation': this.state.userLocation })
             }
           />
         </Aux>
