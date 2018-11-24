@@ -1,36 +1,59 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
+import { SERVER_URL } from '../../../constants/Config';
 import Styles from './Styles';
 
 export default class Vote extends React.Component{
     constructor(props){
 		super(props);
-		this.state = {voteNumber : props.voteNumber, voteUp : false , voteDown : false};
+		this.state = {voteNumber : props.voteNumber, voteUp : props.voted , voteDown : false};
 	}
 
-	// can't vote up and down at the same time
-	voteUP = () => {
+	serverVoteUp = () =>{
+		const url = `${SERVER_URL}/api/comments/upvote/${this.props.userId}/${this.props.commentId}`;
+		fetch(url,{
+			method:'put',
+		})
+		.then((response) => { 
+			console.log("vote up",response);
+		})
+		.catch((error) => {
+			console.log("Error vote up failed", error);
+		});
+	}
+
+	serverVoteDown =()=>{
+		const url = `${SERVER_URL}/api/comments/downvote/${this.props.userId}/${this.props.commentId}`;
+		fetch(url,{
+			method:'put',
+		})
+		.then((response) => { 
+			console.log("vote down",response);
+		})
+		.catch((error) => {
+			console.log("Error vote up failed", error);
+		});
+	}
+
+	voteUP = () => {		
 		if(!this.state.voteUp){
 			this.setState((state,props) => {return {voteNumber : state.voteNumber + 1 , voteUp : true}});
-			if(this.state.voteDown){
-				this.setState((state,props) => {return {voteNumber : state.voteNumber + 1, voteDown : false}});
-			}
+			this.serverVoteUp();
 		}
 		else{
 			this.setState((state,props) => {return {voteNumber : state.voteNumber - 1 , voteUp : false}});
+			this.serverVoteDown();
 		}
 	};
 
 	voteDown = () => {
 		if(!this.state.voteDown){
 			this.setState((state,props) => {return {voteNumber : state.voteNumber - 1, voteDown : true}});
-			if(this.state.voteUp){
-				this.setState((state,props) => {return {voteNumber : state.voteNumber - 1, voteUp : false}});
-			}
+			this.serverVoteDown();
 		}
 		else{
 			this.setState((state,props) => {return {voteNumber : state.voteNumber + 1, voteDown : false}});
+			this.serverVoteUp();
 		}
 	};
 

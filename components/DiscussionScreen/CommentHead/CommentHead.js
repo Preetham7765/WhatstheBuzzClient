@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet,Button} from 'react-native';
+import {View, Text, StyleSheet,Button, ScrollView} from 'react-native';
 
 import Vote from '../../../containers/Discussion/Vote/VoteBar';
 import SpamButton from '../../../containers/Discussion/ReportSpam/ReportSpam';
@@ -15,14 +15,15 @@ export default class CommentHead extends React.Component {
 				<View style = {{flex : 1}}>
 					<Vote voteNumber = {998} />
 				</View>
-
 				<View style = {Styles.headContent}>
-					<Text style = {Styles.title}> This is a title !</Text>
-					<Text style = {Styles.decription}> This is description</Text>
+					<Text style = {Styles.title}> {this.props.title}</Text>
+					<ScrollView>
+						<Text style = {Styles.description}>{this.props.description}</Text>
+					</ScrollView>
 					<View style = {Styles.eventInfo}>
-						<Text>Time</Text>
-						<Text>Location</Text>
-						<Text >Author</Text>
+						<Text>{this.props.time}</Text>
+						<Text>{this.props.location}</Text>
+						<Text>{this.props.author}</Text>
 					</View>
 					<View style = {Styles.userAction}>
 						<SpamButton spamNum = {10} spam = {false} />
