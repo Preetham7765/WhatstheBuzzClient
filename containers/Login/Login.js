@@ -37,9 +37,14 @@ class Login extends React.Component {
 
                 this.setState({
                     signedIn: true,
-                    //name: result.user.name,
+                    username: result.user.email,
+                    firstName: result.user.givenName,
+                    lastName: result.user.familyName,
+                    email: result.user.email,
+                    signInMode: 'google',
                     //photoUrl: result.user.photoUrl
                 });
+                this.googleCheckUser();
                 this.props.navigation.navigate("Main");
             } else {
                 console.log("cancelled")
@@ -47,6 +52,44 @@ class Login extends React.Component {
         } catch (e) {
             console.log("error", e)
         }
+    }
+    googleCheckUser()
+    {
+        console.log("Finding if user has already logged in using Google");
+        // send data to server
+        const user = {
+            username: this.state.username,
+            signInMode: 'google'
+        };
+        //console.log("Registering new user1");
+
+        fetch(`${SERVER_URL}/api/users/isUserPresent`, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        })
+            .then(response => {
+                console.log(response.status);
+                if (response.status === 200) {
+                    Alert.alert("User available");
+                    this.props.navigation.navigate("Main");
+                } else
+                {
+                   this.googleSignUp();
+                }
+            })
+            .catch(function(error) {
+                console.log(user);
+                console.log(
+                    "There has been a problem with your fetch operation: " + error.message
+                );
+                // ADD THIS THROW error
+                throw error;
+            });
     }
 
     googleSignUp()
@@ -57,11 +100,12 @@ class Login extends React.Component {
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             username: this.state.username,
-            password: this.state.password
+            email: this.state.email,
+            signInMode: 'google',
         };
         console.log("Registering new user1", newUser);
 
-        fetch(`${SERVER_URL}/api/users/register`, {
+        fetch(`${SERVER_URL}/api/users/googleSignUp`, {
             method: "POST",
             headers: {
                 Accept: "application/json",
@@ -72,7 +116,7 @@ class Login extends React.Component {
             .then(response => console.log(response.status))
             .then(() => {
                 Alert.alert("Registration successful. Log in to start buzzing!");
-                this.props.navigation.navigate("Login");
+                //this.props.navigation.navigate("Login");
             })
             .catch(function(error) {
                 console.log(newUser);
@@ -84,6 +128,7 @@ class Login extends React.Component {
                 throw error;
             });
     }
+
   onLogin() {
     const { username, password } = this.state;
 
