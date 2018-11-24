@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
 import Styles from "./Styles";
 
-import SERVER_URL from '../../constants/Config';
+import { SERVER_URL } from '../../constants/Config';
 
 class Register extends React.Component {
   static navigationOptions = {
