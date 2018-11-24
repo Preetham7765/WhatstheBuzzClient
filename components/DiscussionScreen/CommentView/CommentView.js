@@ -21,7 +21,7 @@ export default class CommentView extends React.Component{
             <View styles={Styles.container}>
                 <View style={Styles.card}>
                     <View style = {{flex : 1}}>
-                        <Vote voteNumber={this.props.commentCtr} commentId = {this.props.commentId}/>
+                        <Vote voteNumber={this.props.commentCtr} commentId = {this.props.commentId} voted = {this.voted()}  userId = {this.props.userId}/>
                     </View>
                     <View style = {{flex : 8}}>
                         <CommentText authorName={this.props.authorName} commentDesc={this.props.commentDesc}/>
@@ -29,5 +29,14 @@ export default class CommentView extends React.Component{
                 </View>
             </View>
         );
+    }
+
+    voted = () => {
+        for (var i = 0; i < this.props.votedby.length; i++) {
+            if (this.props.votedby[i] === this.props.userId) {
+                return true;
+            }
+        }
+        return false;
     }
 }

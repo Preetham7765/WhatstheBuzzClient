@@ -52,13 +52,15 @@ export default class ThreadView extends React.Component{
     }
 
     renderMessage(props) {
-        const { currentMessage: { text: currText, user : {name : authorname} , votes : voteNum , _id : commentID} } = props;
+        const { currentMessage: { text: currText, user : {name : authorname} , votes : voteNum , _id : commentID , votedby : voteBy} } = props;
 
         return <CommentView 
                 authorName = {authorname}
                 commentDesc = {currText}
                 commentCtr = {voteNum}
                 commentId = {commentID}
+                votedby = {voteBy}
+                userId = "5bda0840335d2283c0d5d0ef"
                 />
     }
     
