@@ -24,9 +24,8 @@ class Login extends React.Component {
     signIn = async () => {
         try {
             const result = await Expo.Google.logInAsync({
-                androidClientId:
-                    "680284249418-pnjnbe7di9stdg75nu422ais0ecu0g41.apps.googleusercontent.com",
-                iosClientId: "680284249418-jqli8orrn39mklhvc6b73l7nlfmtejap.apps.googleusercontent.com",
+                androidClientId:'${ANDROID_CLIENT_ID}',
+                iosClientId:'${IOS_CLIENT_ID}',
                 scopes: ["profile", "email"]
             })
 
