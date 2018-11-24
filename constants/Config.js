@@ -1,3 +1,3 @@
-const SERVER_URL = 'http://192.168.1.128:5000';
+const SERVER_URL = 'http://10.0.0.137:5000';
 
 export default SERVER_URL;
