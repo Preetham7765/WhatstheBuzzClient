@@ -6,7 +6,7 @@ import Aux from "../../hoc/Auxi";
 import MapScreen from "../../components/MapScreen/MapScreen";
 import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
 
-import SERVER_URL from '../../constants/Config';
+import { SERVER_URL } from '../../constants/Config';
 
 class UsersMap extends React.Component {
   state = {

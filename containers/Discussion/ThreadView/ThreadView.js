@@ -8,7 +8,7 @@ import SocketIOClient from 'socket.io-client';
 import CommentHead from '../../../components/DiscussionScreen/CommentHead/CommentHead';
 import CommentView from '../../../components/DiscussionScreen/CommentView/CommentView';
 import Aux from '../../../hoc/Auxi';
-import SERVER_URL from '../../../constants/Config';
+import { SERVER_URL } from '../../../constants/Config';
 import ErrorScreen from '../../../components/ErrorScreen/ErrorScreen';
 
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import SERVER_URL from '../../../constants/Config';
+import { SERVER_URL } from '../../../constants/Config';
 import Styles from './Styles';
 
 export default class Vote extends React.Component{
