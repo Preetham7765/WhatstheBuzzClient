@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
     windowHead: {
       flexDirection: 'row',
       backgroundColor: 'white',
-      height: 200,
+      height: 180,
       padding : 10,
       marginBottom: 10  
     },

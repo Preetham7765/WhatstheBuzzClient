@@ -85,15 +85,13 @@ export default class ThreadView extends React.Component {
         else
             return (
                 <Aux>
-                    <View>
-                        <CommentHead
-                            title={this.state.topic.title}
-                            description={this.state.topic.description}
-                            author={this.state.topic.author}
-                            time={this.state.topic.time}
-                            location={this.state.topic.location}
-                        />
-                    </View>
+                    <CommentHead
+                        title={this.state.topic.title}
+                        description={this.state.topic.description}
+                        author={this.state.topic.author}
+                        time={this.state.topic.time}
+                        location={this.state.topic.location}
+                    />
                     <GiftedChat
                         messages={this.state.topic.comments}
                         keyboardShouldPersistTaps={'always'}
