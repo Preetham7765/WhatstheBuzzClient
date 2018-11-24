@@ -21,7 +21,31 @@ class Login extends React.Component {
       password: ""
     };
   }
+    signIn = async () => {
+        try {
+            const result = await Expo.Google.logInAsync({
+                androidClientId:
+                    "680284249418-pnjnbe7di9stdg75nu422ais0ecu0g41.apps.googleusercontent.com",
+                iosClientId: "680284249418-jqli8orrn39mklhvc6b73l7nlfmtejap.apps.googleusercontent.com",
+                scopes: ["profile", "email"]
+            })
 
+            if (result.type === "success") {
+              console.log(result);
+
+                this.setState({
+                    signedIn: true,
+                    //name: result.user.name,
+                    //photoUrl: result.user.photoUrl
+                });
+                this.props.navigation.navigate("Main");
+            } else {
+                console.log("cancelled")
+            }
+        } catch (e) {
+            console.log("error", e)
+        }
+    }
   onLogin() {
     const { username, password } = this.state;
 
@@ -68,6 +92,7 @@ class Login extends React.Component {
     const { username, password } = this.state;
     return (
       <View style={Styles.container}>
+
         <View style={Styles.inputContainer}>
           <TextInput
             value={this.state.username}
@@ -103,6 +128,13 @@ class Login extends React.Component {
             />
           </View>
         </View>
+          <View style={{ flexDirection: "column", width: "70%", padding: 10 }}>
+              <Button
+                  title={"Login with Google"}
+                  color="#4285F4"
+                  onPress={this.signIn}
+              />
+          </View>
       </View>
     );
   }
