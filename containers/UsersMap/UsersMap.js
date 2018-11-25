@@ -32,6 +32,7 @@ class UsersMap extends React.Component {
         return this._getTopicsDataAsync(coords);
       })
       .then(respJson => {
+        // console.log("response in refresh", respJson);
         if (respJson.length != this.state.nearbyTopics.length) {
           this.setState({ nearbyTopics: respJson });
         }
@@ -106,7 +107,7 @@ class UsersMap extends React.Component {
         let retLocation = await Location.watchPositionAsync(
           { enableHighAccuracy: true },
           async coords => {
-            console.log(coords);
+            // console.log(coords);
             let respJson;
             try {
               respJson = await this._getTopicsDataAsync(coords);
@@ -120,8 +121,8 @@ class UsersMap extends React.Component {
             } catch (error) {
               this.setState({ errMessage: error.message, isMounted: true });
             }
-          });
-        console.log("relocation", retLocation);
+        });
+        // console.log("relocation", retLocation);
       } catch (error) {
         this.setState({ errMessage: error.message, isMounted: true });
         isLocationEnbaled = false;
@@ -131,7 +132,7 @@ class UsersMap extends React.Component {
   };
 
   createNewTopic = (userLocation) => {
-    console.log("Creating new topic ", userLocation);
+    // console.log("Creating new topic ", userLocation);
   }
 
   // TODO: should take buzz id and then fetch content from server 
