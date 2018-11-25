@@ -15,7 +15,7 @@ class CommentText extends React.Component{
     }
 }
 
-export default class CommentView extends React.Component{
+export default class CommentView extends React.PureComponent{
     render(){
         return(
             <View styles={Styles.container}>
