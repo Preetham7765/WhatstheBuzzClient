@@ -5,7 +5,7 @@ import Styles, {formStyles} from './Styles';
 import t from 'tcomb-form-native';
 
 
-import SERVER_URL from '../../constants/Config';
+import {SERVER_URL} from '../../constants/Config';
 // create an onsubmit handler 
 
 // we need to current location of the user to be sent

@@ -4,19 +4,21 @@ const styles = StyleSheet.create({
     windowHead: {
       flexDirection: 'row',
       backgroundColor: 'white',
-      height: 150,
-      padding : 10,  
+      height: 180,
+      padding : 10,
+      marginBottom: 10  
     },
     headContent: {
         flex : 8,
         flexDirection : 'column',
+        marginLeft: 10
     },
     title: {
         flex : 1,
-        fontSize: 30,
+        fontSize: 18,
         fontWeight: 'bold',
     },
-    decription : {
+    description : {
         flex : 2,
         fontSize: 12,
     },
