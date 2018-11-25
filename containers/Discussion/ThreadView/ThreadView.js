@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View, StyleSheet, FlatList, Keyboard } from 'react-native';
+import { Platform, KeyboardAvoidingView, FlatList, Keyboard } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { Location } from 'expo';
@@ -23,13 +23,14 @@ export default class ThreadView extends React.Component {
         super(props);
         this.socket = SocketIOClient(SERVER_URL);
         this.socket.on('newComment', this.onReceivedMessage);
-        this.socket.on('message', this.onUpdateComments);
+        this.socket.on('addCommentStatus', this.onUpdateComments);
+        this.shouldScroll = false;
     }
 
 
     onSendNewComment = () => {
 
-        if(this.state.commentText === '')
+        if (this.state.commentText === '')
             return;
 
         // send the data to the server.
@@ -43,9 +44,7 @@ export default class ThreadView extends React.Component {
             comment: comment
         }
         console.log(newComment);
-        this.socket.emit("addNewComment", newComment, (data) =>{
-            console.log("emmit callback", data);
-        });
+        this.socket.emit("addNewComment", newComment);
 
         /*fetch(url, {
             method: 'POST',
@@ -66,10 +65,22 @@ export default class ThreadView extends React.Component {
         */
     }
 
+    isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        const paddingToBottom = 20;
+        if (layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - paddingToBottom) {
+             console.log("Setting should scroll to true");
+            this.shouldScroll = true;
+        }
+        else {
+            this.shouldScroll = false;
+        }
+    };
 
-    onInputChangeHandler = (newText) =>{
 
-        this.setState({commentText: newText});
+    onInputChangeHandler = (newText) => {
+
+        this.setState({ commentText: newText });
 
     }
 
@@ -77,12 +88,12 @@ export default class ThreadView extends React.Component {
         console.log("Got from socket new message", message);
         let newState = { ...this.state };
         newState.topic.comments.push(message);
-        this.setState({ newState });
+        this.setState({ ...newState });
 
     }
 
     onUpdateComments = (message) => {
-        if(message === 'Error'){
+        if (message === 'Error') {
             console.log("Error adding new comment", message);
             return;
         }
@@ -92,7 +103,6 @@ export default class ThreadView extends React.Component {
         newState.commentText = '';
         this.setState({ ...newState });
         Keyboard.dismiss();
-        this.flatlist.scrollToEnd({animated: true});
     }
 
     renderMessage({ item }) {
@@ -128,23 +138,31 @@ export default class ThreadView extends React.Component {
             return <ErrorScreen errorMessage="Loading" />
         else
             return (
-                <View style = {Styles.container}>
+                <KeyboardAvoidingView
+                    style={Styles.container}
+                    behavior="padding"
+                    keyboardVerticalOffset={85}>
                     <FlatList
-                        ref = { ref => this.flatlist = ref}
-                        style = {Styles.flatListStyle}
+                        ref={ref => this.flatList = ref}
+                        style={Styles.flatListStyle}
                         data={this.state.topic.comments}
                         renderItem={this.renderMessage}
                         keyExtractor={(item) => item._id}
                         ListHeaderComponent={this.renderTopicDetails}
+                        onContentSizeChange={() => {
+                            if (this.shouldScroll)
+                                this.flatList.scrollToEnd({ animated: true });
+                        }}
+                        onScroll={({ nativeEvent }) => { this.isCloseToBottom(nativeEvent) }}
                     />
-                    <InputToolbar 
-                        style = {Styles.flatListStyle}
-                        value = {this.state.commentText}
-                        changed = {this.onInputChangeHandler}
-                        clicked = {this.onSendNewComment}
+                    <InputToolbar
+                        style={Styles.flatListStyle}
+                        value={this.state.commentText}
+                        changed={this.onInputChangeHandler}
+                        clicked={this.onSendNewComment}
                     />
-                    <KeyboardSpacer/>
-                </View>
+
+                </KeyboardAvoidingView>
             );
         /*
             return (

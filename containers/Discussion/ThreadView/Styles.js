@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import inputToolBar from '../../../components/DiscussionScreen/InputToolBar/InputToolBar';
 
 
 const styles = StyleSheet.create({
