@@ -30,6 +30,11 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
     },
+    ownerAction : {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
     card: {
         borderRadius: 10,
         padding: 8,

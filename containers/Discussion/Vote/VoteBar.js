@@ -45,18 +45,6 @@ export default class Vote extends React.Component{
 			this.serverVoteDown();
 		}
 	};
-
-	voteDown = () => {
-		if(!this.state.voteDown){
-			this.setState((state,props) => {return {voteNumber : state.voteNumber - 1, voteDown : true}});
-			this.serverVoteDown();
-		}
-		else{
-			this.setState((state,props) => {return {voteNumber : state.voteNumber + 1, voteDown : false}});
-			this.serverVoteUp();
-		}
-	};
-
 	getVoteText = () => {
 		if(this.state.voteNumber <= 1000){
 			return this.state.voteNumber;
@@ -71,7 +59,6 @@ export default class Vote extends React.Component{
             <View style={Styles.voteContainer}>
                 <TouchableOpacity  onPress ={this.voteUP} style={ this.state.voteUp ? Styles.marked : Styles.unMarked }><Text>+</Text></TouchableOpacity>
                 <Text style={{textAlignVertical: "center",textAlign: "center",}}>{this.getVoteText()}</Text>
-                <TouchableOpacity  onPress = {this.voteDown} style={ this.state.voteDown ? Styles.marked : Styles.unMarked }><Text>-</Text></TouchableOpacity>
             </View>
         );
     }
