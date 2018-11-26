@@ -3,9 +3,9 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
 	voteContainer : {
 	  flex : 1,
-	  alignItems: 'stretch',
+	  alignItems: 'center',
 	  flexDirection: 'column',
-	  justifyContent: 'flex-start',
+	  justifyContent: 'center',
 	},
 
 	marked : {
