@@ -13,7 +13,7 @@ export default class CommentHead extends React.Component {
 			//vote + content
 			<View style = {Styles.windowHead}>
 				<View style = {{flex : 1}}>
-					<Vote voteNumber = {998} />
+					<Vote voteNumber={this.props.voteNumber} topicId = {this.props.topicId} voted = {this.voted()}  userId = {this.props.userId} type = {"topic"}/>
 				</View>
 				<View style = {Styles.headContent}>
 					<Text style = {Styles.title}> {this.props.title}</Text>
@@ -27,11 +27,19 @@ export default class CommentHead extends React.Component {
 					</View>
 					<View style = {Styles.userAction}>
 						<SpamButton spamNum = {10} spam = {false} />
-						<DuplicateButton duplicateNum = {10} duplicate = {false} />
 					</View>
 				</View>
 			</View>
 		);
 	}
+
+	voted = () => {
+        for (var i = 0; i < this.props.votedby.length; i++) {
+            if (this.props.votedby[i] === this.props.userId) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

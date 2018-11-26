@@ -61,7 +61,7 @@ export default  class CommentView extends React.Component{
                 <View styles={Styles.container}>
                     <View style={Styles.card}>
                         <View style = {{flex : 1}}>
-                            <Vote voteNumber={this.props.commentCtr} commentId = {this.props.commentId} voted = {this.voted()}  userId = {this.props.userId}/>
+                            <Vote voteNumber={this.props.commentCtr} commentId = {this.props.commentId} voted = {this.voted()}  userId = {this.props.userId} type = {"comment"}/>
                         </View>
                         <View style = {{flex : 8}}>
                         {this.state.editMode ?

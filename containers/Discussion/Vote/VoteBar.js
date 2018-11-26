@@ -6,11 +6,17 @@ import Styles from './Styles';
 export default class Vote extends React.Component{
     constructor(props){
 		super(props);
-		this.state = {voteNumber : props.voteNumber, voteUp : props.voted , voteDown : false};
+		this.state = {voteNumber : props.voteNumber, voteUp : props.voted };
 	}
 
 	serverVoteUp = () =>{
-		const url = `${SERVER_URL}/api/comments/upvote/${this.props.userId}/${this.props.commentId}`;
+		var url;
+		if(this.props.type === "comment"){
+			url = `${SERVER_URL}/api/comments/upvote/${this.props.userId}/${this.props.commentId}`;
+		}
+		else{
+			url = `${SERVER_URL}/api/topics/upvote/${this.props.userId}/${this.props.topicId}`;
+		}
 		fetch(url,{
 			method:'put',
 		})
@@ -23,7 +29,13 @@ export default class Vote extends React.Component{
 	}
 
 	serverVoteDown =()=>{
-		const url = `${SERVER_URL}/api/comments/downvote/${this.props.userId}/${this.props.commentId}`;
+		var url;
+		if(this.props.type === "comment"){
+			url = `${SERVER_URL}/api/comments/downvote/${this.props.userId}/${this.props.commentId}`;
+		}
+		else{
+			url = `${SERVER_URL}/api/topics/downvote/${this.props.userId}/${this.props.topicId}`;
+		}
 		fetch(url,{
 			method:'put',
 		})

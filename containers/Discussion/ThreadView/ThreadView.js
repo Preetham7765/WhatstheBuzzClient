@@ -95,6 +95,11 @@ export default class ThreadView extends React.Component {
                         author={this.state.topic.author}
                         time={this.state.topic.time}
                         location={this.state.topic.location}
+
+                        voteNumber={this.state.topic.votes} 
+                        topicId = {this.state.topic._id} 
+                        userId = "5beb57fb7a732933a40e8192"
+                        votedby = {this.state.topic.votedby}
                     />
                     <GiftedChat
                         messages={this.state.topic.comments}
