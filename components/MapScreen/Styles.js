@@ -1,16 +1,17 @@
 import { StyleSheet } from 'react-native';
-    
+
 const styles = StyleSheet.create({
     mapContainer: {
-        width:'100%',
+        width: '100%',
     },
     map: {
         width: '100%',
-        height: '100%'
+        height: '100%',
+        zIndex: -1
     },
-    tooltipView:{
+    tooltipView: {
         padding: 10,
-        backgroundColor:"#fff"
+        backgroundColor: "#fff"
     },
     markerWrap: {
         alignItems: "center",

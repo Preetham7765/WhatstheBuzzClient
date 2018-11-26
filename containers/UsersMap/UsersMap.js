@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Platform } from "react-native";
+import { Button, Platform, TouchableOpacity } from "react-native";
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
 import Aux from "../../hoc/Auxi";
@@ -7,6 +7,7 @@ import MapScreen from "../../components/MapScreen/MapScreen";
 import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
 
 import { SERVER_URL } from '../../constants/Config';
+import { Icon } from 'react-native-elements';
 
 class UsersMap extends React.Component {
   state = {
@@ -31,6 +32,7 @@ class UsersMap extends React.Component {
         return this._getTopicsDataAsync(coords);
       })
       .then(respJson => {
+        // console.log("response in refresh", respJson);
         if (respJson.length != this.state.nearbyTopics.length) {
           this.setState({ nearbyTopics: respJson });
         }
@@ -105,7 +107,7 @@ class UsersMap extends React.Component {
         let retLocation = await Location.watchPositionAsync(
           { enableHighAccuracy: true },
           async coords => {
-            console.log(coords);
+            // console.log(coords);
             let respJson;
             try {
               respJson = await this._getTopicsDataAsync(coords);
@@ -119,8 +121,8 @@ class UsersMap extends React.Component {
             } catch (error) {
               this.setState({ errMessage: error.message, isMounted: true });
             }
-          });
-        console.log("relocation", retLocation);
+        });
+        // console.log("relocation", retLocation);
       } catch (error) {
         this.setState({ errMessage: error.message, isMounted: true });
         isLocationEnbaled = false;
@@ -130,7 +132,7 @@ class UsersMap extends React.Component {
   };
 
   createNewTopic = (userLocation) => {
-    console.log("Creating new topic ", userLocation);
+    // console.log("Creating new topic ", userLocation);
   }
 
   // TODO: should take buzz id and then fetch content from server 
@@ -147,6 +149,16 @@ class UsersMap extends React.Component {
       //console.log("calling render", this.state.nearbyTopics.length);
       return (
         <Aux>
+          <TouchableOpacity
+          style = {{
+            position: 'absolute',
+            top: 30,
+            right: 5
+          }}
+          onPress={this.refresh}>
+          <Icon name="refresh"
+            raised />
+          </TouchableOpacity>
           <MapScreen
             userLocation={this.state.userLocation}
             topicData={this.state.nearbyTopics}
