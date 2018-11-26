@@ -5,6 +5,14 @@ import AppNavigator from './navigators/AppNavigator';
 
 export default class App extends React.Component {
 
+    constructor(){
+
+        super();
+        // Creating Global Variable.
+        global.currentUser = '';
+        global.currentUserId = '';
+    }
+
     state = {
         isLoadingComplete: false,
     };

@@ -50,7 +50,7 @@ class EditModeComment extends React.Component{
     }
 }
 
-export default  class CommentView extends React.Component{
+export default  class CommentView extends React.PureComponent{
     constructor(props){
         super(props);
         this.state= {commentDesc : this.props.commentDesc, editMode : false, showComment : true, isOwner : this.isOwner()};

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
 	voteContainer : {
 	  flex : 1,
-	  alignItems: 'center',
+	  alignItems: 'stretch',
 	  flexDirection: 'column',
 	  justifyContent: 'center',
 	},

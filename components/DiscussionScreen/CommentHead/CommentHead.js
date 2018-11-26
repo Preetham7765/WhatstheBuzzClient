@@ -7,7 +7,7 @@ import DuplicateButton from '../../../containers/Discussion/ReportDuplicate/Repo
 import Styles from './Styles';
 
 
-export default class CommentHead extends React.Component {
+export default class CommentHead extends React.PureComponent {
 	render(){
 		return(
 			//vote + content
