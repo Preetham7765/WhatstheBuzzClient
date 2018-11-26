@@ -127,7 +127,6 @@ class NewTopicScreen extends React.Component {
             return t.struct({
                 title: t.String,
                 description: t.maybe(t.String),
-                startTime: t.Date,
                 duration: activeDuration,
             });
         }
