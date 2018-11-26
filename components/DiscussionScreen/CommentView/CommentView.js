@@ -7,18 +7,30 @@ import { SERVER_URL } from '../../../constants/Config';
 
 class CommentText extends React.Component{
     render(){
+
         return(
                 <View style={Styles.userInfoContainer}>
                     <Text style={Styles.comment}>{this.props.commentDesc}</Text>
                     <Text style={Styles.userInfoText}>-{this.props.authorName}</Text>
-                    <View style={Styles.ownerAction}>
-                    <Button onPress = {this.props.enterEditMode} title = "Edit"/>
-                    <Button onPress = {this.props.delete} title = "Delete"/>
-                    </View>
+                    {this.props.isOwner ?
+                        <OwnerAction enterEditMode = {this.props.enterEditMode} delete = {this.props.delete}/>
+                        : null}
                 </View>
         );
     }
 }
+
+class OwnerAction extends React.Component{
+    render(){
+        return(
+            <View style={Styles.ownerAction}>
+                <Button onPress = {this.props.enterEditMode} title = "Edit"/>
+                <Button onPress = {this.props.delete} title = "Delete"/>
+            </View>
+        );
+    }
+}
+
 
 class EditModeComment extends React.Component{
     constructor(props){
@@ -41,7 +53,7 @@ class EditModeComment extends React.Component{
 export default  class CommentView extends React.Component{
     constructor(props){
         super(props);
-        this.state= {commentDesc : this.props.commentDesc, editMode : false, showComment : true};
+        this.state= {commentDesc : this.props.commentDesc, editMode : false, showComment : true, isOwner : this.isOwner()};
     }
     render(){
         if(this.state.showComment){
@@ -53,8 +65,10 @@ export default  class CommentView extends React.Component{
                         </View>
                         <View style = {{flex : 8}}>
                         {this.state.editMode ?
+                                //Enter edit mode
                                 <EditModeComment changeText = {(text) => {this.setState({commentDesc : text})}} commentDesc = {this.state.commentDesc} submit = {this.submit} cancel = {this.cancel}/> 
-                            :   <CommentText authorName={this.props.authorName} commentDesc={this.state.commentDesc} enterEditMode = {this.edit} delete = {this.delete}/>}
+                                //read comment , can enter edit mode
+                            :   <CommentText authorName={this.props.authorName} commentDesc={this.state.commentDesc} enterEditMode = {this.edit} delete = {this.delete} isOwner = {this.state.isOwner}/>}
                         </View>
                     </View>
                 </View>
@@ -105,6 +119,14 @@ export default  class CommentView extends React.Component{
 		});
     }
 
+    isOwner = () => {
+        if(this.props.authorId == this.props.userId){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     voted = () => {
         for (var i = 0; i < this.props.votedby.length; i++) {
             if (this.props.votedby[i] === this.props.userId) {
