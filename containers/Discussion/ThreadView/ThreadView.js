@@ -1,13 +1,10 @@
 import React from 'react';
-import { Platform, KeyboardAvoidingView, FlatList, Keyboard } from 'react-native';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { KeyboardAvoidingView, FlatList, Keyboard } from 'react-native';
 import { Location } from 'expo';
 import SocketIOClient from 'socket.io-client';
 
 import CommentHead from '../../../components/DiscussionScreen/CommentHead/CommentHead';
 import CommentView from '../../../components/DiscussionScreen/CommentView/CommentView';
-import Aux from '../../../hoc/Auxi';
 import { SERVER_URL } from '../../../constants/Config';
 import ErrorScreen from '../../../components/ErrorScreen/ErrorScreen';
 import InputToolbar from '../../../components/DiscussionScreen/InputToolBar/InputToolBar';
