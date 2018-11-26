@@ -34,7 +34,8 @@ class Login extends React.Component {
             })
             if (result.type === "success") {
               console.log(result);
-
+                global.currentUser=result.user.email;
+                Alert.alert("Welcome, ",global.currentUser);
                 this.setState({
                     signedIn: true,
                     //name: result.user.name,
@@ -109,7 +110,8 @@ class Login extends React.Component {
       .then(response => {
         console.log(response.status);
         if (response.status === 200) {
-          Alert.alert("Login successful");
+            global.currentUser=this.state.username;
+            Alert.alert("Welcome, ",global.currentUser);
           this.props.navigation.navigate("Main");
         } else Alert.alert("Login unsuccessful");
       })
@@ -132,6 +134,10 @@ class Login extends React.Component {
       <View style={Styles.container}>
 
         <View style={Styles.inputContainer}>
+            <Text>
+                {global.SampleVar}
+                {/*Global Variable*/}
+            </Text>
           <TextInput
             value={this.state.username}
             onChangeText={username => this.setState({ username })}
