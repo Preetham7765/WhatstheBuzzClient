@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Button, TextInput, View, KeyboardAvoidingView, Text, Alert} from "react-native";
-import styles from './Styles'
-import Styles from "../Login/Styles";
+import Styles from './Styles'
 import SERVER_URL from "../../constants/Config";
 
 class EnterpriseRegister extends React.Component{
@@ -39,7 +38,6 @@ class EnterpriseRegister extends React.Component{
 
         fetch(`${SERVER_URL}/api/users/enterprise`, {
             method: "POST",
-            mode: "cors",
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
@@ -52,7 +50,7 @@ class EnterpriseRegister extends React.Component{
             } else {
                 Alert.alert("Request unsuccessful");
             }
-        })
+        }).catch(err  => console.log(err));
 
     }
 
