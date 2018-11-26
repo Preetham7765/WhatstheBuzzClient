@@ -11,6 +11,8 @@ export default class App extends React.Component {
         // Creating Global Variable.
         global.currentUser = '';
         global.currentUserId = '';
+        global.enterprise= null;
+        global.enterpriseActive = '';
     }
 
     state = {

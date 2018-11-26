@@ -20,7 +20,7 @@ const activeDuration = t.enums({
     120: '120 minutes',
 
 }, 'Duration');
-
+var eventType = null;
 var options = {
 
     fields: {
@@ -67,7 +67,7 @@ class NewTopicScreen extends React.Component {
         super(props);
         const value = {};
         this.state ={
-            author : global.currentUser,
+            author : global.currentUserId,
             value : value,
             topicType : this.getTopicType(),
             userLocation : null
@@ -86,7 +86,7 @@ class NewTopicScreen extends React.Component {
                 description: this.state.value.description,
                 duration: this.state.value.duration,
                 location: [userLocation.coords.longitude, userLocation.coords.latitude],
-                topicType: this.state.value.topicType,
+                topicType: eventType,
                 startAt: this.state.value.startTime,
                 expireAt: this.state.value.endTime
             }
@@ -113,22 +113,8 @@ class NewTopicScreen extends React.Component {
     }
 
     getTopicType() {
-        var topicType = null;
-        fetch(`${SERVER_URL}/api/users/${global.currentUserId}`, {
-            method : 'GET',
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-            },
-        }).then((res) =>
-            res.json()
-        ).then((user) => {
-            if(user.enterprise && user.enterpriseActive !== "pending"){
-                topicType = 'Event';
-            }
-        }).catch(err => console.log(err));
-
-        if(topicType === 'Event'){
-            console.log("in event topictype");
+        if(global.enterprise &&  global.enterpriseActive !== "pending"){
+            eventType = 'Event';
             return t.struct({
                 title: t.String,
                 description: t.maybe(t.String),
@@ -137,6 +123,7 @@ class NewTopicScreen extends React.Component {
             });
         }
         else {
+            eventType = 'Buzz';
             return t.struct({
                 title: t.String,
                 description: t.maybe(t.String),

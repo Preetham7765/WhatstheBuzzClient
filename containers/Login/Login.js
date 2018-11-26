@@ -87,7 +87,7 @@ class Login extends React.Component {
     onLogin() {
         const {username, password} = this.state;
 
-        Alert.alert("Credentials", `${username} + ${password}`);
+        // Alert.alert("Credentials", `${username} + ${password}`);
 
         console.log("Finding user");
         // send data to server
@@ -110,13 +110,16 @@ class Login extends React.Component {
             console.log(response.status);
             if (response.status === 200) {
                 global.currentUser = this.state.username;
-                console.log(global.currentUserId);
-                Alert.alert("Welcome, ", global.currentUser);
+                // Alert.alert("Welcome, ", global.currentUser);
                 this.props.navigation.navigate("Main");
                 return response.json();
             } else Alert.alert("Login unsuccessful");
         })
-        .then((data) => {global.currentUserId = data.userId;})
+        .then((data) => {
+            global.currentUserId = data.userId;
+            global.enterprise = data.enterprise;
+            global.enterpriseActive = data.enterpriseActive;
+        })
         .catch(function (error) {
             console.log(user);
             console.log(
