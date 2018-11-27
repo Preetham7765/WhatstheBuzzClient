@@ -1,11 +1,8 @@
 import React, { Component } from "react";
-import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
-import ActionBar from "react-native-action-bar";
+import { Alert, Button, TextInput, View, StyleSheet, Text, AsyncStorage } from "react-native";
 import Styles from './Styles';
 
 import {SERVER_URL,ANDROID_CLIENT_ID,IOS_CLIENT_ID} from '../../constants/Config';
-//import {ANDROID_CLIENT_ID} from '../../constants/Config';
-//import IOS_CLIENT_ID from '../../constants/Config';
 
 class Login extends React.Component {
   static navigationOptions = {
@@ -24,6 +21,19 @@ class Login extends React.Component {
     };
   }
 
+  componentDidMount(){
+      console.log("Already Logged in",AsyncStorage.getItem('username'));
+      this._loadInitialState().done();
+  }
+
+  _loadInitialState = async () =>{
+      const userId = await AsyncStorage.getItem('userId');
+      const username = await AsyncStorage.getItem('username');
+      if(userId !== null)
+      {
+          this.props.navigation.navigate('Main');
+      }
+  }
     signIn = async () => {
         try {
             console.log(ANDROID_CLIENT_ID);
@@ -72,10 +82,12 @@ class Login extends React.Component {
             },
             body: JSON.stringify(user)
         })
-            .then(response => {
-                console.log(response.status);
-                if (response.status === 200) {
-                    Alert.alert("User available");
+            .then(res => {
+                console.log(res.status);
+                if(res.success===true){
+                   // Alert.alert("User available");
+                    AsyncStorage.setItem('userId',res.userId);
+                    AsyncStorage.setItem('username',res.username);
                     this.props.navigation.navigate("Main");
                 } else
                 {
@@ -113,9 +125,11 @@ class Login extends React.Component {
             },
             body: JSON.stringify(newUser)
         })
-            .then(response => console.log(response.status))
-            .then(() => {
-                Alert.alert("Registration successful. Log in to start buzzing!");
+            //.then(response => console.log(response.status))
+            .then((res) => {
+                //Alert.alert("Registration successful. Log in to start buzzing!");
+                AsyncStorage.setItem('userId',res.userId);
+                AsyncStorage.setItem('username',res.username);
                 //this.props.navigation.navigate("Login");
             })
             .catch(function(error) {
@@ -141,7 +155,6 @@ class Login extends React.Component {
       password: this.state.password
     };
     //console.log("Registering new user1");
-
     fetch(`${SERVER_URL}/api/users/login`, {
       method: "POST",
       mode: "cors",
@@ -151,12 +164,18 @@ class Login extends React.Component {
       },
       body: JSON.stringify(user)
     })
-      .then(response => {
-        console.log(response.status);
-        if (response.status === 200) {
-          Alert.alert("Login successful");
-          this.props.navigation.navigate("Main");
-        } else Alert.alert("Login unsuccessful");
+        .then((response) => response.json())
+
+      .then(res => {
+          //alert(res.message);
+          if (res.success === true) {
+              console.log(res);
+              alert(res.userId);
+              AsyncStorage.setItem('userId', res.userId);
+              AsyncStorage.setItem('username', res.username);
+              this.props.navigation.navigate("Main");
+          }
+          else Alert.alert("Login unsuccessful");
       })
       .catch(function(error) {
         console.log(user);
@@ -165,12 +184,10 @@ class Login extends React.Component {
         );
         // ADD THIS THROW error
         throw error;
-      });
+      })
   }
 
-  onRegister() {}
-
-  render() {
+  render(){
     const { navigate } = this.props.navigation;
     const { username, password } = this.state;
     return (
