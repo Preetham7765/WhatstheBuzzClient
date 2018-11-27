@@ -3,3 +3,4 @@ node_modules/**/*
 npm-debug.*
 .idea/workspace.xml
 .idea/*
+reset-cache/*

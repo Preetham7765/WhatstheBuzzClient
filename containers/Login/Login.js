@@ -44,7 +44,8 @@ class Login extends React.Component {
             })
             if (result.type === "success") {
               console.log(result);
-
+                global.currentUser=result.user.email;
+                Alert.alert("Welcome, ",global.currentUser);
                 this.setState({
                     signedIn: true,
                     username: result.user.email,
@@ -164,6 +165,7 @@ class Login extends React.Component {
       },
       body: JSON.stringify(user)
     })
+
         .then((response) => response.json())
 
       .then(res => {
@@ -176,6 +178,7 @@ class Login extends React.Component {
               this.props.navigation.navigate("Main");
           }
           else Alert.alert("Login unsuccessful");
+
       })
       .catch(function(error) {
         console.log(user);
@@ -194,6 +197,10 @@ class Login extends React.Component {
       <View style={Styles.container}>
 
         <View style={Styles.inputContainer}>
+            <Text>
+                {global.SampleVar}
+                {/*Global Variable*/}
+            </Text>
           <TextInput
             value={this.state.username}
             onChangeText={username => this.setState({ username })}

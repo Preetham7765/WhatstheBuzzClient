@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View, StyleSheet, FlatList } from 'react-native';
+import { Platform, KeyboardAvoidingView, FlatList, Keyboard } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { Location } from 'expo';
@@ -10,28 +10,34 @@ import CommentView from '../../../components/DiscussionScreen/CommentView/Commen
 import Aux from '../../../hoc/Auxi';
 import { SERVER_URL } from '../../../constants/Config';
 import ErrorScreen from '../../../components/ErrorScreen/ErrorScreen';
-
-
+import InputToolbar from '../../../components/DiscussionScreen/InputToolBar/InputToolBar';
+import Styles from './Styles';
 
 export default class ThreadView extends React.Component {
 
-    state = {}
+    state = {
+        commentText: ''
+    }
 
     constructor(props) {
         super(props);
         this.socket = SocketIOClient(SERVER_URL);
         this.socket.on('newComment', this.onReceivedMessage);
-
+        this.socket.on('addCommentStatus', this.onUpdateComments);
+        this.shouldScroll = false;
     }
 
 
-    onSendNewComment = (message = []) => {
+    onSendNewComment = () => {
+
+        if (this.state.commentText === '')
+            return;
 
         // send the data to the server.
-        const authorId = message[0].user._id;
-        const comment = message[0].text;
+        const authorId = "5beb57fb7a732933a40e8192";
+        const comment = this.state.commentText;
 
-        const url = `${SERVER_URL}/api/comments`;
+        // const url = `${SERVER_URL}/api/comments`;
         const newComment = {
             authorId: authorId,
             topicId: this.props.navigation.getParam('topicId', null),
@@ -39,7 +45,6 @@ export default class ThreadView extends React.Component {
         }
         console.log(newComment);
         this.socket.emit("addNewComment", newComment);
-
 
         /*fetch(url, {
             method: 'POST',
@@ -60,32 +65,106 @@ export default class ThreadView extends React.Component {
         */
     }
 
+    isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        const paddingToBottom = 20;
+        if (layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - paddingToBottom) {
+             console.log("Setting should scroll to true");
+            this.shouldScroll = true;
+        }
+        else {
+            this.shouldScroll = false;
+        }
+    };
+
+
+    onInputChangeHandler = (newText) => {
+
+        this.setState({ commentText: newText });
+
+    }
+
     onReceivedMessage = (message) => {
         console.log("Got from socket new message", message);
         let newState = { ...this.state };
-        newState.topic.comments = GiftedChat.append(this.state.topic.comments, message);
-        this.setState({ newState });
+        newState.topic.comments.push(message);
+        this.setState({ ...newState });
 
     }
 
-    renderMessage(props) {
-        const { currentMessage: { text: currText, user : {name : authorname} , votes : voteNum , _id : commentID , votedby : voteBy} } = props;
+    onUpdateComments = (message) => {
+        if (message === 'Error') {
+            console.log("Error adding new comment", message);
+            return;
+        }
 
-        return <CommentView 
-                authorName = {authorname}
-                commentDesc = {currText}
-                commentCtr = {voteNum}
-                commentId = {commentID}
-                votedby = {voteBy}
-                userId = "5bda0840335d2283c0d5d0ef"
-                />
+        let newState = { ...this.state };
+        newState.topic.comments.push(message);
+        newState.commentText = '';
+        this.setState({ ...newState });
+        Keyboard.dismiss();
     }
+
+    renderMessage({ item }) {
+        // const { currentMessage: { text: currText, user: { name: authorname }, votes: voteNum, _id: commentID, votedby: voteBy } } = props;
+
+        const authorName = item.user.name;
+        const currText = item.text;
+        const voteNum = item.votes;
+        const commentID = item._id;
+        const voteBy = item.votedby;
+
+        return <CommentView
+            commentId={commentID}
+            authorName={authorName}
+            commentDesc={currText}
+            commentCtr={voteNum}
+            votedby={voteBy}
+            userId="5bda0840335d2283c0d5d0ef"
+        />
+    }
+
+    renderTopicDetails = () => (<CommentHead
+        title={this.state.topic.title}
+        description={this.state.topic.description}
+        author={this.state.topic.author}
+        time={this.state.topic.time}
+        location={this.state.topic.location}
+    />);
 
 
     render() {
         if (this.state.topic === undefined)
             return <ErrorScreen errorMessage="Loading" />
         else
+            return (
+                <KeyboardAvoidingView
+                    style={Styles.container}
+                    behavior="padding"
+                    keyboardVerticalOffset={85}>
+                    <FlatList
+                        ref={ref => this.flatList = ref}
+                        style={Styles.flatListStyle}
+                        data={this.state.topic.comments}
+                        renderItem={this.renderMessage}
+                        keyExtractor={(item) => item._id}
+                        ListHeaderComponent={this.renderTopicDetails}
+                        onContentSizeChange={() => {
+                            if (this.shouldScroll)
+                                this.flatList.scrollToEnd({ animated: true });
+                        }}
+                        onScroll={({ nativeEvent }) => { this.isCloseToBottom(nativeEvent) }}
+                    />
+                    <InputToolbar
+                        style={Styles.flatListStyle}
+                        value={this.state.commentText}
+                        changed={this.onInputChangeHandler}
+                        clicked={this.onSendNewComment}
+                    />
+
+                </KeyboardAvoidingView>
+            );
+        /*
             return (
                 <Aux>
                     <CommentHead
@@ -109,6 +188,7 @@ export default class ThreadView extends React.Component {
                 </Aux>
                 // </View>
             );
+        */
     }
 
     componentDidMount() {
