@@ -2,50 +2,49 @@ import React, { Component } from "react";
 import { Alert, Button, TextInput, View, StyleSheet, Text, AsyncStorage } from "react-native";
 import Styles from './Styles';
 
-import {SERVER_URL,ANDROID_CLIENT_ID,IOS_CLIENT_ID} from '../../constants/Config';
+import { SERVER_URL, ANDROID_CLIENT_ID, IOS_CLIENT_ID } from '../../constants/Config';
 
 class Login extends React.Component {
-  static navigationOptions = {
-    title: "Whats the Buzz!",
-    headerTitleStyle: { textAlign: "center", alignSelf: "center", flex: 1 },
-    headerStyle: {
-      backgroundColor: "#ecf0f1"
-    }
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: "",
-      password: ""
+    static navigationOptions = {
+        title: "Whats the Buzz!",
+        headerTitleStyle: { textAlign: "center", alignSelf: "center", flex: 1 },
+        headerStyle: {
+            backgroundColor: "#ecf0f1"
+        }
     };
-  }
 
-  componentDidMount(){
-      console.log("Already Logged in",AsyncStorage.getItem('username'));
-      this._loadInitialState().done();
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+            password: ""
+        };
+    }
 
-  _loadInitialState = async () =>{
-      const userId = await AsyncStorage.getItem('userId');
-      const username = await AsyncStorage.getItem('username');
-      if(userId !== null)
-      {
-          this.props.navigation.navigate('Main');
-      }
-  }
+    componentDidMount() {
+        console.log("Already Logged in", AsyncStorage.getItem('username'));
+        this._loadInitialState().done();
+    }
+
+    _loadInitialState = async () => {
+        const userId = await AsyncStorage.getItem('userId');
+        const username = await AsyncStorage.getItem('username');
+        if (userId !== null) {
+            this.props.navigation.navigate('Main');
+        }
+    }
     signIn = async () => {
         try {
             console.log(ANDROID_CLIENT_ID);
             const result = await Expo.Google.logInAsync({
-                androidClientId:ANDROID_CLIENT_ID,
-                iosClientId:IOS_CLIENT_ID,
+                androidClientId: ANDROID_CLIENT_ID,
+                iosClientId: IOS_CLIENT_ID,
                 scopes: ["profile", "email"]
             })
             if (result.type === "success") {
-              console.log(result);
-                global.currentUser=result.user.email;
-                Alert.alert("Welcome, ",global.currentUser);
+                console.log(result);
+                global.currentUser = result.user.email;
+                Alert.alert("Welcome, ", global.currentUser);
                 this.setState({
                     signedIn: true,
                     username: result.user.email,
@@ -64,8 +63,7 @@ class Login extends React.Component {
             console.log("error", e)
         }
     }
-    googleCheckUser()
-    {
+    googleCheckUser() {
         console.log("Finding if user has already logged in using Google");
         // send data to server
         const user = {
@@ -85,17 +83,16 @@ class Login extends React.Component {
         })
             .then(res => {
                 console.log(res.status);
-                if(res.success===true){
-                   // Alert.alert("User available");
-                    AsyncStorage.setItem('userId',res.userId);
-                    AsyncStorage.setItem('username',res.username);
+                if (res.success === true) {
+                    // Alert.alert("User available");
+                    AsyncStorage.setItem('userId', res.userId);
+                    AsyncStorage.setItem('username', res.username);
                     this.props.navigation.navigate("Main");
-                } else
-                {
-                   this.googleSignUp();
+                } else {
+                    this.googleSignUp();
                 }
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(user);
                 console.log(
                     "There has been a problem with your fetch operation: " + error.message
@@ -105,8 +102,7 @@ class Login extends React.Component {
             });
     }
 
-    googleSignUp()
-    {
+    googleSignUp() {
         console.log("Registering new user");
         // send data to server
         const newUser = {
@@ -129,11 +125,11 @@ class Login extends React.Component {
             //.then(response => console.log(response.status))
             .then((res) => {
                 //Alert.alert("Registration successful. Log in to start buzzing!");
-                AsyncStorage.setItem('userId',res.userId);
-                AsyncStorage.setItem('username',res.username);
+                AsyncStorage.setItem('userId', res.userId);
+                AsyncStorage.setItem('username', res.username);
                 //this.props.navigation.navigate("Login");
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(newUser);
                 console.log(
                     "There has been a problem with your fetch operation: " +
@@ -144,107 +140,105 @@ class Login extends React.Component {
             });
     }
 
-  onLogin() {
-    const { username, password } = this.state;
+    onLogin() {
+        const { username, password } = this.state;
 
-    Alert.alert("Credentials", `${username} + ${password}`);
+        Alert.alert("Credentials", `${username} + ${password}`);
 
-    console.log("Finding user");
-    // send data to server
-    const user = {
-      username: this.state.username,
-      password: this.state.password
-    };
-    //console.log("Registering new user1");
-    fetch(`${SERVER_URL}/api/users/login`, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(user)
-    })
+        console.log("Finding user");
+        // send data to server
+        const user = {
+            username: this.state.username,
+            password: this.state.password
+        };
+        //console.log("Registering new user1");
+        fetch(`${SERVER_URL}/api/users/login`, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        })
+            .then((response) => response.json())
+            .then(res => {
+                //alert(res.message);
+                if (res.success === true) {
+                    console.log(res);
+                    alert(res.userId);
+                    AsyncStorage.setItem('userId', res.userId);
+                    AsyncStorage.setItem('username', res.username);
+                    this.props.navigation.navigate("Main");
+                }
+                else Alert.alert("Login unsuccessful");
 
-        .then((response) => response.json())
+            })
+            .catch(function (error) {
+                console.log(user);
+                console.log(
+                    "There has been a problem with your fetch operation: " + error.message
+                );
+                // ADD THIS THROW error
+                throw error;
+            })
+    }
 
-      .then(res => {
-          //alert(res.message);
-          if (res.success === true) {
-              console.log(res);
-              alert(res.userId);
-              AsyncStorage.setItem('userId', res.userId);
-              AsyncStorage.setItem('username', res.username);
-              this.props.navigation.navigate("Main");
-          }
-          else Alert.alert("Login unsuccessful");
+    render() {
+        const { navigate } = this.props.navigation;
+        const { username, password } = this.state;
+        return (
+            <View style={Styles.container}>
 
-      })
-      .catch(function(error) {
-        console.log(user);
-        console.log(
-          "There has been a problem with your fetch operation: " + error.message
+                <View style={Styles.inputContainer}>
+                    <Text>
+                        {global.SampleVar}
+                        {/*Global Variable*/}
+                    </Text>
+                    <TextInput
+                        value={this.state.username}
+                        onChangeText={username => this.setState({ username })}
+                        placeholder={"Username"}
+                        style={Styles.input}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        value={this.state.password}
+                        onChangeText={password => this.setState({ password })}
+                        placeholder={"Password"}
+                        secureTextEntry={true}
+                        underlineColorAndroid="transparent"
+                        style={Styles.input}
+                    />
+                    <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
+                        <Button
+                            title={"Login"}
+                            color="#841584"
+                            onPress={this.onLogin.bind(this)}
+                        />
+                    </View>
+                    <Text style={Styles.titleText}>{"OR"}</Text>
+                    <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
+                        <Button
+                            title={"Register"}
+                            color="#841584"
+                            //onPress={this.onLogin.bind(this)}
+                            onPress={() => navigate("Register")}
+                        // onPress={() => this.onRegister.bind(this)}
+                        />
+                    </View>
+                </View>
+                <View style={{ flexDirection: "column", width: "70%", padding: 10 }}>
+                    <Button
+                        title={"Login with Google"}
+                        color="#4285F4"
+                        onPress={this.signIn}
+                    />
+                </View>
+            </View>
         );
-        // ADD THIS THROW error
-        throw error;
-      })
-  }
-
-  render(){
-    const { navigate } = this.props.navigation;
-    const { username, password } = this.state;
-    return (
-      <View style={Styles.container}>
-
-        <View style={Styles.inputContainer}>
-            <Text>
-                {global.SampleVar}
-                {/*Global Variable*/}
-            </Text>
-          <TextInput
-            value={this.state.username}
-            onChangeText={username => this.setState({ username })}
-            placeholder={"Username"}
-            style={Styles.input}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-          <TextInput
-            value={this.state.password}
-            onChangeText={password => this.setState({ password })}
-            placeholder={"Password"}
-            secureTextEntry={true}
-            underlineColorAndroid="transparent"
-            style={Styles.input}
-          />
-          <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
-            <Button
-              title={"Login"}
-              color="#841584"
-              onPress={this.onLogin.bind(this)}
-            />
-          </View>
-          <Text style={Styles.titleText}>{"OR"}</Text>
-          <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
-            <Button
-              title={"Register"}
-              color="#841584"
-              //onPress={this.onLogin.bind(this)}
-              onPress={() => navigate("Register")}
-              // onPress={() => this.onRegister.bind(this)}
-            />
-          </View>
-        </View>
-          <View style={{ flexDirection: "column", width: "70%", padding: 10 }}>
-              <Button
-                  title={"Login with Google"}
-                  color="#4285F4"
-                  onPress={this.signIn}
-              />
-          </View>
-      </View>
-    );
-  }
+    }
 }
 
 export default Login;
