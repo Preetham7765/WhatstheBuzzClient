@@ -9,6 +9,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/vector-icons": "latest",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "concurrently": "^4.0.1",
@@ -17,7 +18,9 @@
     "moment": "^2.22.2",
     "mongoose": "^5.3.8",
     "native-base": "^2.8.1",
+    "prop-types": "latest",
     "react": "16.3.1",
+    "react-base": "^0.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
     "react-native-action-bar": "^2.0.5",
     "react-native-action-button": "^2.8.5",
@@ -30,8 +33,12 @@
     "react-native-map-clustering": "^1.3.0",
     "react-native-maps": "^0.22.0",
     "react-native-modal-datetime-picker": "^6.0.0",
+    "react-native-progress": "^3.5.0",
     "react-native-status-bar-height": "^2.1.0",
     "react-navigation": "^2.18.2",
+    "react-redux": "^5.1.1",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
     "socket.io-client": "^2.1.1",
     "tcomb-form-native": "^0.6.20"
   },

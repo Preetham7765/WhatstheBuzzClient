@@ -19,6 +19,18 @@ const styles = StyleSheet.create({
     },
     progressView: {
         marginTop: 20,
+    },
+    enterprise: {
+        backgroundColor: 'yellow'
+    },
+    normal: {
+        backgroundColor: 'red'
+    },
+    card: {
+        borderWidth: 3,
+        borderRadius: 3,
+        borderColor: '#000',
+        padding: 10
     }
 });
 
