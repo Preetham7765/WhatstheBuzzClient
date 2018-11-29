@@ -1,6 +1,7 @@
 import {RATIO, STEP} from "../constants/Config";
 
 const calcLevel = (rep) => {
+    if(rep===undefined) return [0,0];
     let level = 0;
     let step = STEP;
     let progress;

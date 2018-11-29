@@ -24,6 +24,7 @@ import {Entypo, MaterialCommunityIcons} from '@expo/vector-icons';
 import styles from './Styles';
 import FreeBuzz from "../FreeBuzz/FreeBuzz";
 import {SERVER_URL} from "../../constants/Config";
+import {calcLevel} from "../../services/Level";
 import { AppLoading, Font } from 'expo';
 
 class UserScreen extends React.Component {
@@ -91,16 +92,20 @@ class UserScreen extends React.Component {
 
 
     render() {
-        const { user } = this.props.user;
-        if (!this.state.fontLoaded) {
+
+        if (!this.state.fontLoaded && this.props.user.reputationScore === undefined) {
             return <AppLoading />;
         }
+        const { user } = this.props.user;
+        console.log(user.firstName + ' - rep : ' + user.reputationScore);
+        console.log(calcLevel(user.reputationScore));
+        let result = [0,0];//calcLevel(this.props.user.reputationScore);
+        const level = result[0];
+        const prog = result[1];
         return (
 
 
             <ScrollView style={styles.container}>
-
-
                 <Container>
                     <Content>
                         <Card style={[styles.card, user.enterprise ? styles.enterprise : styles.normal]}>
@@ -113,12 +118,12 @@ class UserScreen extends React.Component {
                                     <MaterialCommunityIcons name="marker-check" size={32} color="green"/>
                                     <Body>
                                     <Text>{user.firstName } {user.lastName}</Text>
-                                    <Text note>Level {UserScreen.getLevel(user.reputationScore)}</Text>
+                                    <Text note>Level {level}</Text>
                                     </Body>
                                 </Left>
                                 <Body>
                                 <View style={styles.container}>
-                                    <Progress.Bar progress={this.state.progress} width={100} />
+                                    <Progress.Bar progress={prog} width={100} />
                                 </View>
                                 </Body>
                             </CardItem>
