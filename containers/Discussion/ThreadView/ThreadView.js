@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, FlatList, Keyboard } from 'react-native';
+import { KeyboardAvoidingView, FlatList, Keyboard, Platform } from 'react-native';
 import { Location } from 'expo';
 import SocketIOClient from 'socket.io-client';
 
@@ -10,18 +10,19 @@ import ErrorScreen from '../../../components/ErrorScreen/ErrorScreen';
 import InputToolbar from '../../../components/DiscussionScreen/InputToolBar/InputToolBar';
 import Styles from './Styles';
 
-export default class ThreadView extends React.Component {
 
-    state = {
-        commentText: ''
-    }
+
+export default class ThreadView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.socket = SocketIOClient(SERVER_URL);
+        this.socket = SocketIOClient(SERVER_URL);;
         this.socket.on('newComment', this.onReceivedMessage);
         this.socket.on('addCommentStatus', this.onUpdateComments);
         this.shouldScroll = false;
+        this.state = {
+            commentText: '',
+        }
     }
 
 
@@ -66,7 +67,7 @@ export default class ThreadView extends React.Component {
         const paddingToBottom = 20;
         if (layoutMeasurement.height + contentOffset.y >=
             contentSize.height - paddingToBottom) {
-             console.log("Setting should scroll to true");
+            console.log("Setting should scroll to true");
             this.shouldScroll = true;
         }
         else {
@@ -102,22 +103,24 @@ export default class ThreadView extends React.Component {
         Keyboard.dismiss();
     }
 
-    renderMessage({ item }) {
+    renderMessage = ({ item }) => {
         // const { currentMessage: { text: currText, user: { name: authorname }, votes: voteNum, _id: commentID, votedby: voteBy } } = props;
-
         const authorName = item.user.name;
         const currText = item.text;
         const voteNum = item.votes;
         const commentID = item._id;
         const voteBy = item.votedby;
-
+        const authorId = item.user._id;
+        console.log(item);
         return <CommentView
             commentId={commentID}
             authorName={authorName}
             commentDesc={currText}
             commentCtr={voteNum}
             votedby={voteBy}
-            userId="5bda0840335d2283c0d5d0ef"
+            authorId={authorId}
+            userId="5beb57fb7a732933a40e8192"
+            socket={this.socket}
         />
     }
 
@@ -127,6 +130,11 @@ export default class ThreadView extends React.Component {
         author={this.state.topic.author}
         time={this.state.topic.time}
         location={this.state.topic.location}
+        voteNumber={this.state.topic.votes}
+        topicId={this.state.topic._id}
+        userId="5beb57fb7a732933a40e8192"
+        votedby={this.state.topic.votedby}
+        socket={this.socket}
     />);
 
 
@@ -138,7 +146,7 @@ export default class ThreadView extends React.Component {
                 <KeyboardAvoidingView
                     style={Styles.container}
                     behavior="padding"
-                    keyboardVerticalOffset={ Platform.OS === "android"? 85 : 0 }>>
+                    keyboardVerticalOffset={Platform.OS === "android" ? 85 : 0}>
                     <FlatList
                         ref={ref => this.flatList = ref}
                         style={Styles.flatListStyle}
@@ -170,6 +178,11 @@ export default class ThreadView extends React.Component {
                         author={this.state.topic.author}
                         time={this.state.topic.time}
                         location={this.state.topic.location}
+
+                        voteNumber={this.state.topic.votes} 
+                        topicId = {this.state.topic._id} 
+                        userId = "5beb57fb7a732933a40e8192"
+                        votedby = {this.state.topic.votedby}
                     />
                     <GiftedChat
                         messages={this.state.topic.comments}
@@ -204,7 +217,7 @@ export default class ThreadView extends React.Component {
                     latitude: respJson.topic.location[1],
                     longitude: respJson.topic.location[0]
                 }
-                console.log(topicLocation);
+                //console.log(topicLocation);
 
                 Location.reverseGeocodeAsync(topicLocation)
                     .then(res => {
@@ -217,7 +230,7 @@ export default class ThreadView extends React.Component {
                         respJson.topic.location = res[0].street;
                         respJson.topic.time = time;
                         // ressJson.topic.time = creationDate;
-                        console.log("New topic", respJson);
+                        //console.log("New topic", respJson);
                         this.setState({ ...respJson });
                     })
                     .catch(err => console.log(err))
