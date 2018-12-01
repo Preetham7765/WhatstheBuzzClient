@@ -8,44 +8,32 @@ export default class Vote extends React.Component{
 		super(props);
 		this.state = {voteNumber : props.voteNumber, voteUp : props.voted };
 		this.props.socket.on('vote', this.onVote);
+		this.msg = {
+			_id : this.props._id,
+			user : this.props.userId,
+		}
 	}
 
 	serverVoteUp = ()=> {
 		if(this.props.type === "comment"){
-			const msg = {
-				_id : this.props.commentId,
-				user : this.props.userId,
-			}
-			this.props.socket.emit("voteUpComment",msg);
+			this.props.socket.emit("voteUpComment",this.msg);
 		}
 		else{
-			const msg = {
-				_id : this.props.topicId,
-				user : this.props.userId,
-			}
-			this.props.socket.emit("voteUpTopic",msg);
+			this.props.socket.emit("voteUpTopic",this.msg);
 		}
 	}
 
 	serverVoteDown = () => {
 		if(this.props.type === "comment"){
-			const msg = {
-				_id : this.props.commentId,
-				user : this.props.userId,
-			}
-			this.props.socket.emit("voteDownComment",msg);
+			this.props.socket.emit("voteDownComment",this.msg);
 		}
 		else{
-			const msg = {
-				_id : this.props.topicId,
-				user : this.props.userId,
-			}
-			this.props.socket.emit("voteDownTopic",msg);
+			this.props.socket.emit("voteDownTopic",this.msg);
 		}
 	}
 
 	onVote = (msg) =>{
-		if((this.props.commentId === msg._id) || (this.props.topicId == msg._id)){
+		if(this.props._id == msg._id){
 			this.setState({voteNumber : msg.votes});
 		}
 	}	

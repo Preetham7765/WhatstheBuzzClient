@@ -64,7 +64,7 @@ export default  class CommentView extends React.PureComponent{
                 <View styles={Styles.container}>
                     <View style={Styles.card}>
                         <View style = {{flex : 1}}>
-                            <Vote voteNumber={this.props.commentCtr} commentId = {this.props.commentId} voted = {this.voted()}  userId = {this.props.userId} type = {"comment"} socket = {this.props.socket}/>
+                            <Vote voteNumber={this.props.commentCtr} _id = {this.props.commentId} voted = {this.voted()}  userId = {this.props.userId} type = {"comment"} socket = {this.props.socket}/>
                         </View>
                         <View style = {{flex : 8}}>
                         {this.state.editMode ?
