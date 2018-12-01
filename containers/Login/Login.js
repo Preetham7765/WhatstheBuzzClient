@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Alert, Button, TextInput, View, StyleSheet, Text, AsyncStorage } from "react-native";
 import Styles from './Styles';
 
@@ -22,8 +22,8 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        // console.log("Already Logged in", AsyncStorage.getItem('username'));
-        // this._loadInitialState().done();
+        // console.log("Already Logged in", AsyncStorage.getItem('userId'));
+        //  this._loadInitialState().done();
     }
 
     _loadInitialState = async () => {
@@ -194,10 +194,6 @@ class Login extends React.Component {
             <View style={Styles.container}>
 
                 <View style={Styles.inputContainer}>
-                    <Text>
-                        {global.SampleVar}
-                        {/*Global Variable*/}
-                    </Text>
                     <TextInput
                         value={this.state.username}
                         onChangeText={username => this.setState({ username })}
@@ -231,6 +227,13 @@ class Login extends React.Component {
                         // onPress={() => this.onRegister.bind(this)}
                         />
                     </View>
+                </View>
+                <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
+                    <Button
+                        title={"Enterprise Register"}
+                        color="#841584"
+                        onPress={() => navigate("EnterpriseRegister")}
+                    />
                 </View>
                 <View style={{ flexDirection: "column", width: "70%", padding: 10 }}>
                     <Button

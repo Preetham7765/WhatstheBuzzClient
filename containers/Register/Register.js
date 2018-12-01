@@ -28,6 +28,9 @@ class Register extends React.Component {
     this.state = {
       firstName: "",
       lastName: "",
+      username: "",
+      password: "",
+      confirmPassword: ""
     };
   }
 
@@ -51,7 +54,7 @@ class Register extends React.Component {
         <View style={Styles.inputContainer}>
           <TextInput
             value={this.state.firstName}
-            onChangeText={firstName => this.setState({ firstName })}
+            onChangeText={firstName => this.setState({ firstName: firstName })}
             placeholder={"First Name"}
             style={Styles.input}
             underlineColorAndroid="transparent"
@@ -59,7 +62,7 @@ class Register extends React.Component {
           />
           <TextInput
             value={this.state.lastName}
-            onChangeText={lastName => this.setState({ lastName })}
+            onChangeText={lastName => this.setState({ lastName: lastName })}
             placeholder={"Last Name"}
             style={Styles.input}
             underlineColorAndroid="transparent"
@@ -67,7 +70,7 @@ class Register extends React.Component {
           />
           <TextInput
             value={this.state.username}
-            onChangeText={username => this.setState({ username })}
+            onChangeText={username => this.setState({ username: username })}
             placeholder={"Username"}
             style={Styles.input}
             underlineColorAndroid="transparent"
@@ -75,7 +78,7 @@ class Register extends React.Component {
           />
           <TextInput
             value={this.state.password}
-            onChangeText={password => this.setState({ password })}
+            onChangeText={password => this.setState({ password: password })}
             placeholder={"Password"}
             secureTextEntry={true}
             underlineColorAndroid="transparent"
@@ -83,7 +86,7 @@ class Register extends React.Component {
           />
           <TextInput
             value={this.state.confirmPassword}
-            onChangeText={confirmPassword => this.setState({ confirmPassword })}
+            onChangeText={confirmPassword => this.setState({ confirmPassword: confirmPassword })}
             placeholder={"Confirm Password"}
             secureTextEntry={true}
             underlineColorAndroid="transparent"
@@ -110,12 +113,11 @@ class Register extends React.Component {
       password,
       confirmPassword
     } = this.state;
-    //Alert.alert('hi');
+
     if (password !== confirmPassword) {
       Alert.alert("Password and Confirm Password do not match");
     } else {
       console.log("Registering new user");
-      // send data to server
       const newUser = {
         firstName: this.state.firstName,
         lastName: this.state.lastName,
@@ -132,10 +134,12 @@ class Register extends React.Component {
         },
         body: JSON.stringify(newUser)
       })
-        .then(response => console.log(response.status))
-        .then(() => {
-          Alert.alert("Registration successful. Log in to start buzzing!");
-          this.props.navigation.navigate("Login");
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            Alert.alert("Registration successful. Log in to start buzzing!");
+            this.props.navigation.navigate("Login");
+          }
         })
         .catch(function (error) {
           console.log(newUser);

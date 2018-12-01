@@ -1,13 +1,16 @@
 import React from "react";
-import { Button, Platform, TouchableOpacity, AsyncStorage, Alert } from "react-native";
+import { Platform, TouchableOpacity, Linking, BackHandler, AsyncStorage, Alert  } from "react-native";
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
+import { IntentLauncherAndroid } from 'expo';
+
 import Aux from "../../hoc/Auxi";
 import MapScreen from "../../components/MapScreen/MapScreen";
 import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
-
 import { SERVER_URL } from '../../constants/Config';
 import { Icon } from 'react-native-elements';
+
+import AsyncAlert from '../../components/AsyncAlert';
 
 class UsersMap extends React.Component {
   state = {
@@ -20,7 +23,10 @@ class UsersMap extends React.Component {
   constructor(props) {
     super(props);
     this.props = props;
+    this.retLocation = null;
+
   }
+
 
   refresh = () => {
 
@@ -69,7 +75,7 @@ class UsersMap extends React.Component {
     this.subs.forEach((sub) => {
       sub.remove();
     });
-
+    if (this.retLocation) this.retLocation.remove();
     this.setState({ isMounted: false });
   }
 
@@ -99,49 +105,60 @@ class UsersMap extends React.Component {
     }
   };
 
-  /*
-  * needs a look again
-  */
   _getLocationAsync = async () => {
-    let isLocationEnbaled = true;
-
-    do {
-      try {
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
-
-        if (status !== "granted") {
-          this.setState({
-            errMessage: "Permission to get location not obtained"
-          });
-          isLocationEnbaled = false;
-          continue; // should close the app here
+    try {
+      let providerStatus = await Location.getProviderStatusAsync();
+      console.log("Provider status", providerStatus);
+      if (providerStatus.locationServicesEnabled == false || providerStatus.gpsAvailable == false) {
+        let permission = await AsyncAlert('Please enable location services to continue');
+        if (Platform.OS === "android") {
+          // create an alert asking the user to enable location
+          if (permission === "yes") {
+            await IntentLauncherAndroid.startActivityAsync(
+              IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
+            );
+          }
+          else {
+            BackHandler.exitApp();
+          }
         }
-        console.log("waiting for location");
-        let retLocation = await Location.watchPositionAsync(
-          { enableHighAccuracy: true },
-          async coords => {
-            // console.log(coords);
-            let respJson;
-            try {
-              respJson = await this._getTopicsDataAsync(coords);
-              console.log("setting state");
-              this.setState({
-                userLocation: coords,
-                nearbyTopics: respJson,
-                errMessage: null,
-                isMounted: true
-              });
-            } catch (error) {
-              this.setState({ errMessage: error.message, isMounted: true });
-            }
-          });
-        // console.log("relocation", retLocation);
-      } catch (error) {
-        this.setState({ errMessage: error.message, isMounted: true });
-        isLocationEnbaled = false;
-
+        else if (Platform.OS === "ios") {
+          if (permission === "yes") {
+            await Linking.openURL("App-Prefs:root=Privacy&path=LOCATION");
+          }
+          else {
+            // close the ios app don't know how to do.
+          }
+        }
       }
-    } while (!isLocationEnbaled);
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        throw new Error("Permission to get location not obtained");
+      }
+      console.log("waiting for location");
+      this.retLocation = await Location.watchPositionAsync(
+        { enableHighAccuracy: true, distanceInterval: 100 },
+        async coords => {
+          // console.log(coords);
+          let respJson;
+          try {
+            respJson = await this._getTopicsDataAsync(coords);
+            console.log("setting state");
+            this.setState({
+              userLocation: coords,
+              nearbyTopics: respJson,
+              errMessage: null,
+              isMounted: true
+            });
+          } catch (error) {
+            this.setState({ errMessage: error.message, isMounted: true });
+            this.retLocation.remove();
+          }
+        });
+    } catch (error) {
+      this.setState({ errMessage: error.message, isMounted: true });
+    }
+
   };
 
   // TODO: should take buzz id and then fetch content from server 
