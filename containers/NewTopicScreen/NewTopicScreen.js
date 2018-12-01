@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dimensions, ScrollView, AsyncStorage } from 'react-native';
+import { Button, Dimensions, ScrollView, AsyncStorage, Alert } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Styles, { formStyles } from './Styles';
 import t from 'tcomb-form-native';
@@ -26,7 +26,7 @@ const activeDuration = t.enums({
 
 }, 'Duration');
 
-var options = {
+const options = {
 
     fields: {
         title: {
@@ -114,7 +114,11 @@ class NewTopicScreen extends React.Component {
                 body: JSON.stringify(newTopicData)
             })
                 .then((response) => {
-                    console.log("Response from server ", response)
+                    if (response.status === 401) {
+                        Alert.alert("Authorization failed. Please login again");
+                        this.props.navigation.navigate('Login');
+                        throw new Error("Authentication Failed");
+                    }
                 })
                 .catch((error) => {
                     console.log(error)

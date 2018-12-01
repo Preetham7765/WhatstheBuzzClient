@@ -220,6 +220,11 @@ export default class ThreadView extends React.Component {
         };
         fetch(url, { headers: header })
             .then((response) => {
+                if (response.status === 401) {
+                    Alert.alert("Authorization failed. Please login again");
+                    this.props.navigation.navigate('Login');
+                    throw new Error("Authentication Failed");
+                }
                 return response.json();
             })
             .then((respJson) => {

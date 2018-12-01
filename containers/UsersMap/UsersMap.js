@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Platform, TouchableOpacity, AsyncStorage } from "react-native";
+import { Button, Platform, TouchableOpacity, AsyncStorage, Alert } from "react-native";
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
 import Aux from "../../hoc/Auxi";
@@ -24,7 +24,9 @@ class UsersMap extends React.Component {
 
   refresh = () => {
 
-    if (!this.state.isMounted)
+    console.log("Refresh: isMounted", this.state.isMounted);
+
+    if (this.state.isMounted === false)
       return;
 
     Location.getCurrentPositionAsync()
@@ -84,10 +86,15 @@ class UsersMap extends React.Component {
         'Authorization': token
       }
       const response = await fetch(url, { headers: header });
+      if(response.status === 401){
+        Alert.alert("Authorization failed. Please login again");
+        this.props.navigation.navigate('Login');
+        throw new Error("Authentication Failed");
+      }
       const respJson = response.json();
       return respJson;
     } catch (error) {
-      console.log("error");
+      console.log("UsersMap failed to fetch", error);
       throw error;
     }
   };
