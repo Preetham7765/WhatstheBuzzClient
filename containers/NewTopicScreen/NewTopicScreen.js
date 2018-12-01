@@ -13,11 +13,6 @@ import {SERVER_URL} from '../../constants/Config';
 
 const Form = t.form.Form;
 
-const topicTypes = t.enums({
-    'Buzz': 'Buzz',
-    'Event': 'Event'
-}, 'Type');
-
 const activeDuration = t.enums({
     30: '30 minutes',
     60: '60 minutes',
@@ -25,7 +20,7 @@ const activeDuration = t.enums({
     120: '120 minutes',
 
 }, 'Duration');
-
+var eventType = null;
 var options = {
 
     fields: {
@@ -72,9 +67,9 @@ class NewTopicScreen extends React.Component {
         super(props);
         const value = {};
         this.state ={
-            author : '5bda0840335d2283c0d5d0ef',
+            author : global.currentUserId,
             value : value,
-            topicType : this.getTopicType(value),
+            topicType : this.getTopicType(),
             userLocation : null
         };
     }
@@ -91,7 +86,7 @@ class NewTopicScreen extends React.Component {
                 description: this.state.value.description,
                 duration: this.state.value.duration,
                 location: [userLocation.coords.longitude, userLocation.coords.latitude],
-                topicType: this.state.value.topicType,
+                topicType: eventType,
                 startAt: this.state.value.startTime,
                 expireAt: this.state.value.endTime
             }
@@ -117,30 +112,29 @@ class NewTopicScreen extends React.Component {
         }
     }
 
-    getTopicType(value) {
-        if(value.topicType === 'Event'){
-            console.log("in event topictype");
+    getTopicType() {
+        if(global.enterprise &&  global.enterpriseActive !== "pending"){
+            eventType = 'Event';
             return t.struct({
                 title: t.String,
                 description: t.maybe(t.String),
-                topicType: topicTypes,
                 startTime: t.Date,
-                endTime: t.Date
+                endTime: t.Date,
             });
         }
         else {
+            eventType = 'Buzz';
             return t.struct({
                 title: t.String,
                 description: t.maybe(t.String),
-                topicType: topicTypes,
+                startTime: t.Date,
                 duration: activeDuration,
             });
         }
     }
 
     onChangeHandler = (value) => {
-        const topicType = value.topicTypes !== this.state.value.topicType ? this.getTopicType(value) : this.state.topicType;
-        this.setState({value, topicType});
+        this.setState({value});
     }
 
     componentWillUnmount = () => {
@@ -155,7 +149,7 @@ class NewTopicScreen extends React.Component {
             <ScrollView style={Styles.container}>
                 <Form
                     ref={(f) => this._form = f}
-                    type={this.state.topicType}
+                    type={this.getTopicType()}
                     options={options}
                     value={this.state.value}
                     onChange={this.onChangeHandler}

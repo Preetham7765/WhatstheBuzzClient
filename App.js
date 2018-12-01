@@ -7,6 +7,16 @@ import store from './store';
 
 export default class App extends React.Component {
 
+    constructor(){
+
+        super();
+        // Creating Global Variable.
+        global.currentUser = '';
+        global.currentUserId = '';
+        global.enterprise= null;
+        global.enterpriseActive = '';
+    }
+
     state = {
         isLoadingComplete: false,
     };
