@@ -7,56 +7,61 @@ export default class Vote extends React.Component{
     constructor(props){
 		super(props);
 		this.state = {voteNumber : props.voteNumber, voteUp : props.voted };
+		this.props.socket.on('vote', this.onVote);
 	}
 
-	serverVoteUp = () =>{
-		var url;
+	serverVoteUp = ()=> {
 		if(this.props.type === "comment"){
-			url = `${SERVER_URL}/api/comments/upvote/${this.props.userId}/${this.props.commentId}`;
+			const msg = {
+				_id : this.props.commentId,
+				user : this.props.userId,
+			}
+			this.props.socket.emit("voteUpComment",msg);
 		}
 		else{
-			url = `${SERVER_URL}/api/topics/upvote/${this.props.userId}/${this.props.topicId}`;
+			const msg = {
+				_id : this.props.topicId,
+				user : this.props.userId,
+			}
+			this.props.socket.emit("voteUpTopic",msg);
 		}
-		fetch(url,{
-			method:'put',
-		})
-		.then((response) => { 
-			console.log("vote up",response);
-		})
-		.catch((error) => {
-			console.log("Error vote up failed", error);
-		});
 	}
 
-	serverVoteDown =()=>{
-		var url;
+	serverVoteDown = () => {
 		if(this.props.type === "comment"){
-			url = `${SERVER_URL}/api/comments/downvote/${this.props.userId}/${this.props.commentId}`;
+			const msg = {
+				_id : this.props.commentId,
+				user : this.props.userId,
+			}
+			this.props.socket.emit("voteDownComment",msg);
 		}
 		else{
-			url = `${SERVER_URL}/api/topics/downvote/${this.props.userId}/${this.props.topicId}`;
+			const msg = {
+				_id : this.props.topicId,
+				user : this.props.userId,
+			}
+			this.props.socket.emit("voteDownTopic",msg);
 		}
-		fetch(url,{
-			method:'put',
-		})
-		.then((response) => { 
-			console.log("vote down",response);
-		})
-		.catch((error) => {
-			console.log("Error vote up failed", error);
-		});
 	}
+
+	onVote = (msg) =>{
+		if((this.props.commentId === msg._id) || (this.props.topicId == msg._id)){
+			this.setState({voteNumber : msg.votes});
+		}
+	}	
+
 
 	voteUP = () => {		
 		if(!this.state.voteUp){
-			this.setState((state,props) => {return {voteNumber : state.voteNumber + 1 , voteUp : true}});
+			this.setState((state,props) => {return {voteUp : true}});
 			this.serverVoteUp();
 		}
 		else{
-			this.setState((state,props) => {return {voteNumber : state.voteNumber - 1 , voteUp : false}});
+			this.setState((state,props) => {return {voteUp : false}});
 			this.serverVoteDown();
 		}
 	};
+
 	getVoteText = () => {
 		if(this.state.voteNumber <= 1000){
 			return this.state.voteNumber;

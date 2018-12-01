@@ -13,7 +13,7 @@ export default class CommentHead extends React.PureComponent {
 			//vote + content
 			<View style = {Styles.windowHead}>
 				<View style = {{flex : 1}}>
-					<Vote voteNumber={this.props.voteNumber} topicId = {this.props.topicId} voted = {this.voted()}  userId = {this.props.userId} type = {"topic"}/>
+					<Vote voteNumber={this.props.voteNumber} topicId = {this.props.topicId} voted = {this.voted()}  socket = {this.props.socket} userId = {this.props.userId} type = {"topic"}/>
 				</View>
 				<View style = {Styles.headContent}>
 					<Text style = {Styles.title}> {this.props.title}</Text>

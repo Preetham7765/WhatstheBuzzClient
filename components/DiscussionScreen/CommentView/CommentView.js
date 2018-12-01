@@ -3,7 +3,8 @@ import React from 'react';
 import {View, Text, StyleSheet, Button ,TextInput} from 'react-native';
 import Vote from '../../../containers/Discussion/Vote/VoteBar';
 import Styles from './Styles';
-import { SERVER_URL } from '../../../constants/Config';
+
+
 
 class CommentText extends React.Component{
     render(){
@@ -53,6 +54,8 @@ class EditModeComment extends React.Component{
 export default  class CommentView extends React.PureComponent{
     constructor(props){
         super(props);
+        this.props.socket.on('editComment', this.onEditComment);
+        this.props.socket.on('deleteComment', this.onDeleteComment);
         this.state= {commentDesc : this.props.commentDesc, editMode : false, showComment : true, isOwner : this.isOwner()};
     }
     render(){
@@ -61,7 +64,7 @@ export default  class CommentView extends React.PureComponent{
                 <View styles={Styles.container}>
                     <View style={Styles.card}>
                         <View style = {{flex : 1}}>
-                            <Vote voteNumber={this.props.commentCtr} commentId = {this.props.commentId} voted = {this.voted()}  userId = {this.props.userId} type = {"comment"}/>
+                            <Vote voteNumber={this.props.commentCtr} commentId = {this.props.commentId} voted = {this.voted()}  userId = {this.props.userId} type = {"comment"} socket = {this.props.socket}/>
                         </View>
                         <View style = {{flex : 8}}>
                         {this.state.editMode ?
@@ -80,21 +83,18 @@ export default  class CommentView extends React.PureComponent{
     }
 
     delete = () => {
-        //change locally
-        this.setState({showComment : false});
-
-        //update server
-        const url = `${SERVER_URL}/api/comments/delete/${this.props.commentId}/`;
-		fetch(url,{
-			method:'put',
-		})
-		.then((response) => { 
-			console.log("delete comment",response);
-		})
-		.catch((error) => {
-			console.log("Error delete comment", error);
-		});
+        const comment = {
+            _id: this.props.commentId,
+        }
+        this.props.socket.emit("deleteComment", comment);
     }
+
+    onDeleteComment = (msg) => {
+        if(msg._id == this.props.commentId){
+            this.setState({showComment : false});
+        }
+    }
+
     edit = () => {
         this.setState({editMode : true});
     }
@@ -102,21 +102,22 @@ export default  class CommentView extends React.PureComponent{
     cancel = () => {
         this.setState({editMode : false});
     }
-    submit = (text) => {
-        //change locally
-        this.setState({editMode : false , commentDesc : text});
 
-        //submit to server
-        const url = `${SERVER_URL}/api/comments/edit/${this.props.commentId}/${text}`;
-		fetch(url,{
-			method:'put',
-		})
-		.then((response) => { 
-			console.log("edit comment",response);
-		})
-		.catch((error) => {
-			console.log("Error edit comment", error);
-		});
+    onEditComment = (msg) => {
+        if(msg._id == this.props.commentId){
+            this.setState({commentDesc : msg.description});
+        }
+    }
+
+    submit = (text) => {
+        
+        this.setState({editMode : false});
+        const comment = {
+            _id: this.props.commentId,
+            commentDesc : text
+        }
+        this.props.socket.emit("editComment", comment);
+
     }
 
     isOwner = () => {
@@ -127,6 +128,7 @@ export default  class CommentView extends React.PureComponent{
             return false;
         }
     }
+
     voted = () => {
         for (var i = 0; i < this.props.votedby.length; i++) {
             if (this.props.votedby[i] === this.props.userId) {
