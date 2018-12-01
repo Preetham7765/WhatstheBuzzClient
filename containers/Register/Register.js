@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
-import Styles from "./Styles";
+import React from "react";
+import { Alert, Button, TextInput, View } from "react-native";
+import Styles from './Styles';
 
 import { SERVER_URL } from '../../constants/Config';
 
@@ -17,7 +17,7 @@ class Register extends React.Component {
     // true means invalid, so our conditions got reversed
     return {
       firstName: firstName.length > 0,
-        lastName: lastName.length > 0,
+      lastName: lastName.length > 0,
       username: username.length > 0,
       password: password.length > 0
     };
@@ -137,11 +137,11 @@ class Register extends React.Component {
           Alert.alert("Registration successful. Log in to start buzzing!");
           this.props.navigation.navigate("Login");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(newUser);
           console.log(
             "There has been a problem with your fetch operation: " +
-              error.message
+            error.message
           );
           // ADD THIS THROW error
           throw error;
