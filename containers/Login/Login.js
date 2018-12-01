@@ -22,8 +22,8 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Already Logged in", AsyncStorage.getItem('username'));
-        this._loadInitialState().done();
+        // console.log("Already Logged in", AsyncStorage.getItem('username'));
+        // this._loadInitialState().done();
     }
 
     _loadInitialState = async () => {
@@ -163,12 +163,15 @@ class Login extends React.Component {
         })
             .then((response) => response.json())
             .then(res => {
-                //alert(res.message);
                 if (res.success === true) {
-                    console.log(res);
-                    alert(res.userId);
-                    AsyncStorage.setItem('userId', res.userId);
-                    AsyncStorage.setItem('username', res.username);
+                    AsyncStorage.setItem('token', res.token);
+                    AsyncStorage.setItem('userId', res.data.userId);
+                    AsyncStorage.setItem('enterpriseActive', res.data.enterpriseActive.toString());
+                    AsyncStorage.setItem('enterprise', res.data.enterprise.toString());
+                    AsyncStorage.getAllKeys()
+                        .then(data => {
+                            console.log("printing all storage contents", data);
+                        });
                     this.props.navigation.navigate("Main");
                 }
                 else Alert.alert("Login unsuccessful");

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Platform, TouchableOpacity } from "react-native";
+import { Button, Platform, TouchableOpacity, AsyncStorage } from "react-native";
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
 import Aux from "../../hoc/Auxi";
@@ -77,7 +77,13 @@ class UsersMap extends React.Component {
       const url = `${SERVER_URL}/api/topics?latitude=${
         coords.coords.latitude
         }&longitude=${coords.coords.longitude}`;
-      const response = await fetch(url);
+      const token = await AsyncStorage.getItem('token');
+      const header = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+      const response = await fetch(url, { headers: header });
       const respJson = response.json();
       return respJson;
     } catch (error) {
@@ -121,7 +127,7 @@ class UsersMap extends React.Component {
             } catch (error) {
               this.setState({ errMessage: error.message, isMounted: true });
             }
-        });
+          });
         // console.log("relocation", retLocation);
       } catch (error) {
         this.setState({ errMessage: error.message, isMounted: true });
@@ -130,10 +136,6 @@ class UsersMap extends React.Component {
       }
     } while (!isLocationEnbaled);
   };
-
-  createNewTopic = (userLocation) => {
-    // console.log("Creating new topic ", userLocation);
-  }
 
   // TODO: should take buzz id and then fetch content from server 
   showDiscussionWindow = (topicId) => {
@@ -150,14 +152,14 @@ class UsersMap extends React.Component {
       return (
         <Aux>
           <TouchableOpacity
-          style = {{
-            position: 'absolute',
-            top: 30,
-            right: 5
-          }}
-          onPress={this.refresh}>
-          <Icon name="refresh"
-            raised />
+            style={{
+              position: 'absolute',
+              top: 30,
+              right: 5
+            }}
+            onPress={this.refresh}>
+            <Icon name="refresh"
+              raised />
           </TouchableOpacity>
           <MapScreen
             userLocation={this.state.userLocation}

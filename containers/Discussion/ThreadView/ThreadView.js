@@ -1,7 +1,6 @@
 import React from 'react';
-import { Platform, KeyboardAvoidingView, FlatList, Keyboard } from 'react-native';
+import { Platform, KeyboardAvoidingView, FlatList, Keyboard, AsyncStorage } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import { GiftedChat } from 'react-native-gifted-chat';
 import { Location } from 'expo';
 import SocketIOClient from 'socket.io-client';
 
@@ -28,13 +27,23 @@ export default class ThreadView extends React.Component {
     }
 
 
-    onSendNewComment = () => {
+    onSendNewComment = async () => {
 
         if (this.state.commentText === '')
             return;
 
         // send the data to the server.
-        const authorId = "5beb57fb7a732933a40e8192";
+        //const authorId = "5beb57fb7a732933a40
+        let authorId = '';
+        let token = '';
+        try {
+            authorId = await AsyncStorage.getItem('userId');
+            token = await AsyncStorage.getItem('token');
+        }
+        catch (error) {
+            console.log("Could not retreieve data from async storage", error);
+            return;
+        }
         const comment = this.state.commentText;
 
         // const url = `${SERVER_URL}/api/comments`;
@@ -69,7 +78,7 @@ export default class ThreadView extends React.Component {
         const paddingToBottom = 20;
         if (layoutMeasurement.height + contentOffset.y >=
             contentSize.height - paddingToBottom) {
-             console.log("Setting should scroll to true");
+            console.log("Setting should scroll to true");
             this.shouldScroll = true;
         }
         else {
@@ -191,13 +200,25 @@ export default class ThreadView extends React.Component {
         */
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         // fetch results from server. props will have the id of the buzz/event
 
         this.socket.emit('addUser', this.props.navigation.getParam('topicId', null));
-
+        let token = '';
+        try {
+            token = await AsyncStorage.getItem('token');
+        }
+        catch (error) {
+            console.log("ThreadView:Error in getting token");
+            return;
+        }
         const url = `${SERVER_URL}/api/comments/${this.props.navigation.getParam('topicId', null)}`;
-        fetch(url)
+        const header = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': token
+        };
+        fetch(url, { headers: header })
             .then((response) => {
                 return response.json();
             })

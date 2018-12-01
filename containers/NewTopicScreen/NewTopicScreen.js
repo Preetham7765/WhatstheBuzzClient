@@ -1,11 +1,11 @@
 import React from 'react';
-import {Button, Dimensions, ScrollView} from 'react-native';
+import { Button, Dimensions, ScrollView, AsyncStorage } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import Styles, {formStyles} from './Styles';
+import Styles, { formStyles } from './Styles';
 import t from 'tcomb-form-native';
 
 
-import {SERVER_URL} from '../../constants/Config';
+import { SERVER_URL } from '../../constants/Config';
 // create an onsubmit handler 
 
 // we need to current location of the user to be sent
@@ -68,21 +68,20 @@ class NewTopicScreen extends React.Component {
 
     dimensions = Dimensions.get('window');
 
-    constructor(props){
+    constructor(props) {
         super(props);
         const value = {};
-        this.state ={
-            author : '5bda0840335d2283c0d5d0ef',
-            value : value,
-            topicType : this.getTopicType(value),
-            userLocation : null
+        this.state = {
+            author: '',
+            value: value,
+            topicType: this.getTopicType(value),
+            userLocation: null
         };
     }
 
-    createTopicHandler = () => {
+    createTopicHandler = async () => {
         let value = this._form.getValue();
         const userLocation = this.props.navigation.getParam('userLocation', null);
-        console.log(userLocation);
         if (value !== null && userLocation !== null) {
             // send data to server
             const newTopicData = {
@@ -97,11 +96,20 @@ class NewTopicScreen extends React.Component {
             }
 
             console.log("newTopicData", newTopicData);
+            let token = '';
+            try {
+                token = await AsyncStorage.getItem('token');
+            }
+            catch (error) {
+                console.log("NewTopicScreen: Failed to get token", error);
+                return;
+            }
 
             fetch(`${SERVER_URL}/api/topics`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json; charset=utf-8",
+                    'Authorization': token
                 },
                 body: JSON.stringify(newTopicData)
             })
@@ -118,7 +126,7 @@ class NewTopicScreen extends React.Component {
     }
 
     getTopicType(value) {
-        if(value.topicType === 'Event'){
+        if (value.topicType === 'Event') {
             console.log("in event topictype");
             return t.struct({
                 title: t.String,
@@ -140,13 +148,25 @@ class NewTopicScreen extends React.Component {
 
     onChangeHandler = (value) => {
         const topicType = value.topicTypes !== this.state.value.topicType ? this.getTopicType(value) : this.state.topicType;
-        this.setState({value, topicType});
+        this.setState({ value, topicType });
     }
 
     componentWillUnmount = () => {
         //    const refresh = this.props.navigation.getParam('refresh', null);
         //    console.log(refresh);
         //    refresh();
+    }
+
+    async componentDidMount() {
+        if (this.state.author == '') {
+            try {
+                const authorId = await AsyncStorage.getItem('userId');
+                this.setState({ author: authorId });
+            }
+            catch (error) {
+                console.log("NewTopicScreen: failed to get author id", error);
+            }
+        }
     }
 
     render() {
@@ -159,9 +179,9 @@ class NewTopicScreen extends React.Component {
                     options={options}
                     value={this.state.value}
                     onChange={this.onChangeHandler}
-                    style={{flex: 1}}/>
-                <Button title="Create New Post" onPress={this.createTopicHandler}/>
-                <KeyboardSpacer/>
+                    style={{ flex: 1 }} />
+                <Button title="Create New Post" onPress={this.createTopicHandler} />
+                <KeyboardSpacer />
             </ScrollView>
 
         );
