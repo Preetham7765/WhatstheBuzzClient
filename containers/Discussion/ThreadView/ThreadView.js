@@ -138,7 +138,7 @@ export default class ThreadView extends React.Component {
                 <KeyboardAvoidingView
                     style={Styles.container}
                     behavior="padding"
-                    keyboardVerticalOffset={85}>
+                    keyboardVerticalOffset={ Platform.OS === "android"? 85 : 0 }>>
                     <FlatList
                         ref={ref => this.flatList = ref}
                         style={Styles.flatListStyle}

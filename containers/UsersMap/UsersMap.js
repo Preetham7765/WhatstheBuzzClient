@@ -111,7 +111,7 @@ class UsersMap extends React.Component {
         }
         else if (Platform.OS === "ios") {
           if (permission === "yes") {
-            await Linking.openUrl("App-Prefs:root=Privacy&path=LOCATION");
+            await Linking.openURL("App-Prefs:root=Privacy&path=LOCATION");
           }
           else {
             // close the ios app don't know how to do.
