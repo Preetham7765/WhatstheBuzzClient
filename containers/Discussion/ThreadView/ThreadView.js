@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, FlatList, Keyboard } from 'react-native';
+import { KeyboardAvoidingView, FlatList, Keyboard, Platform } from 'react-native';
 import { Location } from 'expo';
 import SocketIOClient from 'socket.io-client';
 
@@ -9,6 +9,7 @@ import { SERVER_URL } from '../../../constants/Config';
 import ErrorScreen from '../../../components/ErrorScreen/ErrorScreen';
 import InputToolbar from '../../../components/DiscussionScreen/InputToolBar/InputToolBar';
 import Styles from './Styles';
+
 
 
 export default class ThreadView extends React.Component {
@@ -66,7 +67,7 @@ export default class ThreadView extends React.Component {
         const paddingToBottom = 20;
         if (layoutMeasurement.height + contentOffset.y >=
             contentSize.height - paddingToBottom) {
-             console.log("Setting should scroll to true");
+            console.log("Setting should scroll to true");
             this.shouldScroll = true;
         }
         else {
@@ -117,9 +118,9 @@ export default class ThreadView extends React.Component {
             commentDesc={currText}
             commentCtr={voteNum}
             votedby={voteBy}
-            authorId = {authorId}
+            authorId={authorId}
             userId="5beb57fb7a732933a40e8192"
-            socket = {this.socket}
+            socket={this.socket}
         />
     }
 
@@ -129,11 +130,11 @@ export default class ThreadView extends React.Component {
         author={this.state.topic.author}
         time={this.state.topic.time}
         location={this.state.topic.location}
-        voteNumber={this.state.topic.votes} 
-        topicId = {this.state.topic._id} 
-        userId = "5beb57fb7a732933a40e8192"
-        votedby = {this.state.topic.votedby}
-        socket = {this.socket}
+        voteNumber={this.state.topic.votes}
+        topicId={this.state.topic._id}
+        userId="5beb57fb7a732933a40e8192"
+        votedby={this.state.topic.votedby}
+        socket={this.socket}
     />);
 
 
@@ -145,7 +146,7 @@ export default class ThreadView extends React.Component {
                 <KeyboardAvoidingView
                     style={Styles.container}
                     behavior="padding"
-                    keyboardVerticalOffset={ Platform.OS === "android"? 85 : 0 }>>
+                    keyboardVerticalOffset={Platform.OS === "android" ? 85 : 0}>
                     <FlatList
                         ref={ref => this.flatList = ref}
                         style={Styles.flatListStyle}
