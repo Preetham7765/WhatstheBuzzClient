@@ -53,31 +53,14 @@ export default class ThreadView extends React.Component {
         }
         console.log(newComment);
         this.socket.emit("addNewComment", newComment);
-
-        /*fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(newComment)
-        })
-            .then((response) => {
-                console.log("Sent new comment Successfully", response);
-                let newState = { ...this.state };
-                newState.topic.comments = GiftedChat.append(this.state.topic.comments, message);
-                this.setState({ newState });
-            })
-            .catch((error) => {
-                console.log("Error new comment send failed", error);
-            });
-        */
+        this.shouldScroll = true;
+        this.flatList.scrollToEnd();
     }
 
     isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         const paddingToBottom = 20;
         if (layoutMeasurement.height + contentOffset.y >=
             contentSize.height - paddingToBottom) {
-            console.log("Setting should scroll to true");
             this.shouldScroll = true;
         }
         else {
