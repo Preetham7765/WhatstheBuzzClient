@@ -57,6 +57,7 @@ var options = {
             mode: 'datetime'
         },
         endTime: {
+            minimumDate: new Date(),
             mode: 'datetime'
         }
     },
