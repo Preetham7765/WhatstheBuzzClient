@@ -13,12 +13,13 @@ class Register extends React.Component {
     }
   };
 
-  validate(firstName, lastName, username, password) {
+  validate(firstName, lastName, username, email, password) {
     // true means invalid, so our conditions got reversed
     return {
       firstName: firstName.length > 0,
       lastName: lastName.length > 0,
       username: username.length > 0,
+      email: email.length > 0,
       password: password.length > 0
     };
   }
@@ -29,6 +30,7 @@ class Register extends React.Component {
       firstName: "",
       lastName: "",
       username: "",
+      email: "",
       password: "",
       confirmPassword: ""
     };
@@ -77,6 +79,14 @@ class Register extends React.Component {
             autoCapitalize="none"
           />
           <TextInput
+            value={this.state.email}
+            onChangeText={email => this.setState({ email: email })}
+            placeholder={"email"}
+            underlineColorAndroid="transparent"
+            style={Styles.input}
+            autoCapitalize="none"
+          />
+          <TextInput
             value={this.state.password}
             onChangeText={password => this.setState({ password: password })}
             placeholder={"Password"}
@@ -122,6 +132,7 @@ class Register extends React.Component {
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         username: this.state.username,
+        email: this.state.email, 
         password: this.state.password
       };
       console.log("Registering new user1", newUser);

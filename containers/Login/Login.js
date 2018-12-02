@@ -27,11 +27,10 @@ class Login extends React.Component {
     }
 
     _loadInitialState = async () => {
-        const userId = await AsyncStorage.getItem('userId');
-        const username = await AsyncStorage.getItem('username');
-        if (userId !== null) {
-            this.props.navigation.navigate('Main');
-        }
+        // const userId = await AsyncStorage.getItem('userId');
+        // if (userId !== null) {
+        //     this.props.navigation.navigate('Main');
+        // }
     }
     signIn = async () => {
         try {
@@ -44,7 +43,7 @@ class Login extends React.Component {
             if (result.type === "success") {
                 console.log(result);
                 global.currentUser = result.user.email;
-                Alert.alert("Welcome, ", global.currentUser);
+                // Alert.alert("Welcome, ", global.currentUser);
                 this.setState({
                     signedIn: true,
                     username: result.user.email,
@@ -143,8 +142,6 @@ class Login extends React.Component {
     onLogin() {
         const { username, password } = this.state;
 
-        Alert.alert("Credentials", `${username} + ${password}`);
-
         console.log("Finding user");
         // send data to server
         const user = {
@@ -170,7 +167,7 @@ class Login extends React.Component {
                     AsyncStorage.setItem('enterprise', res.data.enterprise.toString());
                     AsyncStorage.getAllKeys()
                         .then(data => {
-                            console.log("printing all storage contents", data);
+                            console.log("printing all storage contents", data,);
                         });
                     this.props.navigation.navigate("Main");
                 }

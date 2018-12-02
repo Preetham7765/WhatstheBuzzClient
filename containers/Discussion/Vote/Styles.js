@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
 	  flex : 1,
 	  alignItems: 'stretch',
 	  flexDirection: 'column',
-	  justifyContent: 'flex-start',
+	  justifyContent: 'center',
 	},
 
 	marked : {

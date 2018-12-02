@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
         flex : 1,
         borderWidth : 2 ,
         borderColor : 'rgba(0,0,0,0)',
-        alignItems : 'center',
+        alignItems : 'flex-end',
         justifyContent : 'center',
     },
 	notSelected : {

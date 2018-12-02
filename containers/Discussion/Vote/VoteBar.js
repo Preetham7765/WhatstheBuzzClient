@@ -6,81 +6,47 @@ import Styles from './Styles';
 export default class Vote extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { voteNumber: props.voteNumber, voteUp: props.voted, voteDown: false };
+		this.state = { voteNumber: props.voteNumber, voteUp: props.voted };
+		this.props.socket.on('vote', this.onVote);
+		this.msg = {
+			_id: this.props._id,
+			user: this.props.userId,
+		}
 	}
 
-	serverVoteUp = async () => {
-		const url = `${SERVER_URL}/api/comments/upvote/${this.props.userId}/${this.props.commentId}`;
-		let token = '';
-		try {
-			token = await AsyncStorage.getItem('token');
+	serverVoteUp = () => {
+		if (this.props.type === "comment") {
+			this.props.socket.emit("voteUpComment", this.msg);
 		}
-		catch (error) {
-			console.log("VoteBar: Failed to get token");
-			return;
+		else {
+			this.props.socket.emit("voteUpTopic", this.msg);
 		}
-		const header = {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'Authorization': token
-		}
-		fetch(url, {
-			method: 'put',
-			headers: header
-		})
-			.then((response) => {
-				console.log("vote up", response);
-			})
-			.catch((error) => {
-				console.log("Error vote up failed", error);
-			});
 	}
 
-	serverVoteDown = async () => {
-		const url = `${SERVER_URL}/api/comments/downvote/${this.props.userId}/${this.props.commentId}`;
-		try {
-			token = await AsyncStorage.getItem('token');
+	serverVoteDown = () => {
+		if (this.props.type === "comment") {
+			this.props.socket.emit("voteDownComment", this.msg);
 		}
-		catch (error) {
-			console.log("VoteBar: Failed to get token");
-			return;
+		else {
+			this.props.socket.emit("voteDownTopic", this.msg);
 		}
-		const header = {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'Authorization': token
-		}
-		fetch(url, {
-			method: 'put',
-			headers: header
-		})
-			.then((response) => {
-				console.log("vote down", response);
-			})
-			.catch((error) => {
-				console.log("Error vote up failed", error);
-			});
 	}
+
+	onVote = (msg) => {
+		if (this.props._id == msg._id) {
+			this.setState({ voteNumber: msg.votes });
+		}
+	}
+
 
 	voteUP = () => {
 		if (!this.state.voteUp) {
-			this.setState((state, props) => { return { voteNumber: state.voteNumber + 1, voteUp: true } });
+			this.setState((state, props) => { return { voteUp: true } });
 			this.serverVoteUp();
 		}
 		else {
-			this.setState((state, props) => { return { voteNumber: state.voteNumber - 1, voteUp: false } });
+			this.setState((state, props) => { return { voteUp: false } });
 			this.serverVoteDown();
-		}
-	};
-
-	voteDown = () => {
-		if (!this.state.voteDown) {
-			this.setState((state, props) => { return { voteNumber: state.voteNumber - 1, voteDown: true } });
-			this.serverVoteDown();
-		}
-		else {
-			this.setState((state, props) => { return { voteNumber: state.voteNumber + 1, voteDown: false } });
-			this.serverVoteUp();
 		}
 	};
 
@@ -98,7 +64,6 @@ export default class Vote extends React.Component {
 			<View style={Styles.voteContainer}>
 				<TouchableOpacity onPress={this.voteUP} style={this.state.voteUp ? Styles.marked : Styles.unMarked}><Text>+</Text></TouchableOpacity>
 				<Text style={{ textAlignVertical: "center", textAlign: "center", }}>{this.getVoteText()}</Text>
-				<TouchableOpacity onPress={this.voteDown} style={this.state.voteDown ? Styles.marked : Styles.unMarked}><Text>-</Text></TouchableOpacity>
 			</View>
 		);
 	}

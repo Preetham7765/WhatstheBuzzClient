@@ -17,7 +17,7 @@ export default createStackNavigator(
         EnterpriseRegister: EnterpriseRegister,
         ScreenThread: ThreadView
     },
-    {
-        initialRouteName: "Login"
-    }
+{
+    initialRouteName: "Login"
+}
 );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, TouchableOpacity, Linking, BackHandler, AsyncStorage, Alert  } from "react-native";
+import { Platform, TouchableOpacity, Linking, BackHandler, AsyncStorage, Alert } from "react-native";
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
 import { IntentLauncherAndroid } from 'expo';
@@ -50,7 +50,7 @@ class UsersMap extends React.Component {
       });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     if (!this.state.userLocation && !this.state.errMessage) {
       if (Platform.OS === "android" && !Constants.isDevice) {
         this.setState({
@@ -61,6 +61,16 @@ class UsersMap extends React.Component {
         this._getLocationAsync();
       }
     }
+
+    try {
+      this.enterpise = await AsyncStorage.getItem('enterprise') === 'true';
+      this.enterpriseActive = await AsyncStorage.getItem('enterpriseActive');
+    }
+    catch (error) {
+      console.log("NewTopicScreen: Failed to read from storage ", error);
+      return;
+    }
+
 
     this.subs = [
       this.props.navigation.addListener('willFocus', () => console.log('will focus')),
@@ -92,7 +102,7 @@ class UsersMap extends React.Component {
         'Authorization': token
       }
       const response = await fetch(url, { headers: header });
-      if(response.status === 401){
+      if (response.status === 401) {
         Alert.alert("Authorization failed. Please login again");
         this.props.navigation.navigate('Login');
         throw new Error("Authentication Failed");
@@ -193,7 +203,11 @@ class UsersMap extends React.Component {
           <ActionButton
             buttonColor="rgba(231,76,60,1)"
             onPress={() =>
-              this.props.navigation.navigate('NewTopic', { 'userLocation': this.state.userLocation })
+              this.props.navigation.navigate('NewTopic', {
+                'enterprise': this.enterpise,
+                'enterpriseActive': this.enterpriseActive,
+                'userLocation': this.state.userLocation
+              })
             }
           />
         </Aux>

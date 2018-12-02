@@ -20,8 +20,8 @@ const activeDuration = t.enums({
     120: '120 minutes',
 
 }, 'Duration');
-let eventType = null;
-const options = {
+var eventType = null;
+var options = {
 
     fields: {
         title: {
@@ -124,21 +124,9 @@ class NewTopicScreen extends React.Component {
         }
     }
 
-    async getTopicType() {
-
-        let enterprise = false;
-        let enterpriseActive = '';
-
-        try {
-            enterpise = await AsyncStorage.getItem('enterprise') === 'true';
-            enterpriseActive = await AsyncStorage.getItem('enterpriseActive');  
-        }
-        catch(error) {
-
-            console.log("NewTopicScreen: Failed to read from storage " ,error);
-            return;
-        }
-
+    getTopicType() {
+        let enterprise = this.props.navigation.getParam('enterprise', false);
+        let enterpriseActive = this.props.navigation.getParam('enterpriseActive', null);
         if(enterprise &&  enterpriseActive !== "pending"){
             eventType = 'Event';
             return t.struct({
@@ -153,7 +141,6 @@ class NewTopicScreen extends React.Component {
             return t.struct({
                 title: t.String,
                 description: t.maybe(t.String),
-                startTime: t.Date,
                 duration: activeDuration,
             });
         }
