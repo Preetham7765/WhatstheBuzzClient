@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {Button, TextInput, View, KeyboardAvoidingView, Text, Alert} from "react-native";
+import React from 'react';
+import { Button, TextInput, View, KeyboardAvoidingView, Text, Alert } from "react-native";
 import Styles from './Styles'
-import SERVER_URL from "../../constants/Config";
+import { SERVER_URL } from "../../constants/Config";
 
-class EnterpriseRegister extends React.Component{
+class EnterpriseRegister extends React.Component {
 
     static navigationOptions = {
         title: "Whats the Buzz!",
@@ -18,15 +18,15 @@ class EnterpriseRegister extends React.Component{
         this.state = {
             firstname: "",
             lastname: "",
-            email:"",
+            email: "",
             username: "",
-            password:""
+            password: ""
         };
     }
 
-    onRequest(){
+    onRequest() {
 
-        const {firstname, lastname, email, username, password } = this.state;
+        const { firstname, lastname, email, username, password } = this.state;
 
         const user = {
             firstname: this.state.firstname,
@@ -35,30 +35,31 @@ class EnterpriseRegister extends React.Component{
             username: this.state.username,
             password: this.state.password
         }
-
-        fetch(`${SERVER_URL}/api/users/enterprise`, {
+        const url = `${SERVER_URL}/api/users/enterprise`;
+        fetch(url, {
             method: "POST",
             headers: {
-                Accept: "application/json",
+                "Accept": "application/json",
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(user)
         }).then(response => {
+            console.log(response);
             if (response.status === 200) {
-                this.props.navigation.navigate("Login");
                 Alert.alert("Request successful. Check your email for followup");
+                this.props.navigation.navigate("Login");
             } else {
                 Alert.alert("Request unsuccessful");
             }
-        }).catch(err  => console.log(err));
+        }).catch(err => console.log(err));
 
     }
 
-    render(){
-        return(
+    render() {
+        return (
             <KeyboardAvoidingView style={Styles.container} behavior={"padding"}>
                 <View style={Styles.inputContainer}>
-                    <Text style={{padding: 10, fontSize : 15}}>
+                    <Text style={{ padding: 10, fontSize: 15 }}>
                         Using Enterprise Subscription you can post events as well as buzzes for more amount of time with no limit restrictions
                     </Text>
                     <TextInput

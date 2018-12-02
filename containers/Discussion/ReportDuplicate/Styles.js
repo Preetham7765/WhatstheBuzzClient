@@ -1,19 +1,19 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-    container :{
-        flex : 1,
-        borderWidth : 2 ,
-        borderColor : 'rgba(0,0,0,0)',
-        alignItems : 'center',
-        justifyContent : 'center',
+    container: {
+        flex: 1,
+        borderWidth: 2,
+        borderColor: 'rgba(0,0,0,0)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-	notSelected : {
-        backgroundColor : '#FFFF00',
+    notSelected: {
+        backgroundColor: '#FFFF00',
     },
-    Selected : {
-        backgroundColor : '#cccccc',
-      },
-  });
+    Selected: {
+        backgroundColor: '#cccccc',
+    },
+});
 
-  export default styles;
+export default styles;

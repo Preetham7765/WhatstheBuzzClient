@@ -8,6 +8,6 @@ const errorScreen = (props) => {
             <Text>{props.errorMessage}</Text>
         </View>
     );
-} 
+}
 
 export default errorScreen;

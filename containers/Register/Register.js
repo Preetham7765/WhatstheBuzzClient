@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import { Alert, Button, TextInput, View, StyleSheet, Text } from "react-native";
-import Styles from "./Styles";
+import React from "react";
+import { Alert, Button, TextInput, View } from "react-native";
+import Styles from './Styles';
 
 import { SERVER_URL } from '../../constants/Config';
 
@@ -13,12 +13,13 @@ class Register extends React.Component {
     }
   };
 
-  validate(firstName, lastName, username, password) {
+  validate(firstName, lastName, username, email, password) {
     // true means invalid, so our conditions got reversed
     return {
       firstName: firstName.length > 0,
-        lastName: lastName.length > 0,
+      lastName: lastName.length > 0,
       username: username.length > 0,
+      email: email.length > 0,
       password: password.length > 0
     };
   }
@@ -28,6 +29,10 @@ class Register extends React.Component {
     this.state = {
       firstName: "",
       lastName: "",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
     };
   }
 
@@ -51,7 +56,7 @@ class Register extends React.Component {
         <View style={Styles.inputContainer}>
           <TextInput
             value={this.state.firstName}
-            onChangeText={firstName => this.setState({ firstName })}
+            onChangeText={firstName => this.setState({ firstName: firstName })}
             placeholder={"First Name"}
             style={Styles.input}
             underlineColorAndroid="transparent"
@@ -59,7 +64,7 @@ class Register extends React.Component {
           />
           <TextInput
             value={this.state.lastName}
-            onChangeText={lastName => this.setState({ lastName })}
+            onChangeText={lastName => this.setState({ lastName: lastName })}
             placeholder={"Last Name"}
             style={Styles.input}
             underlineColorAndroid="transparent"
@@ -67,15 +72,23 @@ class Register extends React.Component {
           />
           <TextInput
             value={this.state.username}
-            onChangeText={username => this.setState({ username })}
+            onChangeText={username => this.setState({ username: username })}
             placeholder={"Username"}
             style={Styles.input}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
           <TextInput
+            value={this.state.email}
+            onChangeText={email => this.setState({ email: email })}
+            placeholder={"email"}
+            underlineColorAndroid="transparent"
+            style={Styles.input}
+            autoCapitalize="none"
+          />
+          <TextInput
             value={this.state.password}
-            onChangeText={password => this.setState({ password })}
+            onChangeText={password => this.setState({ password: password })}
             placeholder={"Password"}
             secureTextEntry={true}
             underlineColorAndroid="transparent"
@@ -83,7 +96,7 @@ class Register extends React.Component {
           />
           <TextInput
             value={this.state.confirmPassword}
-            onChangeText={confirmPassword => this.setState({ confirmPassword })}
+            onChangeText={confirmPassword => this.setState({ confirmPassword: confirmPassword })}
             placeholder={"Confirm Password"}
             secureTextEntry={true}
             underlineColorAndroid="transparent"
@@ -110,16 +123,16 @@ class Register extends React.Component {
       password,
       confirmPassword
     } = this.state;
-    //Alert.alert('hi');
+
     if (password !== confirmPassword) {
       Alert.alert("Password and Confirm Password do not match");
     } else {
       console.log("Registering new user");
-      // send data to server
       const newUser = {
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         username: this.state.username,
+        email: this.state.email,
         password: this.state.password
       };
       console.log("Registering new user1", newUser);
@@ -132,16 +145,18 @@ class Register extends React.Component {
         },
         body: JSON.stringify(newUser)
       })
-        .then(response => console.log(response.status))
-        .then(() => {
-          Alert.alert("Registration successful. Log in to start buzzing!");
-          this.props.navigation.navigate("Login");
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            Alert.alert("Registration successful. Log in to start buzzing!");
+            this.props.navigation.navigate("Login");
+          }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(newUser);
           console.log(
             "There has been a problem with your fetch operation: " +
-              error.message
+            error.message
           );
           // ADD THIS THROW error
           throw error;

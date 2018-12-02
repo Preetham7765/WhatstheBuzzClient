@@ -4,3 +4,4 @@ npm-debug.*
 .idea/workspace.xml
 .idea/*
 reset-cache/*
+package-lock.json

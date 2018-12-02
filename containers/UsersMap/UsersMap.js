@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Platform, TouchableOpacity, Linking, BackHandler } from "react-native";
+import { Platform, TouchableOpacity, Linking, BackHandler, AsyncStorage, Alert } from "react-native";
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
 import { IntentLauncherAndroid } from 'expo';
@@ -30,7 +30,9 @@ class UsersMap extends React.Component {
 
   refresh = () => {
 
-    if (!this.state.isMounted)
+    console.log("Refresh: isMounted", this.state.isMounted);
+
+    if (this.state.isMounted === false)
       return;
 
     Location.getCurrentPositionAsync()
@@ -48,7 +50,7 @@ class UsersMap extends React.Component {
       });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     if (!this.state.userLocation && !this.state.errMessage) {
       if (Platform.OS === "android" && !Constants.isDevice) {
         this.setState({
@@ -59,6 +61,16 @@ class UsersMap extends React.Component {
         this._getLocationAsync();
       }
     }
+
+    try {
+      this.enterpise = await AsyncStorage.getItem('enterprise') === 'true';
+      this.enterpriseActive = await AsyncStorage.getItem('enterpriseActive');
+    }
+    catch (error) {
+      console.log("NewTopicScreen: Failed to read from storage ", error);
+      return;
+    }
+
 
     this.subs = [
       this.props.navigation.addListener('willFocus', () => console.log('will focus')),
@@ -83,11 +95,22 @@ class UsersMap extends React.Component {
       const url = `${SERVER_URL}/api/topics?latitude=${
         coords.coords.latitude
         }&longitude=${coords.coords.longitude}`;
-      const response = await fetch(url);
+      const token = await AsyncStorage.getItem('token');
+      const header = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+      const response = await fetch(url, { headers: header });
+      if (response.status === 401) {
+        Alert.alert("Authorization failed. Please login again");
+        this.props.navigation.navigate('Login');
+        throw new Error("Authentication Failed");
+      }
       const respJson = response.json();
       return respJson;
     } catch (error) {
-      console.log("error");
+      console.log("UsersMap failed to fetch", error);
       throw error;
     }
   };
@@ -111,7 +134,7 @@ class UsersMap extends React.Component {
         }
         else if (Platform.OS === "ios") {
           if (permission === "yes") {
-            await Linking.openUrl("App-Prefs:root=Privacy&path=LOCATION");
+            await Linking.openURL("App-Prefs:root=Privacy&path=LOCATION");
           }
           else {
             // close the ios app don't know how to do.
@@ -148,10 +171,6 @@ class UsersMap extends React.Component {
 
   };
 
-  createNewTopic = (userLocation) => {
-    // console.log("Creating new topic ", userLocation);
-  }
-
   // TODO: should take buzz id and then fetch content from server 
   showDiscussionWindow = (topicId) => {
 
@@ -184,7 +203,11 @@ class UsersMap extends React.Component {
           <ActionButton
             buttonColor="rgba(231,76,60,1)"
             onPress={() =>
-              this.props.navigation.navigate('NewTopic', { 'userLocation': this.state.userLocation })
+              this.props.navigation.navigate('NewTopic', {
+                'enterprise': this.enterpise,
+                'enterpriseActive': this.enterpriseActive,
+                'userLocation': this.state.userLocation
+              })
             }
           />
         </Aux>
