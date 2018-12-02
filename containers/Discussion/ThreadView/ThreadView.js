@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, FlatList, Keyboard, Platform } from 'react-native';
+import { Platform, KeyboardAvoidingView, FlatList, Keyboard, AsyncStorage } from 'react-native';
 import { Location } from 'expo';
 import SocketIOClient from 'socket.io-client';
 
@@ -26,13 +26,23 @@ export default class ThreadView extends React.Component {
     }
 
 
-    onSendNewComment = () => {
+    onSendNewComment = async () => {
 
         if (this.state.commentText === '')
             return;
 
         // send the data to the server.
-        const authorId = "5beb57fb7a732933a40e8192";
+        //const authorId = "5beb57fb7a732933a40
+        let authorId = '';
+        let token = '';
+        try {
+            authorId = await AsyncStorage.getItem('userId');
+            token = await AsyncStorage.getItem('token');
+        }
+        catch (error) {
+            console.log("Could not retreieve data from async storage", error);
+            return;
+        }
         const comment = this.state.commentText;
 
         // const url = `${SERVER_URL}/api/comments`;
@@ -43,31 +53,14 @@ export default class ThreadView extends React.Component {
         }
         console.log(newComment);
         this.socket.emit("addNewComment", newComment);
-
-        /*fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(newComment)
-        })
-            .then((response) => {
-                console.log("Sent new comment Successfully", response);
-                let newState = { ...this.state };
-                newState.topic.comments = GiftedChat.append(this.state.topic.comments, message);
-                this.setState({ newState });
-            })
-            .catch((error) => {
-                console.log("Error new comment send failed", error);
-            });
-        */
+        this.shouldScroll = true;
+        this.flatList.scrollToEnd();
     }
 
     isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
         const paddingToBottom = 20;
         if (layoutMeasurement.height + contentOffset.y >=
             contentSize.height - paddingToBottom) {
-            console.log("Setting should scroll to true");
             this.shouldScroll = true;
         }
         else {
@@ -111,7 +104,6 @@ export default class ThreadView extends React.Component {
         const commentID = item._id;
         const voteBy = item.votedby;
         const authorId = item.user._id;
-        console.log(item);
         return <CommentView
             commentId={commentID}
             authorName={authorName}
@@ -119,7 +111,7 @@ export default class ThreadView extends React.Component {
             commentCtr={voteNum}
             votedby={voteBy}
             authorId={authorId}
-            userId="5beb57fb7a732933a40e8192"
+            userId= {this.state.userId}
             socket={this.socket}
         />
     }
@@ -132,7 +124,7 @@ export default class ThreadView extends React.Component {
         location={this.state.topic.location}
         voteNumber={this.state.topic.votes}
         topicId={this.state.topic._id}
-        userId="5beb57fb7a732933a40e8192"
+        userId={this.state.userId}
         votedby={this.state.topic.votedby}
         socket={this.socket}
     />);
@@ -169,46 +161,36 @@ export default class ThreadView extends React.Component {
 
                 </KeyboardAvoidingView>
             );
-        /*
-            return (
-                <Aux>
-                    <CommentHead
-                        title={this.state.topic.title}
-                        description={this.state.topic.description}
-                        author={this.state.topic.author}
-                        time={this.state.topic.time}
-                        location={this.state.topic.location}
-
-                        voteNumber={this.state.topic.votes} 
-                        topicId = {this.state.topic._id} 
-                        userId = "5beb57fb7a732933a40e8192"
-                        votedby = {this.state.topic.votedby}
-                    />
-                    <GiftedChat
-                        messages={this.state.topic.comments}
-                        keyboardShouldPersistTaps={'always'}
-                        onSend={message => this.onSendNewComment(message)}
-                        user={{
-                            _id: "5bda0840335d2283c0d5d0ef",
-                            name: "Chris"
-                        }}
-                        renderMessage={this.renderMessage}
-                    />
-                    {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
-                </Aux>
-                // </View>
-            );
-        */
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         // fetch results from server. props will have the id of the buzz/event
 
         this.socket.emit('addUser', this.props.navigation.getParam('topicId', null));
-
+        let token = '';
+        let userId = '';
+        try { 
+            userId = await AsyncStorage.getItem('userId'); 
+            token = await AsyncStorage.getItem('token');
+        }
+        catch (error) {
+            console.log("ThreadView:Error in getting token or userId", error);
+            return;
+        }
+        
         const url = `${SERVER_URL}/api/comments/${this.props.navigation.getParam('topicId', null)}`;
-        fetch(url)
+        const header = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': token
+        };
+        fetch(url, { headers: header })
             .then((response) => {
+                if (response.status === 401) {
+                    Alert.alert("Authorization failed. Please login again");
+                    this.props.navigation.navigate('Login');
+                    throw new Error("Authentication Failed");
+                }
                 return response.json();
             })
             .then((respJson) => {
@@ -231,7 +213,12 @@ export default class ThreadView extends React.Component {
                         respJson.topic.time = time;
                         // ressJson.topic.time = creationDate;
                         //console.log("New topic", respJson);
-                        this.setState({ ...respJson });
+                        const topicData = {...respJson.topic }
+                        const newState = {
+                            userId: userId,
+                            topic: topicData
+                        }
+                        this.setState({ ...newState });
                     })
                     .catch(err => console.log(err))
 

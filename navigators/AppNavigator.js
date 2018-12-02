@@ -18,6 +18,6 @@ export default createStackNavigator(
         ScreenThread: ThreadView
     },
 {
-    initialRouteName: "Main"
+    initialRouteName: "Login"
 }
 );
