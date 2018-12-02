@@ -2,37 +2,37 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     windowHead: {
-      flexDirection: 'row',
-      backgroundColor: 'white',
-      height: 180,
-      padding : 10,
-      marginBottom: 10  
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        height: 180,
+        padding: 10,
+        marginBottom: 10
     },
     headContent: {
-        flex : 8,
-        flexDirection : 'column',
+        flex: 8,
+        flexDirection: 'column',
         marginLeft: 10
     },
     title: {
-        flex : 1,
+        flex: 1,
         fontSize: 18,
         fontWeight: 'bold',
     },
-    description : {
-        flex : 2,
+    description: {
+        flex: 2,
         fontSize: 12,
     },
-    eventInfo :{
+    eventInfo: {
         flex: 1,
-        flexDirection : 'row',
+        flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems : 'center',
+        alignItems: 'center',
     },
-    userAction : {
-      flex : 1,
-      flexDirection : 'row',
-      justifyContent: 'space-around', 
+    userAction: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
     }
-  });
+});
 
-  export default styles;
+export default styles;

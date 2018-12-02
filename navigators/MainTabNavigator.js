@@ -7,9 +7,9 @@ import UsersMap from '../containers/UsersMap/UsersMap';
 import UserScreen from '../containers/UserScreen/UserScreen';
 const MapStack = createStackNavigator({
     Map: UsersMap,
-},{
-    headerMode: 'none',
-});
+}, {
+        headerMode: 'none',
+    });
 
 MapStack.navigationOptions = {
     tabBarLabel: 'Map',
@@ -51,9 +51,9 @@ MapStack.navigationOptions = {
 
 const UserStack = createStackNavigator({
     User: UserScreen,
-},{
-    headerMode: 'none'
-});
+}, {
+        headerMode: 'none'
+    });
 
 UserStack.navigationOptions = {
     tabBarLabel: 'Profile',
@@ -67,5 +67,5 @@ UserStack.navigationOptions = {
 
 export default createBottomTabNavigator({
     MapStack,
-   UserStack
+    UserStack
 });

@@ -8,9 +8,9 @@ const inputToolBar = (props) => {
         <View style={Styles.container}>
             <TextInput
                 style={Styles.textInput}
-                onChangeText = {(text)=>props.changed(text)}
-                value = {props.value}
-                placeholder = "Type here...."
+                onChangeText={(text) => props.changed(text)}
+                value={props.value}
+                placeholder="Type here...."
             />
             <Button
                 style={Styles.button}

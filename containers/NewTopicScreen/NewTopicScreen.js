@@ -127,7 +127,7 @@ class NewTopicScreen extends React.Component {
     getTopicType() {
         let enterprise = this.props.navigation.getParam('enterprise', false);
         let enterpriseActive = this.props.navigation.getParam('enterpriseActive', null);
-        if(enterprise &&  enterpriseActive !== "pending"){
+        if (enterprise && enterpriseActive !== "pending") {
             eventType = 'Event';
             return t.struct({
                 title: t.String,
@@ -147,7 +147,7 @@ class NewTopicScreen extends React.Component {
     }
 
     onChangeHandler = (value) => {
-        this.setState({value});
+        this.setState({ value });
     }
 
     componentWillUnmount = () => {

@@ -167,7 +167,7 @@ class Login extends React.Component {
                     AsyncStorage.setItem('enterprise', res.data.enterprise.toString());
                     AsyncStorage.getAllKeys()
                         .then(data => {
-                            console.log("printing all storage contents", data,);
+                            console.log("printing all storage contents", data);
                         });
                     this.props.navigation.navigate("Main");
                 }
