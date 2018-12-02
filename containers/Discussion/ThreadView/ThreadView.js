@@ -111,7 +111,7 @@ export default class ThreadView extends React.Component {
             commentCtr={voteNum}
             votedby={voteBy}
             authorId={authorId}
-            userId= {this.state.userId}
+            userId={this.state.userId}
             socket={this.socket}
         />
     }
@@ -169,15 +169,15 @@ export default class ThreadView extends React.Component {
         this.socket.emit('addUser', this.props.navigation.getParam('topicId', null));
         let token = '';
         let userId = '';
-        try { 
-            userId = await AsyncStorage.getItem('userId'); 
+        try {
+            userId = await AsyncStorage.getItem('userId');
             token = await AsyncStorage.getItem('token');
         }
         catch (error) {
             console.log("ThreadView:Error in getting token or userId", error);
             return;
         }
-        
+
         const url = `${SERVER_URL}/api/comments/${this.props.navigation.getParam('topicId', null)}`;
         const header = {
             'Accept': 'application/json',
@@ -213,7 +213,7 @@ export default class ThreadView extends React.Component {
                         respJson.topic.time = time;
                         // ressJson.topic.time = creationDate;
                         //console.log("New topic", respJson);
-                        const topicData = {...respJson.topic }
+                        const topicData = { ...respJson.topic }
                         const newState = {
                             userId: userId,
                             topic: topicData

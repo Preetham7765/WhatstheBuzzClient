@@ -1,4 +1,4 @@
-import {createStackNavigator} from "react-navigation";
+import { createStackNavigator } from "react-navigation";
 import NewTopicScreen from "../containers/NewTopicScreen/NewTopicScreen";
 import MainTabNavigator from "./MainTabNavigator";
 import Login from "../containers/Login/Login";
@@ -17,7 +17,7 @@ export default createStackNavigator(
         EnterpriseRegister: EnterpriseRegister,
         ScreenThread: ThreadView
     },
-{
-    initialRouteName: "Login"
-}
+    {
+        initialRouteName: "Login"
+    }
 );

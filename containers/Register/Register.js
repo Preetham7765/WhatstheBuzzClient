@@ -132,7 +132,7 @@ class Register extends React.Component {
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         username: this.state.username,
-        email: this.state.email, 
+        email: this.state.email,
         password: this.state.password
       };
       console.log("Registering new user1", newUser);

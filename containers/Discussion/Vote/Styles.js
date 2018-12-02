@@ -1,26 +1,26 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-	voteContainer : {
-	  flex : 1,
-	  alignItems: 'stretch',
-	  flexDirection: 'column',
-	  justifyContent: 'center',
+	voteContainer: {
+		flex: 1,
+		alignItems: 'stretch',
+		flexDirection: 'column',
+		justifyContent: 'center',
 	},
 
-	marked : {
-		backgroundColor  : 'green',
+	marked: {
+		backgroundColor: 'green',
 		justifyContent: 'center',
 		alignItems: 'center',
-		flex : 1,
+		flex: 1,
 	},
 
-	unMarked : {
-		backgroundColor  : '#DDDDDD',
+	unMarked: {
+		backgroundColor: '#DDDDDD',
 		justifyContent: 'center',
 		alignItems: 'center',
-		flex : 1,
+		flex: 1,
 	},
-  });
+});
 
-  export default styles;
+export default styles;
