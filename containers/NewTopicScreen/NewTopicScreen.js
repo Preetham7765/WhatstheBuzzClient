@@ -54,6 +54,11 @@ var options = {
         },
         startTime: {
             minimumDate: new Date(),
+            mode: 'datetime'
+        },
+        endTime: {
+            minimumDate: new Date(),
+            mode: 'datetime'
         }
     },
     stylesheet: formStyles,
