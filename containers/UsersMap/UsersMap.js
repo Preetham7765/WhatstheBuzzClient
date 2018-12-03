@@ -190,7 +190,7 @@ class UsersMap extends React.Component {
           return response.json()
         })
         .then(respJson => {
-          console.log("Navigating to newtopic");
+          console.log("Navigating to newtopic", respJson);
           if (respJson.success === false) {
 
             throw new Error(respJson.errorMsg);
@@ -201,10 +201,9 @@ class UsersMap extends React.Component {
             'userLocation': this.state.userLocation
           });
         })
-      // .catch(err => {
-      //   console.log(err);
-      //   Alert.alert(err.message);
-      // });
+      .catch(err => {
+        Alert.alert(err.message);
+      });
     }
     else {
       this.props.navigation.navigate('NewTopic', {
