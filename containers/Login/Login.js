@@ -1,13 +1,13 @@
 import React from "react";
-import { Alert, Button, TextInput, View, StyleSheet, Text, AsyncStorage } from "react-native";
+import {Alert, Button, TextInput, View, StyleSheet, Text, AsyncStorage} from "react-native";
 import Styles from './Styles';
 
-import { SERVER_URL, ANDROID_CLIENT_ID, IOS_CLIENT_ID } from '../../constants/Config';
+import {SERVER_URL, PROD_URL, ANDROID_CLIENT_ID, IOS_CLIENT_ID} from '../../constants/Config';
 
 class Login extends React.Component {
     static navigationOptions = {
         title: "Whats the Buzz!",
-        headerTitleStyle: { textAlign: "center", alignSelf: "center", flex: 1 },
+        headerTitleStyle: {textAlign: "center", alignSelf: "center", flex: 1},
         headerStyle: {
             backgroundColor: "#ecf0f1"
         }
@@ -62,6 +62,7 @@ class Login extends React.Component {
             console.log("error", e)
         }
     }
+
     googleCheckUser() {
         console.log("Finding if user has already logged in using Google");
         // send data to server
@@ -121,7 +122,7 @@ class Login extends React.Component {
             },
             body: JSON.stringify(newUser)
         })
-            //.then(response => console.log(response.status))
+        //.then(response => console.log(response.status))
             .then((res) => {
                 //Alert.alert("Registration successful. Log in to start buzzing!");
                 AsyncStorage.setItem('userId', res.userId);
@@ -140,7 +141,7 @@ class Login extends React.Component {
     }
 
     onLogin() {
-        const { username, password } = this.state;
+        const {username, password} = this.state;
 
         console.log("Finding user");
         // send data to server
@@ -149,7 +150,7 @@ class Login extends React.Component {
             password: this.state.password
         };
         //console.log("Registering new user1");
-        fetch(`${SERVER_URL}/api/users/login`, {
+        fetch(`${PROD_URL}/api/users/login`, {
             method: "POST",
             mode: "cors",
             headers: {
@@ -185,15 +186,15 @@ class Login extends React.Component {
     }
 
     render() {
-        const { navigate } = this.props.navigation;
-        const { username, password } = this.state;
+        const {navigate} = this.props.navigation;
+        const {username, password} = this.state;
         return (
             <View style={Styles.container}>
 
                 <View style={Styles.inputContainer}>
                     <TextInput
                         value={this.state.username}
-                        onChangeText={username => this.setState({ username })}
+                        onChangeText={username => this.setState({username})}
                         placeholder={"Username"}
                         style={Styles.input}
                         underlineColorAndroid="transparent"
@@ -201,13 +202,13 @@ class Login extends React.Component {
                     />
                     <TextInput
                         value={this.state.password}
-                        onChangeText={password => this.setState({ password })}
+                        onChangeText={password => this.setState({password})}
                         placeholder={"Password"}
                         secureTextEntry={true}
                         underlineColorAndroid="transparent"
                         style={Styles.input}
                     />
-                    <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
+                    <View style={{flexDirection: "column", width: "85%", padding: 10}}>
                         <Button
                             title={"Login"}
                             color="#841584"
@@ -215,24 +216,24 @@ class Login extends React.Component {
                         />
                     </View>
                     <Text style={Styles.titleText}>{"OR"}</Text>
-                    <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
+                    <View style={{flexDirection: "column", width: "85%", padding: 10}}>
                         <Button
                             title={"Register"}
                             color="#841584"
                             //onPress={this.onLogin.bind(this)}
                             onPress={() => navigate("Register")}
-                        // onPress={() => this.onRegister.bind(this)}
+                            // onPress={() => this.onRegister.bind(this)}
                         />
                     </View>
                 </View>
-                <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
+                <View style={{flexDirection: "column", width: "85%", padding: 10}}>
                     <Button
                         title={"Enterprise Register"}
                         color="#841584"
                         onPress={() => navigate("EnterpriseRegister")}
                     />
                 </View>
-                <View style={{ flexDirection: "column", width: "70%", padding: 10 }}>
+                <View style={{flexDirection: "column", width: "70%", padding: 10}}>
                     <Button
                         title={"Login with Google"}
                         color="#4285F4"
