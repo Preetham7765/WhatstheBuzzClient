@@ -1,5 +1,5 @@
-import React from 'react';
-import { Image, ScrollView, View, AsyncStorage } from 'react-native';
+import React from "react";
+import { Image, ScrollView, View, AsyncStorage } from "react-native";
 import {
     Accordion,
     Body,
@@ -15,17 +15,17 @@ import {
     Right,
     Text,
     Thumbnail
-} from 'native-base';
-import * as Progress from 'react-native-progress';
+} from "native-base";
+import * as Progress from "react-native-progress";
 import { deleteUser, getUser } from "../../actions/userActions";
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
-import styles from './Styles';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import styles from "./Styles";
 import FreeBuzz from "../FreeBuzz/FreeBuzz";
 import { SERVER_URL } from "../../constants/Config";
 import { calcLevel } from "../../services/Level";
-import { AppLoading, Font } from 'expo';
+import { AppLoading, Font } from "expo";
 
 class UserScreen extends React.Component {
     constructor() {
@@ -56,7 +56,7 @@ class UserScreen extends React.Component {
             });
             this.setState({ fontLoaded: true });
         } catch (error) {
-            console.log('error loading icon fonts', error);
+            console.log("error loading icon fonts", error);
         }
     }
 
@@ -83,7 +83,7 @@ class UserScreen extends React.Component {
 
             let respJson = await response.json();
             console.log(respJson);
-            this.setState( { user: { ...respJson } });
+            this.setState({ user: { ...respJson } });
         }
     }
 
@@ -108,8 +108,9 @@ class UserScreen extends React.Component {
                             <Text>{this.state.user.upvotes}</Text>
                         </ListItem>
                     </List>
-            },]
-    }
+            }]
+    };
+
     static navigationOptions = {
         title: 'Profile',
     };
@@ -131,6 +132,9 @@ class UserScreen extends React.Component {
                 <Container>
                     <Content>
                         <Card style={[styles.card, this.state.user.enterprise ? styles.enterprise : styles.normal]}>
+                            <CardItem button onPress={() => this.onLogout()}>
+                                <Text>Logout</Text>
+                            </CardItem>
                             <CardItem>
                                 <Image source={{ uri: 'http://nbww.com/wp-content/uploads/2016/06/fot-static-promo-0608.jpg' }} style={{ height: 100, width: null, flex: 1 }} />
                             </CardItem>
@@ -176,15 +180,46 @@ class UserScreen extends React.Component {
                                 <FreeBuzz progress={.60} />
                             </CardItem>
                         </Card>
-
                     </Content>
                 </Container>
-            </ScrollView>
-        );
+            </ScrollView>);
     }
 
     static getLevel(reputationScore) {
         return reputationScore > 0 ? Math.round(Math.log(reputationScore)) : 0;
+    }
+
+
+    onLogout() {
+        console.log("in logout");
+        fetch(`${SERVER_URL}/api/users/logout`, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            }
+            //body: JSON.stringify(user)
+        })
+            .then(response => console.log(response.json()))
+            .then(res => {
+                console.log("done");
+
+                console.log("done1");
+                // AsyncStorage.clear;
+                AsyncStorage.removeItem("token");
+                AsyncStorage.removeItem("userId");
+                this.props.navigation.navigate("Login");
+                console.log("done1");
+            })
+            .catch(function (error) {
+                //console.log(user);
+                console.log(
+                    "There has been a problem with your fetch operation: " + error.message
+                );
+                // ADD THIS THROW error
+                throw error;
+            });
     }
 }
 
