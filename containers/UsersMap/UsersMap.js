@@ -63,6 +63,7 @@ class UsersMap extends React.Component {
     }
 
     try {
+      this.userId = await AsyncStorage.getItem('userId');
       this.enterpise = await AsyncStorage.getItem('enterprise') === 'true';
       this.enterpriseActive = await AsyncStorage.getItem('enterpriseActive');
     }
@@ -95,11 +96,11 @@ class UsersMap extends React.Component {
       const url = `${SERVER_URL}/api/topics?latitude=${
         coords.coords.latitude
         }&longitude=${coords.coords.longitude}`;
-      const token = await AsyncStorage.getItem('token');
+      this.token = await AsyncStorage.getItem('token');
       const header = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': token
+        'Authorization': this.token
       }
       const response = await fetch(url, { headers: header });
       if (response.status === 401) {
@@ -169,7 +170,49 @@ class UsersMap extends React.Component {
       this.setState({ errMessage: error.message, isMounted: true });
     }
 
-  };
+  }
+
+  newTopicHandler = () => {
+
+    if (!this.enterpise) {
+      const url = `${SERVER_URL}/api/users/${this.userId}/reputation`;
+      console.log(url);
+      fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': this.token
+        }
+      })
+        .then(response => {
+          if (response.status !== 200) {
+            throw new Error("Bad request, Try logging in again");
+          }
+          return response.json()
+        })
+        .then(respJson => {
+          console.log("Navigating to newtopic", respJson);
+          if (respJson.success === false) {
+
+            throw new Error(respJson.errorMsg);
+          }
+          this.props.navigation.navigate('NewTopic', {
+            'enterprise': this.enterpise,
+            'enterpriseActive': this.enterpriseActive,
+            'userLocation': this.state.userLocation
+          });
+        })
+      .catch(err => {
+        Alert.alert(err.message);
+      });
+    }
+    else {
+      this.props.navigation.navigate('NewTopic', {
+        'enterprise': this.enterpise,
+        'enterpriseActive': this.enterpriseActive,
+        'userLocation': this.state.userLocation
+      });
+    }
+  }
 
   // TODO: should take buzz id and then fetch content from server 
   showDiscussionWindow = (topicId) => {
@@ -202,13 +245,7 @@ class UsersMap extends React.Component {
           />
           <ActionButton
             buttonColor="rgba(231,76,60,1)"
-            onPress={() =>
-              this.props.navigation.navigate('NewTopic', {
-                'enterprise': this.enterpise,
-                'enterpriseActive': this.enterpriseActive,
-                'userLocation': this.state.userLocation
-              })
-            }
+            onPress={this.newTopicHandler}
           />
         </Aux>
       );
