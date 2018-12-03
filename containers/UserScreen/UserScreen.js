@@ -30,7 +30,7 @@ import { AppLoading, Font } from 'expo';
 class UserScreen extends React.Component {
     constructor() {
         super();
-        let that = this;
+        
         this.user = {
             id: '',
             checkins: 0,
@@ -106,6 +106,8 @@ class UserScreen extends React.Component {
         if (!this.state.fontLoaded && this.props.user.reputationScore === undefined) {
             return <AppLoading />;
         }
+        console.log("User screen props", this.props);
+        
         const { user } = this.props.user;
         console.log(user.firstName + ' - rep : ' + user.reputationScore);
         console.log(calcLevel(user.reputationScore));
