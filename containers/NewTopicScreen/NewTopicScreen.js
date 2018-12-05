@@ -91,6 +91,7 @@ class NewTopicScreen extends React.Component {
                 duration: this.state.value.duration,
                 location: [userLocation.coords.longitude, userLocation.coords.latitude],
                 topicType: eventType,
+                region: this.props.navigation.getParameter('region', null),
                 startAt: this.state.value.startTime,
                 expireAt: this.state.value.endTime
             }
