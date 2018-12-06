@@ -44,7 +44,8 @@ class Login extends React.Component {
   _loadInitialState = async () => {
     const userId = await AsyncStorage.getItem("userId");
     if (userId !== null) {
-      this.props.navigation.navigate("Main");
+      //this.props.navigation.navigate("Main");
+      this.props.navigation.replace("Main");
     }
   };
   signIn = async () => {
@@ -186,7 +187,7 @@ class Login extends React.Component {
           AsyncStorage.getAllKeys().then(data => {
             console.log("printing all storage contents", data);
           });
-          this.props.navigation.navigate("Main");
+          this.props.navigation.replace("Main");
         } else Alert.alert("Login unsuccessful");
       })
       .catch(function(error) {
