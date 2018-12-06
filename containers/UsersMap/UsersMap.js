@@ -1,14 +1,12 @@
 import React from "react";
-import {Alert, AsyncStorage, BackHandler, Linking, Platform, TouchableOpacity} from "react-native";
+import {Alert, AsyncStorage, Platform, TouchableOpacity} from "react-native";
 import ActionButton from "react-native-action-button";
-import {Constants, IntentLauncherAndroid, Location, Permissions} from "expo";
+import {Constants, Location} from "expo";
 import SocketIOClient from 'socket.io-client';
 import Aux from "../../hoc/Auxi";
 import MapScreen from "../../components/MapScreen/MapScreen";
-import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
-import {SERVER_URL, REGION_SERVER_URL} from '../../constants/Config';
+import {REGION_SERVER_URL, SERVER_URL} from '../../constants/Config';
 import {Icon} from 'react-native-elements';
-import AsyncAlert from '../../components/AsyncAlert';
 
 class UsersMap extends React.Component {
     state = {
@@ -70,138 +68,64 @@ class UsersMap extends React.Component {
             return;
         }
 
-
         this.subs = [
             this.props.navigation.addListener('willFocus', () => console.log('will focus')),
             this.props.navigation.addListener('willBlur', () => console.log('will blur')),
             this.props.navigation.addListener('didFocus', () => this.refresh()),
             this.props.navigation.addListener('didBlur', () => console.log('did blur')),
         ];
-
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this._getRegionIdAsync(this.state.userLocation);
         this.socket.on(this.state.region, (data) => {
 
-            console.log("new data from rethink db at channel", this.state.region," is  >>>>>>>>>", data);
+            console.log("new data from rethink db at channel", this.state.region, " is  >>>>>>>>>", data);
 
         });
-
     }
 
-    componentWillUnmount() {
-        this.subs.forEach((sub) => {
-            sub.remove();
-        });
-        if (this.retLocation) this.retLocation.remove();
-        this.setState({isMounted: false});
-    }
+    newTopicHandler = () => {
 
-    _getTopicsDataAsync = async coords => {
-        try {
-            console.log("sending response");
-            const url = `${SERVER_URL}/api/topics?latitude=${
-                coords.coords.latitude
-                }&longitude=${coords.coords.longitude}`;
-            const token = await AsyncStorage.getItem('token');
-            const header = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': token
-            }
-            const response = await fetch(url, {headers: header});
-            if (response.status === 401) {
-                Alert.alert("Authorization failed. Please login again");
-                this.props.navigation.navigate('Login');
-                throw new Error("Authentication Failed");
-            }
-            const respJson = response.json();
-            return respJson;
-        } catch (error) {
-            console.log("UsersMap failed to fetch", error);
-            throw error;
-        }
-    };
-
-    _getRegionIdAsync = async coords =>{
-        try{
-            var sendCoords = {
-                lat: coords.coords.latitude,
-               long:  coords.coords.longitude
-            };
-            const header = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': token
-            };
-            const response = await fetch(`${REGION_SERVER_URL}/body`, {method : "POST", headers: header, body : JSON.stringify(sendCoords)});
-
-            if(response.status === 200){
-                this.setState({
-                    region : await response.json()
-                });
-            }
-        }catch (err) {
-            console.log(err);
-        }
-    }
-
-    _getLocationAsync = async () => {
-        try {
-            let providerStatus = await Location.getProviderStatusAsync();
-            console.log("Provider status", providerStatus);
-            if (providerStatus.locationServicesEnabled == false || providerStatus.gpsAvailable == false) {
-                let permission = await AsyncAlert('Please enable location services to continue');
-                if (Platform.OS === "android") {
-                    // create an alert asking the user to enable location
-                    if (permission === "yes") {
-                        await IntentLauncherAndroid.startActivityAsync(
-                            IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
-                        );
-                    }
-                    else {
-                        BackHandler.exitApp();
-                    }
+        if (!this.enterpise) {
+            const url = `${SERVER_URL}/api/users/${this.userId}/reputation`;
+            console.log(url);
+            fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': this.token
                 }
-                else if (Platform.OS === "ios") {
-                    if (permission === "yes") {
-                        await Linking.openURL("App-Prefs:root=Privacy&path=LOCATION");
+            })
+                .then(response => {
+                    if (response.status !== 200) {
+                        throw new Error("Bad request, Try logging in again");
                     }
-                    else {
-                        // close the ios app don't know how to do.
-                    }
-                }
-            }
-            let {status} = await Permissions.askAsync(Permissions.LOCATION);
-            if (status !== "granted") {
-                throw new Error("Permission to get location not obtained");
-            }
-            console.log("waiting for location");
-            this.retLocation = await Location.watchPositionAsync(
-                {enableHighAccuracy: true, distanceInterval: 100},
-                async coords => {
-                    // console.log(coords);
-                    let respJson;
-                    try {
-                        respJson = await this._getTopicsDataAsync(coords);
-                        console.log("setting state");
-                        this.setState({
-                            userLocation: coords,
-                            nearbyTopics: respJson,
-                            errMessage: null,
-                            isMounted: true
-                        });
-                    } catch (error) {
-                        this.setState({errMessage: error.message, isMounted: true});
-                        this.retLocation.remove();
-                    }
-                });
-        } catch (error) {
-            this.setState({errMessage: error.message, isMounted: true});
-        }
+                    return response.json()
+                })
+                .then(respJson => {
+                    console.log("Navigating to newtopic", respJson);
+                    if (respJson.success === false) {
 
-    };
+                        throw new Error(respJson.errorMsg);
+                    }
+                    this.props.navigation.navigate('NewTopic', {
+                        'enterprise': this.enterpise,
+                        'enterpriseActive': this.enterpriseActive,
+                        'userLocation': this.state.userLocation
+                    });
+                })
+                .catch(err => {
+                    Alert.alert(err.message);
+                });
+        }
+        else {
+            this.props.navigation.navigate('NewTopic', {
+                'enterprise': this.enterpise,
+                'enterpriseActive': this.enterpriseActive,
+                'userLocation': this.state.userLocation
+            });
+        }
+    }
 
     // TODO: should take buzz id and then fetch content from server
     showDiscussionWindow = (topicId) => {
@@ -234,19 +158,11 @@ class UsersMap extends React.Component {
                     />
                     <ActionButton
                         buttonColor="rgba(231,76,60,1)"
-                        onPress={() =>
-                            this.props.navigation.navigate('NewTopic', {
-                                'enterprise': this.enterpise,
-                                'enterpriseActive': this.enterpriseActive,
-                                'userLocation': this.state.userLocation,
-                                'region' : this.state.region
-                            })
-                        }
+                        onPress={this.newTopicHandler}
                     />
                 </Aux>
             );
         }
-        return <ErrorScreen errorMessage={text}/>;
     }
 }
 

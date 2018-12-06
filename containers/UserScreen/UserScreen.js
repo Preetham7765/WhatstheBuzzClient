@@ -1,5 +1,5 @@
-import React from 'react';
-import { Image, ScrollView, View, AsyncStorage } from 'react-native';
+import React from "react";
+import { Image, ScrollView, View, AsyncStorage } from "react-native";
 import {
     Accordion,
     Body,
@@ -15,55 +15,35 @@ import {
     Right,
     Text,
     Thumbnail
-} from 'native-base';
-import * as Progress from 'react-native-progress';
+} from "native-base";
+import * as Progress from "react-native-progress";
 import { deleteUser, getUser } from "../../actions/userActions";
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
-import styles from './Styles';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import styles from "./Styles";
 import FreeBuzz from "../FreeBuzz/FreeBuzz";
 import { SERVER_URL } from "../../constants/Config";
 import { calcLevel } from "../../services/Level";
-import { AppLoading, Font } from 'expo';
+import { AppLoading, Font } from "expo";
 
 class UserScreen extends React.Component {
     constructor() {
         super();
-        let that = this;
-        this.user = {
-            id: '',
-            checkins: 0,
-            buzzes: 6,
-            upvotes: 10
-        };
+
         //this.getUserInfo();
         this.state = {
             fontLoaded: false,
             level: 3,
-            dataArray: [
-                {
-                    title: "Show More", content:
-                        <List>
-                            <ListItem>
-                                <Thumbnail size={10} source={require('../../assets/images/buzz3.png')} />
-                                <Text>Buzzes</Text>
-                                <Text>{this.user.buzzes}</Text>
-                            </ListItem>
-                            <ListItem>
-                                <MaterialCommunityIcons name="marker-check" size={32} color="green" />
-                                <Text>Check-ins</Text>
-                                <Text>{this.user.checkins}</Text>
-                            </ListItem>
-                            <ListItem>
-                                <Entypo name="thumbs-up" size={32} color="yellow" />
-                                <Text>Up Votes</Text>
-                                <Text>{this.user.upvotes}</Text>
-                            </ListItem>
-                        </List>
-                },
-            ],
-            progress: 0.5
+            user: {
+                id: '',
+                checkins: 0,
+                buzzes: 6,
+                upvotes: 10,
+                firstName: '',
+                reputationScore: null
+            },
+            progress: 0.5,
         }
     }
 
@@ -76,25 +56,60 @@ class UserScreen extends React.Component {
             });
             this.setState({ fontLoaded: true });
         } catch (error) {
-            console.log('error loading icon fonts', error);
+            console.log("error loading icon fonts", error);
         }
     }
 
     // Grab User data
     async componentDidMount() {
         // this.props.getUser(this.user.id);
-        if (this.user.id != '') {
-
+        if (this.state.user.id === '') {
+            let token = '';
+            let userId = '';
             try {
-                const userId = await AsyncStorage.getItem('userId');
-                this.user.id = userId;
+                userId = await AsyncStorage.getItem('userId');
+                token = await AsyncStorage.getItem('token');
             }
             catch (error) {
-                console.log("UserScreen: failed to get userId", error);
+                console.log("UserScreen: failed to get userId/token", error);
             }
+            const url = `${SERVER_URL}/api/users/${userId}`;
+            let response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': token
+                }
+            });
+
+            let respJson = await response.json();
+            console.log(respJson);
+            this.setState({ user: { ...respJson } });
         }
     }
 
+    getDataArray = () => {
+        return [
+            {
+                title: "Show More", content:
+                    <List>
+                        <ListItem>
+                            <Thumbnail size={10} source={require('../../assets/images/buzz3.png')} />
+                            <Text>Buzzes</Text>
+                            <Text>{this.state.user.buzzes}</Text>
+                        </ListItem>
+                        <ListItem>
+                            <MaterialCommunityIcons name="marker-check" size={32} color="green" />
+                            <Text>Check-ins</Text>
+                            <Text>{this.state.user.checkins}</Text>
+                        </ListItem>
+                        <ListItem>
+                            <Entypo name="thumbs-up" size={32} color="yellow" />
+                            <Text>Up Votes</Text>
+                            <Text>{this.state.user.upvotes}</Text>
+                        </ListItem>
+                    </List>
+            }]
+    };
 
     static navigationOptions = {
         title: 'Profile',
@@ -103,22 +118,23 @@ class UserScreen extends React.Component {
 
     render() {
 
-        if (!this.state.fontLoaded && this.props.user.reputationScore === undefined) {
+        if (!this.state.fontLoaded && this.state.user.reputationScore === null) {
             return <AppLoading />;
         }
-        const { user } = this.props.user;
-        console.log(user.firstName + ' - rep : ' + user.reputationScore);
-        console.log(calcLevel(user.reputationScore));
+
+        console.log(this.state.user.firstName + ' - rep : ' + this.state.user.reputationScore);
+        console.log(calcLevel(this.state.user.reputationScore));
         let result = [0, 0];//calcLevel(this.props.user.reputationScore);
         const level = result[0];
         const prog = result[1];
         return (
-
-
             <ScrollView style={styles.container}>
                 <Container>
                     <Content>
-                        <Card style={[styles.card, user.enterprise ? styles.enterprise : styles.normal]}>
+                        <Card style={[styles.card, this.state.user.enterprise ? styles.enterprise : styles.normal]}>
+                            <CardItem button onPress={() => this.onLogout()}>
+                                <Text>Logout</Text>
+                            </CardItem>
                             <CardItem>
                                 <Image source={{ uri: 'http://nbww.com/wp-content/uploads/2016/06/fot-static-promo-0608.jpg' }} style={{ height: 100, width: null, flex: 1 }} />
                             </CardItem>
@@ -127,7 +143,7 @@ class UserScreen extends React.Component {
                                     <Thumbnail source={{ uri: 'https://image.flaticon.com/icons/png/512/206/206879.png' }} />
                                     <MaterialCommunityIcons name="marker-check" size={32} color="green" />
                                     <Body>
-                                        <Text>{user.firstName} {user.lastName}</Text>
+                                        <Text>{this.state.user.firstName} {this.state.user.lastName}</Text>
                                         <Text note>Level {level}</Text>
                                     </Body>
                                 </Left>
@@ -156,7 +172,7 @@ class UserScreen extends React.Component {
                             </CardItem>
                             <CardItem>
                                 <Content padder>
-                                    <Accordion dataArray={this.state.dataArray} expandedIcon="add">
+                                    <Accordion dataArray={this.getDataArray()} expandedIcon="add">
                                     </Accordion>
                                 </Content>
                             </CardItem>
@@ -164,15 +180,46 @@ class UserScreen extends React.Component {
                                 <FreeBuzz progress={.60} />
                             </CardItem>
                         </Card>
-
                     </Content>
                 </Container>
-            </ScrollView>
-        );
+            </ScrollView>);
     }
 
     static getLevel(reputationScore) {
         return reputationScore > 0 ? Math.round(Math.log(reputationScore)) : 0;
+    }
+
+
+    onLogout() {
+        console.log("in logout");
+        fetch(`${SERVER_URL}/api/users/logout`, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            }
+            //body: JSON.stringify(user)
+        })
+            .then(response => console.log(response.json()))
+            .then(res => {
+                console.log("done");
+
+                console.log("done1");
+                // AsyncStorage.clear;
+                AsyncStorage.removeItem("token");
+                AsyncStorage.removeItem("userId");
+                this.props.navigation.navigate("Login");
+                console.log("done1");
+            })
+            .catch(function (error) {
+                //console.log(user);
+                console.log(
+                    "There has been a problem with your fetch operation: " + error.message
+                );
+                // ADD THIS THROW error
+                throw error;
+            });
     }
 }
 
