@@ -150,7 +150,7 @@ class Login extends React.Component {
             password: this.state.password
         };
         //console.log("Registering new user1");
-        fetch(`${PROD_URL}/api/users/login`, {
+        fetch(`${SERVER_URL}/api/users/login`, {
             method: "POST",
             mode: "cors",
             headers: {
