@@ -1,8 +1,15 @@
 import React from "react";
-import { Alert, Button, TextInput, View } from "react-native";
-import Styles from './Styles';
+import {
+  Alert,
+  Button,
+  TextInput,
+  View,
+  KeyboardAvoidingView,
+  ImageBackground
+} from "react-native";
+import Styles from "./Styles";
 
-import { SERVER_URL } from '../../constants/Config';
+import { SERVER_URL } from "../../constants/Config";
 
 class Register extends React.Component {
   static navigationOptions = {
@@ -52,66 +59,84 @@ class Register extends React.Component {
       password.length > 0 &&
       password === confirmPassword > 0;
     return (
-      <View style={Styles.container}>
-        <View style={Styles.inputContainer}>
-          <TextInput
-            value={this.state.firstName}
-            onChangeText={firstName => this.setState({ firstName: firstName })}
-            placeholder={"First Name"}
-            style={Styles.input}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-          <TextInput
-            value={this.state.lastName}
-            onChangeText={lastName => this.setState({ lastName: lastName })}
-            placeholder={"Last Name"}
-            style={Styles.input}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-          <TextInput
-            value={this.state.username}
-            onChangeText={username => this.setState({ username: username })}
-            placeholder={"Username"}
-            style={Styles.input}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-          <TextInput
-            value={this.state.email}
-            onChangeText={email => this.setState({ email: email })}
-            placeholder={"email"}
-            underlineColorAndroid="transparent"
-            style={Styles.input}
-            autoCapitalize="none"
-          />
-          <TextInput
-            value={this.state.password}
-            onChangeText={password => this.setState({ password: password })}
-            placeholder={"Password"}
-            secureTextEntry={true}
-            underlineColorAndroid="transparent"
-            style={Styles.input}
-          />
-          <TextInput
-            value={this.state.confirmPassword}
-            onChangeText={confirmPassword => this.setState({ confirmPassword: confirmPassword })}
-            placeholder={"Confirm Password"}
-            secureTextEntry={true}
-            underlineColorAndroid="transparent"
-            style={Styles.input}
-          />
-          <View style={{ flexDirection: "column", width: "85%", padding: 10 }}>
-            <Button
-              disabled={!this.validate.bind(this)}
-              title={"Sign Up"}
-              color="#841584"
-              onPress={this.onRegister.bind(this)}
+      <ImageBackground
+        source={require("../../assets/images/bg2.jpg")}
+        imageStyle={{ resizeMode: "cover" }}
+        style={Styles.image}
+      >
+        <KeyboardAvoidingView style={Styles.container} behavior={"padding"}>
+          <View style={Styles.inputContainer}>
+            <TextInput
+              value={this.state.firstName}
+              onChangeText={firstName =>
+                this.setState({ firstName: firstName })
+              }
+              placeholder={"First Name"}
+              placeholderTextColor="black"
+              style={Styles.input}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
             />
+            <TextInput
+              value={this.state.lastName}
+              onChangeText={lastName => this.setState({ lastName: lastName })}
+              placeholder={"Last Name"}
+              placeholderTextColor="black"
+              style={Styles.input}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+            />
+            <TextInput
+              value={this.state.username}
+              onChangeText={username => this.setState({ username: username })}
+              placeholder={"Username"}
+              placeholderTextColor="black"
+              style={Styles.input}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+            />
+            <TextInput
+              value={this.state.email}
+              onChangeText={email => this.setState({ email: email })}
+              placeholder={"Email"}
+              placeholderTextColor="black"
+              underlineColorAndroid="transparent"
+              style={Styles.input}
+              autoCapitalize="none"
+            />
+            <TextInput
+              value={this.state.password}
+              onChangeText={password => this.setState({ password: password })}
+              placeholder={"Password"}
+              placeholderTextColor="black"
+              secureTextEntry={true}
+              underlineColorAndroid="transparent"
+              style={Styles.input}
+            />
+            <TextInput
+              value={this.state.confirmPassword}
+              onChangeText={confirmPassword =>
+                this.setState({ confirmPassword: confirmPassword })
+              }
+              placeholder={"Confirm Password"}
+              placeholderTextColor="black"
+              secureTextEntry={true}
+              underlineColorAndroid="transparent"
+              style={Styles.input}
+            />
+            <View
+              style={{ flexDirection: "column", width: "85%", padding: 10 }}
+            >
+              <Button
+                disabled={!this.validate.bind(this)}
+                title={"Sign Up"}
+                color="#841584"
+                onPress={this.onRegister.bind(this)}
+              />
+            </View>
           </View>
-        </View>
-      </View>
+        </KeyboardAvoidingView>
+      </ImageBackground>
     );
   }
 
@@ -145,18 +170,18 @@ class Register extends React.Component {
         },
         body: JSON.stringify(newUser)
       })
-        .then((response) => {
+        .then(response => {
           console.log(response);
           if (response.status === 200) {
             Alert.alert("Registration successful. Log in to start buzzing!");
             this.props.navigation.navigate("Login");
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log(newUser);
           console.log(
             "There has been a problem with your fetch operation: " +
-            error.message
+              error.message
           );
           // ADD THIS THROW error
           throw error;
