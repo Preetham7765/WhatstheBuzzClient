@@ -15,6 +15,7 @@
     "concurrently": "^4.0.1",
     "expo": "^30.0.1",
     "express": "^4.16.4",
+    "geolib": "^2.0.24",
     "moment": "^2.22.2",
     "mongoose": "^5.3.8",
     "native-base": "^2.8.1",
