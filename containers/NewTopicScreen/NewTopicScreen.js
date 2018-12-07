@@ -5,7 +5,7 @@ import Styles, { formStyles } from './Styles';
 import t from 'tcomb-form-native';
 
 
-import { SERVER_URL } from '../../constants/Config';
+import { SERVER_URL, REGION_SERVER_URL } from '../../constants/Config';
 // create an onsubmit handler 
 
 // we need to current location of the user to be sent
@@ -84,6 +84,25 @@ class NewTopicScreen extends React.Component {
         const userLocation = this.props.navigation.getParam('userLocation', null);
         if (value !== null && userLocation !== null) {
             // send data to server
+
+            const regionParams = {
+                lat: userLocation.coords.latitude,
+                long: userLocation.coords.longitude,
+            }
+
+            const header = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            const response = await fetch(`${REGION_SERVER_URL}/region/topic`, {
+                headers: header,
+                method: "POST",
+                body: JSON.stringify(regionParams)
+            });
+
+            const respJson = await response.json();
+
             const newTopicData = {
                 author: this.state.author,
                 title: this.state.value.title,
@@ -91,6 +110,7 @@ class NewTopicScreen extends React.Component {
                 duration: this.state.value.duration,
                 location: [userLocation.coords.longitude, userLocation.coords.latitude],
                 topicType: eventType,
+                region: respJson.id,
                 startAt: this.state.value.startTime,
                 expireAt: this.state.value.endTime
             }
@@ -119,6 +139,11 @@ class NewTopicScreen extends React.Component {
                         this.props.navigation.navigate('Login');
                         throw new Error("Authentication Failed");
                     }
+                    return response.json();
+                })
+                .then(respJson => {
+                    console.log("Send new topic via socket");
+                    if (eventType === 'Buzz') this.props.navigation.getParam('sendThruSocket', null)(respJson);
                 })
                 .catch((error) => {
                     console.log(error)
@@ -187,7 +212,6 @@ class NewTopicScreen extends React.Component {
                 <Button title="Create New Post" onPress={this.createTopicHandler} />
                 <KeyboardSpacer />
             </ScrollView>
-
         );
     }
 }
