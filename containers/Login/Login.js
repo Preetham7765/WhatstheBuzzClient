@@ -108,7 +108,7 @@ class Login extends React.Component {
           this.googleSignUp();
         }
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(user);
         console.log(
           "There has been a problem with your fetch operation: " + error.message
@@ -145,7 +145,7 @@ class Login extends React.Component {
         AsyncStorage.setItem("username", res.username);
         //this.props.navigation.navigate("Login");
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(newUser);
         console.log(
           "There has been a problem with your fetch operation: " + error.message
@@ -165,7 +165,7 @@ class Login extends React.Component {
       password: this.state.password
     };
     //console.log("Registering new user1");
-    fetch(`${PROD_URL}/api/users/login`, {
+    fetch(`${SERVER_URL}/api/users/login`, {
       method: "POST",
       mode: "cors",
       headers: {
@@ -190,7 +190,7 @@ class Login extends React.Component {
           this.props.navigation.replace("Main");
         } else Alert.alert("Login unsuccessful");
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(user);
         console.log(
           "There has been a problem with your fetch operation: " + error.message

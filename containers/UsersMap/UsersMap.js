@@ -3,11 +3,13 @@ import { Platform, TouchableOpacity, Linking, BackHandler, AsyncStorage, Alert }
 import ActionButton from "react-native-action-button";
 import { Constants, Location, Permissions } from "expo";
 import { IntentLauncherAndroid } from 'expo';
+import SocketIOClient from 'socket.io-client';
+import geolib from 'geolib';
 
 import Aux from "../../hoc/Auxi";
 import MapScreen from "../../components/MapScreen/MapScreen";
 import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
-import { SERVER_URL } from '../../constants/Config';
+import { SERVER_URL, REGION_SERVER_URL } from '../../constants/Config';
 import { Icon } from 'react-native-elements';
 
 import AsyncAlert from '../../components/AsyncAlert';
@@ -17,14 +19,16 @@ class UsersMap extends React.Component {
     userLocation: null,
     nearbyTopics: [],
     errMessage: null,
-    isMounted: false
+    isMounted: false,
+    regions: null
   };
 
   constructor(props) {
     super(props);
     this.props = props;
     this.retLocation = null;
-
+    this.socket = SocketIOClient(SERVER_URL + '/topics');
+    this.socket.on('updateTopic', this.onReceivedNewTopic);
   }
 
 
@@ -53,17 +57,17 @@ class UsersMap extends React.Component {
   async componentDidMount() {
     if (!this.state.userLocation && !this.state.errMessage) {
       if (Platform.OS === "android" && !Constants.isDevice) {
-        this.setState({
-          errorMessage:
-            "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"
-        });
+        // this.setState({
+        //   errorMessage:
+        //     "Oops, this will not work on Sketch in an Android emulator. Try it on your device!"
+        // });
+        this._getLocationAsync();
       } else {
         this._getLocationAsync();
       }
     }
 
     try {
-      this.userId = await AsyncStorage.getItem('userId');
       this.enterpise = await AsyncStorage.getItem('enterprise') === 'true';
       this.enterpriseActive = await AsyncStorage.getItem('enterpriseActive');
     }
@@ -76,8 +80,13 @@ class UsersMap extends React.Component {
     this.subs = [
       this.props.navigation.addListener('willFocus', () => console.log('will focus')),
       this.props.navigation.addListener('willBlur', () => console.log('will blur')),
-      this.props.navigation.addListener('didFocus', () => this.refresh()),
-      this.props.navigation.addListener('didBlur', () => console.log('did blur')),
+      this.props.navigation.addListener('didFocus', async () => {
+        this.refresh();
+
+      }),
+      this.props.navigation.addListener('didBlur', () => {
+
+      }),
     ];
 
   }
@@ -88,6 +97,12 @@ class UsersMap extends React.Component {
     });
     if (this.retLocation) this.retLocation.remove();
     this.setState({ isMounted: false });
+    const data= {
+      id : this.userId,
+      regions: this.regions
+    }
+    this.socket.emit("deleteUser", data);
+    this.socket.disconnect();
   }
 
   _getTopicsDataAsync = async coords => {
@@ -97,6 +112,7 @@ class UsersMap extends React.Component {
         coords.coords.latitude
         }&longitude=${coords.coords.longitude}`;
       this.token = await AsyncStorage.getItem('token');
+      this.userId = await AsyncStorage.getItem('userId');
       const header = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -117,6 +133,7 @@ class UsersMap extends React.Component {
   };
 
   _getLocationAsync = async () => {
+    console.log("insdie _getLocationAsync");
     try {
       let providerStatus = await Location.getProviderStatusAsync();
       console.log("Provider status", providerStatus);
@@ -148,26 +165,80 @@ class UsersMap extends React.Component {
       }
       console.log("waiting for location");
       this.retLocation = await Location.watchPositionAsync(
-        { enableHighAccuracy: true, distanceInterval: 100 },
+        { enableHighAccuracy: false, distanceInterval: 300 },
         async coords => {
-          // console.log(coords);
-          let respJson;
           try {
+
             respJson = await this._getTopicsDataAsync(coords);
             console.log("setting state");
             this.setState({
               userLocation: coords,
               nearbyTopics: respJson,
               errMessage: null,
-              isMounted: true
+              isMounted: true,
             });
+
+            let regions;
+            let respJson;
+            const header = {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+            const regionParams = {
+              lat: this.state.userLocation.coords.latitude,
+              long: this.state.userLocation.coords.longitude,
+              radius: 3000
+            }
+
+            const response = await fetch(`${REGION_SERVER_URL}/region/user`, {
+              headers: header,
+              method: "POST",
+              body: JSON.stringify(regionParams)
+            });
+            respJson = await response.json();
+            let filter_regions = [];
+            regions = respJson['ids'];
+            regions.forEach((element) => {
+              filter_regions.push(element.slice(0, 8));
+            });
+            console.log("Filter regions : ", filter_regions);
+            this.regions = filter_regions;
+            const socketData = {
+              id: this.userId,
+              regions: [...filter_regions]
+            }
+            console.log("Sending user data");
+            this.socket.emit("newUser", socketData);
+
           } catch (error) {
+            console.log(error);
             this.setState({ errMessage: error.message, isMounted: true });
             this.retLocation.remove();
           }
         });
     } catch (error) {
       this.setState({ errMessage: error.message, isMounted: true });
+    }
+
+  }
+
+  onReceivedNewTopic = (newTopic) => {
+
+    console.log("got new topic from socket", newTopic);
+    // append to the new topic
+    const newTopicCords = { latitude: newTopic.loc.coordinates[1], longitude: newTopic.loc.coordinates[0] }
+    const userCords = {
+      latitude: this.state.userLocation.coords.latitude,
+      longitude: this.state.userLocation.coords.longitude
+    }
+    if (geolib.isPointInCircle(newTopicCords, userCords, 3000)) {
+
+      let currentTopics = [...this.state.nearbyTopics];
+
+      currentTopics.push(newTopic);
+
+      this.setState({ nearbyTopics: currentTopics });
+
     }
 
   }
@@ -198,12 +269,13 @@ class UsersMap extends React.Component {
           this.props.navigation.navigate('NewTopic', {
             'enterprise': this.enterpise,
             'enterpriseActive': this.enterpriseActive,
-            'userLocation': this.state.userLocation
+            'userLocation': this.state.userLocation,
+            'sendThruSocket': (data) => { this.socket.emit("newTopic", data) }
           });
         })
-      .catch(err => {
-        Alert.alert(err.message);
-      });
+        .catch(err => {
+          Alert.alert(err.message);
+        });
     }
     else {
       this.props.navigation.navigate('NewTopic', {
@@ -214,7 +286,7 @@ class UsersMap extends React.Component {
     }
   }
 
-  // TODO: should take buzz id and then fetch content from server 
+  // TODO: should take buzz id and then fetch content from server
   showDiscussionWindow = (topicId) => {
 
     this.props.navigation.navigate('ScreenThread', { 'topicId': topicId });
