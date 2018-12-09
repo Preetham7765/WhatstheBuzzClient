@@ -6,12 +6,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'stretch',
 		flexDirection: 'column',
-		justifyContent: 'center',
+		justifyContent: 'flex-end',
 	},
 
 	voteButton: {
 		backgroundColor: '#FFFFFF',
-		justifyContent: 'center',
+		justifyContent: 'flex-end',
 		alignItems: 'center',
 		flex: 1,
 	},

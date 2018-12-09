@@ -1,5 +1,5 @@
 const PROD_URL = "https://sheltered-coast-22714.herokuapp.com";
-const SERVER_URL = "http://10.0.0.137:5000";
+const SERVER_URL = "http://149.161.203.249:5000";
 const ANDROID_CLIENT_ID =
   "680284249418-pnjnbe7di9stdg75nu422ais0ecu0g41.apps.googleusercontent.com";
 const IOS_CLIENT_ID =

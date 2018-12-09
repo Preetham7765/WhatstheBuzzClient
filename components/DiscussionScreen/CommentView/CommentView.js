@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, Button, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput,TouchableOpacity } from 'react-native';
 import Vote from '../../../containers/Discussion/Vote/VoteBar';
 import Styles from './Styles';
 
@@ -25,8 +25,8 @@ class OwnerAction extends React.Component {
     render() {
         return (
             <View style={Styles.ownerAction}>
-                <Button onPress={this.props.enterEditMode} title="Edit"/>
-                <Button onPress={this.props.delete} title="Delete" color = "#0033cc"/>
+                <TouchableOpacity onPress = {this.props.enterEditMode}><Text style={{ fontSize: 12 ,textDecorationLine : "underline",color : "#6666ff"}} >Edit</Text></TouchableOpacity>
+                <TouchableOpacity onPress = {this.props.enterEditMode}><Text style={{ fontSize: 12 ,textDecorationLine : "underline",color : "#ff0066"}} >Delete</Text></TouchableOpacity>
             </View>
         );
     }
@@ -43,8 +43,8 @@ class EditModeComment extends React.Component {
             <View style={Styles.userInfoContainer}>
                 <TextInput onChangeText={(text) => this.setState({ commentDesc: text })} value={this.state.commentDesc} style={Styles.editComment}/>
                 <View style={Styles.ownerAction}>
-                    <Button onPress={this.props.cancel} title="Cancel" color = "#33cc33"/>
-                    <Button onPress={() => this.props.submit(this.state.commentDesc)} title="Submit" color = "#00ffcc"/>
+                <TouchableOpacity onPress = {this.props.cancel}><Text style={{ fontSize: 12,textDecorationLine : "underline",color : "#009999" }} >Cancel</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => this.props.submit(this.state.commentDesc)}><Text style={{ fontSize: 12,textDecorationLine : "underline",color : "#33ccff" }} >Submit</Text></TouchableOpacity>    
                 </View>
             </View>
         );
