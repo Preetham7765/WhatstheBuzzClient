@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 
+
 const styles = StyleSheet.create({
 	voteContainer: {
 		flex: 1,
@@ -8,18 +9,19 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 
-	marked: {
-		backgroundColor: 'green',
+	voteButton: {
+		backgroundColor: '#FFFFFF',
 		justifyContent: 'center',
 		alignItems: 'center',
 		flex: 1,
 	},
 
+	marked: {
+		color : "blue",
+	},
+
 	unMarked: {
-		backgroundColor: '#DDDDDD',
-		justifyContent: 'center',
-		alignItems: 'center',
-		flex: 1,
+		color : "#DDDDDD",
 	},
 });
 

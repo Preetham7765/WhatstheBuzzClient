@@ -25,8 +25,8 @@ class OwnerAction extends React.Component {
     render() {
         return (
             <View style={Styles.ownerAction}>
-                <Button onPress={this.props.enterEditMode} title="Edit" />
-                <Button onPress={this.props.delete} title="Delete" />
+                <Button onPress={this.props.enterEditMode} title="Edit"/>
+                <Button onPress={this.props.delete} title="Delete" color = "#0033cc"/>
             </View>
         );
     }
@@ -41,10 +41,10 @@ class EditModeComment extends React.Component {
     render() {
         return (
             <View style={Styles.userInfoContainer}>
-                <TextInput onChangeText={(text) => this.setState({ commentDesc: text })} value={this.state.commentDesc} />
+                <TextInput onChangeText={(text) => this.setState({ commentDesc: text })} value={this.state.commentDesc} style={Styles.editComment}/>
                 <View style={Styles.ownerAction}>
-                    <Button onPress={this.props.cancel} title="Cancel" />
-                    <Button onPress={() => this.props.submit(this.state.commentDesc)} title="Submit" />
+                    <Button onPress={this.props.cancel} title="Cancel" color = "#33cc33"/>
+                    <Button onPress={() => this.props.submit(this.state.commentDesc)} title="Submit" color = "#00ffcc"/>
                 </View>
             </View>
         );
