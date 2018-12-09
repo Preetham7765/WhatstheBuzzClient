@@ -143,7 +143,7 @@ class NewTopicScreen extends React.Component {
                 })
                 .then(respJson => {
                     console.log("Send new topic via socket");
-                    if (eventType === 'Buzz') this.props.navigation.getParam('sendThruSocket', null)(respJson);
+                    // if (eventType === 'Buzz') this.props.navigation.getParam('sendThruSocket', null)(respJson);
                 })
                 .catch((error) => {
                     console.log(error)
