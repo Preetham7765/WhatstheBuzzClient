@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     headContent: {
         flex: 8,
         flexDirection: 'column',
-        marginLeft: 10
+        marginLeft: 10,
     },
     title: {
         flex: 1,
@@ -21,6 +21,9 @@ const styles = StyleSheet.create({
     description: {
         flex: 2,
         fontSize: 12,
+        borderRadius: 4,
+		borderWidth: 1,
+		borderColor: '#d6d7da',
     },
     eventInfo: {
         flex: 1,

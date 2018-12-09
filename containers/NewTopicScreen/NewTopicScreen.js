@@ -183,7 +183,7 @@ class NewTopicScreen extends React.Component {
                     options={options}
                     value={this.state.value}
                     onChange={this.onChangeHandler}
-                    style={{ flex: 1 }} />
+                    style={{ flex: 1}} />
                 <Button title="Create New Post" onPress={this.createTopicHandler} />
                 <KeyboardSpacer />
             </ScrollView>
