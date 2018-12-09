@@ -9,11 +9,10 @@ const formStyles = {
   },
   dateInput: {
     padding: 60,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
-  controlLabel: {
+  controlLabel: {    
     normal: {
-      color: 'blue',
       fontSize: 18,
       marginBottom: 7,
       fontWeight: '600',
@@ -32,7 +31,7 @@ const formStyles = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor :  "#ccccff",
   },
 });
 
