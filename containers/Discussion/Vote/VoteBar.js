@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SERVER_URL } from '../../../constants/Config';
 import Styles from './Styles';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 export default class Vote extends React.Component {
 	constructor(props) {
@@ -62,8 +64,8 @@ export default class Vote extends React.Component {
 	render() {
 		return (
 			<View style={Styles.voteContainer}>
-				<TouchableOpacity onPress={this.voteUP} style={this.state.voteUp ? Styles.marked : Styles.unMarked}><Text>+</Text></TouchableOpacity>
-				<Text style={{ textAlignVertical: "center", textAlign: "center", }}>{this.getVoteText()}</Text>
+				<Text style={{ textAlignVertical: "center", textAlign: "center", flex : 2}}>{this.getVoteText()}</Text>
+				<TouchableOpacity onPress={this.voteUP} style={Styles.voteButton}><Icon name="thumbs-o-up" style={this.state.voteUp ? Styles.marked : Styles.unMarked} size={25}/></TouchableOpacity>	
 			</View>
 		);
 	}

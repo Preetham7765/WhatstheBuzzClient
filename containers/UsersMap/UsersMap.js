@@ -1,15 +1,15 @@
 import React from "react";
-import {Alert, AsyncStorage, BackHandler, Linking, Platform, TouchableOpacity} from "react-native";
+import { Alert, AsyncStorage, BackHandler, Linking, Platform, TouchableOpacity } from "react-native";
 import ActionButton from "react-native-action-button";
-import {Constants, IntentLauncherAndroid, Location, Permissions} from "expo";
+import { Constants, IntentLauncherAndroid, Location, Permissions } from "expo";
 import SocketIOClient from 'socket.io-client';
 import geolib from 'geolib';
 
 import Aux from "../../hoc/Auxi";
 import MapScreen from "../../components/MapScreen/MapScreen";
 import ErrorScreen from "../../components/ErrorScreen/ErrorScreen";
-import {REGION_SERVER_URL, SERVER_URL} from '../../constants/Config';
-import {Icon} from 'react-native-elements';
+import { REGION_SERVER_URL, SERVER_URL } from '../../constants/Config';
+import { Icon } from 'react-native-elements';
 
 import AsyncAlert from '../../components/AsyncAlert';
 
@@ -26,8 +26,6 @@ class UsersMap extends React.Component {
         super(props);
         this.props = props;
         this.retLocation = null;
-        this.socket = SocketIOClient(SERVER_URL + '/topics');
-        this.socket.on('updateTopic', this.onReceivedNewTopic);
     }
 
 
@@ -45,7 +43,7 @@ class UsersMap extends React.Component {
             .then(respJson => {
                 // console.log("response in refresh", respJson);
                 if (respJson.length != this.state.nearbyTopics.length) {
-                    this.setState({nearbyTopics: respJson});
+                    this.setState({ nearbyTopics: respJson });
                 }
             })
             .catch(error => {
@@ -90,12 +88,18 @@ class UsersMap extends React.Component {
 
     }
 
+    componentWillMount() {
+
+        this.socket = SocketIOClient(SERVER_URL + '/topics');
+        this.socket.on('updateTopic', this.onReceivedNewTopic);
+    }
+    
     componentWillUnmount() {
         this.subs.forEach((sub) => {
             sub.remove();
         });
         if (this.retLocation) this.retLocation.remove();
-        this.setState({isMounted: false});
+        this.setState({ isMounted: false });
         const data = {
             id: this.userId,
             regions: this.regions
@@ -106,7 +110,7 @@ class UsersMap extends React.Component {
 
     _getTopicsDataAsync = async coords => {
         try {
-            console.log("sending response");
+            
             const url = `${SERVER_URL}/api/topics?latitude=${
                 coords.coords.latitude
                 }&longitude=${coords.coords.longitude}`;
@@ -117,7 +121,9 @@ class UsersMap extends React.Component {
                 'Content-Type': 'application/json',
                 'Authorization': this.token
             }
-            const response = await fetch(url, {headers: header});
+
+            console.log("sending response", url);
+            const response = await fetch(url, { headers: header });
             if (response.status === 401) {
                 Alert.alert("Authorization failed. Please login again");
                 this.props.navigation.navigate('Login');
@@ -158,13 +164,13 @@ class UsersMap extends React.Component {
                     }
                 }
             }
-            let {status} = await Permissions.askAsync(Permissions.LOCATION);
+            let { status } = await Permissions.askAsync(Permissions.LOCATION);
             if (status !== "granted") {
                 throw new Error("Permission to get location not obtained");
             }
             console.log("waiting for location");
             this.retLocation = await Location.watchPositionAsync(
-                {enableHighAccuracy: true, distanceInterval: 300},
+                { enableHighAccuracy: true, distanceInterval: 200 },
                 async coords => {
                     try {
 
@@ -211,12 +217,12 @@ class UsersMap extends React.Component {
 
                     } catch (error) {
                         console.log(error);
-                        this.setState({errMessage: error.message, isMounted: true});
+                        this.setState({ errMessage: error.message, isMounted: true });
                         this.retLocation.remove();
                     }
                 });
         } catch (error) {
-            this.setState({errMessage: error.message, isMounted: true});
+            this.setState({ errMessage: error.message, isMounted: true });
         }
 
     }
@@ -225,7 +231,7 @@ class UsersMap extends React.Component {
 
         console.log("got new topic from socket", newTopic['new_val']);
         // append to the new topic
-        const newTopicCords = {latitude: newTopic['new_val']['loc']['coordinates'][1], longitude: newTopic['new_val']['loc']['coordinates'][0]};
+        const newTopicCords = { latitude: newTopic['new_val']['loc']['coordinates'][1], longitude: newTopic['new_val']['loc']['coordinates'][0] };
         const userCords = {
             latitude: this.state.userLocation.coords.latitude,
             longitude: this.state.userLocation.coords.longitude
@@ -236,7 +242,7 @@ class UsersMap extends React.Component {
 
             currentTopics.push(newTopic['new_val']);
 
-            this.setState({nearbyTopics: currentTopics});
+            this.setState({ nearbyTopics: currentTopics });
 
         }
 
@@ -290,7 +296,7 @@ class UsersMap extends React.Component {
     // TODO: should take buzz id and then fetch content from server
     showDiscussionWindow = (topicId) => {
 
-        this.props.navigation.navigate('ScreenThread', {'topicId': topicId});
+        this.props.navigation.navigate('ScreenThread', { 'topicId': topicId });
     }
 
     render() {
@@ -309,7 +315,7 @@ class UsersMap extends React.Component {
                         }}
                         onPress={this.refresh}>
                         <Icon name="refresh"
-                              raised/>
+                            raised />
                     </TouchableOpacity>
                     <MapScreen
                         userLocation={this.state.userLocation}
@@ -323,7 +329,7 @@ class UsersMap extends React.Component {
                 </Aux>
             );
         }
-        return <ErrorScreen errorMessage={text}/>;
+        return <ErrorScreen errorMessage={text} />;
     }
 }
 

@@ -9,10 +9,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     notSelected: {
-        backgroundColor: '#FF0000',
+        backgroundColor: '#cccccc',
     },
     Selected: {
-        backgroundColor: '#cccccc',
+        backgroundColor: '#FF0000',
     },
 });
 

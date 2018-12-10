@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button, TouchableHighlight } from 'react-native';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Styles from './Styles';
 
 export default class SpamButton extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { spamNum: props.spamNum, spam: props.spam, text: "Mark as spam" };
+        this.state = { spamNum: props.spamNum, spam: props.spam, text: "Report Spam" };
     }
 
     render() {
@@ -21,9 +21,11 @@ export default class SpamButton extends React.Component {
                     }
                     onPress={this.taggle}
                 >
+                    <Icon name="exclamation-triangle" size = {15}>
                     <Text>
                         {this.state.text}
                     </Text>
+                    </Icon>
                 </TouchableHighlight>
             </View>
         );
@@ -31,10 +33,10 @@ export default class SpamButton extends React.Component {
 
     taggle = () => {
         if (this.state.spam) {
-            this.setState((states, props) => { return { spam: false, spamNum: states.spamNum - 1, text: "Mark as spam" } });
+            this.setState((states, props) => { return { spam: false, spamNum: states.spamNum - 1, text: "Report Spam" } });
         }
         else {
-            this.setState((states, props) => { return { spam: true, spamNum: states.spamNum + 1, text: (states.spamNum + 1) + " peoples marked as spam" } });
+            this.setState((states, props) => { return { spam: true, spamNum: states.spamNum + 1, text:" It is Spam" } });
         }
     }
 }
