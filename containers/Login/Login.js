@@ -174,7 +174,10 @@ class Login extends React.Component {
       },
       body: JSON.stringify(user)
     })
-      .then(response => response.json())
+      .then(response => {
+        console.log("response in login ", response);
+        return response.json()
+      })
       .then(res => {
         if (res.success === true) {
           AsyncStorage.setItem("token", res.token);

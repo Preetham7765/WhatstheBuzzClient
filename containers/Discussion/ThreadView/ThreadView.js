@@ -16,9 +16,6 @@ export default class ThreadView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.socket = SocketIOClient(SERVER_URL + '/comments');
-        this.socket.on('newComment', this.onReceivedMessage);
-        this.socket.on('addCommentStatus', this.onUpdateComments);
         this.shouldScroll = false;
         this.state = {
             commentText: '',
@@ -161,6 +158,14 @@ export default class ThreadView extends React.Component {
 
                 </KeyboardAvoidingView>
             );
+    }
+
+    componentWillMount() {
+
+        this.socket = SocketIOClient(SERVER_URL + '/comments');
+        this.socket.on('newComment', this.onReceivedMessage);
+        this.socket.on('addCommentStatus', this.onUpdateComments);
+
     }
 
     async componentDidMount() {
