@@ -19,7 +19,7 @@ export default class SpamButton extends React.Component {
                             ? Styles.Selected
                             : Styles.notSelected
                     }
-                    onPress={this.taggle}
+                    onPress={this.toggle}
                 >
                     <Icon name="exclamation-triangle" size = {15}>
                     <Text>
@@ -31,7 +31,7 @@ export default class SpamButton extends React.Component {
         );
     }
 
-    taggle = () => {
+    toggle = () => {
         if (this.state.spam) {
             this.setState((states, props) => { return { spam: false, spamNum: states.spamNum - 1, text: "Report Spam" } });
         }

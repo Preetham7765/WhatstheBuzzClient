@@ -64,8 +64,8 @@ export default class Vote extends React.Component {
 	render() {
 		return (
 			<View style={Styles.voteContainer}>
-				<Text style={{ textAlignVertical: "center", textAlign: "center", flex : 2}}>{this.getVoteText()}</Text>
-				<TouchableOpacity onPress={this.voteUP} style={Styles.voteButton}><Icon name="thumbs-o-up" style={this.state.voteUp ? Styles.marked : Styles.unMarked} size={25}/></TouchableOpacity>	
+				<Text style={{ paddingTop: 5, textAlignVertical: "center", textAlign: "center", flex : 2}}>{this.getVoteText()}</Text>
+				<TouchableOpacity onPress={this.voteUP} style={Styles.voteButton}><Icon name="thumbs-o-up" style={this.state.voteUp ? Styles.marked : Styles.unMarked} size={18}/></TouchableOpacity>
 			</View>
 		);
 	}

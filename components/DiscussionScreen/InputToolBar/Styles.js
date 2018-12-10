@@ -12,9 +12,11 @@ const styles = StyleSheet.create({
 
     textInput: {
         width: "85%",
+        padding: 5
     },
 
     button: {
+        alignItems: 'center',
     }
 });
 

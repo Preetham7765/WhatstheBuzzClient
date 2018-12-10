@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     userInfoText: {
         fontSize: 12,
         color: "#03A9F4",
-        padding: 10,
-        textAlign: 'right',
+        padding: 5,
+        textAlign: 'left',
     },
     comment: {
         fontSize: 15,
