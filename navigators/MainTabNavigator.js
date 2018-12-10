@@ -5,6 +5,11 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 import UsersMap from '../containers/UsersMap/UsersMap';
 import UserScreen from '../containers/UserScreen/UserScreen';
+
+
+
+
+
 const MapStack = createStackNavigator({
     Map: UsersMap,
 }, {
@@ -51,11 +56,13 @@ MapStack.navigationOptions = {
 
 const UserStack = createStackNavigator({
     User: UserScreen,
-}, {
-        headerMode: 'none'
-    });
+},
+    {
+        headerMode: 'none',
+});
 
 UserStack.navigationOptions = {
+
     tabBarLabel: 'Profile',
     tabBarIcon: ({ focused }) => (
         <TabBarIcon

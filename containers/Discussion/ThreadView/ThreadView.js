@@ -14,6 +14,18 @@ import Styles from './Styles';
 
 export default class ThreadView extends React.Component {
 
+
+    static navigationOptions = {
+        title: 'Discuss',
+        headerStyle: {
+            backgroundColor: '#48BBEC',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+    };
+
     constructor(props) {
         super(props);
         this.shouldScroll = false;

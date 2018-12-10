@@ -6,11 +6,24 @@ import Register from "../containers/Register/Register";
 import EnterpriseRegister from "../containers/EnterpriseRegister/EnterpriseRegister"
 import ThreadView from "../containers/Discussion/ThreadView/ThreadView";
 
-export default createStackNavigator(
+const appNavigator = createStackNavigator(
     {
         // You could add another route here for authentication.
         // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-        Main: MainTabNavigator,
+        Main: {
+            screen: MainTabNavigator,
+            navigationOptions: {
+                headerTitle: 'Home',
+                headerStyle: {
+                    backgroundColor: '#48BBEC',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }
+
+        },
         NewTopic: NewTopicScreen,
         Login: Login,
         Register: Register,
@@ -21,3 +34,5 @@ export default createStackNavigator(
         initialRouteName: "Login"
     }
 );
+
+export default appNavigator;
