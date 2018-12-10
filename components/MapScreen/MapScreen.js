@@ -14,8 +14,8 @@ const mapScreen = (props) => {
         userLocation = {
             latitude: props.userLocation.coords.latitude,
             longitude: props.userLocation.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
+            latitudeDelta: 0.1192,
+            longitudeDelta: 0.0921
         };
     }
 

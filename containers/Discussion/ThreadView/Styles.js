@@ -5,7 +5,8 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor :  "#ccccff",
+        backgroundColor: "#E2E9F4",
+        padding: 5
     },
     flatListStyle: {
         flex: 10
