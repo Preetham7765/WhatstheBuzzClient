@@ -120,10 +120,6 @@ class UserScreen extends React.Component {
     ];
   };
 
-  static navigationOptions = {
-    title: "Profile"
-  };
-
   render() {
     if (!this.state.fontLoaded && this.state.user.reputationScore === null) {
       return <AppLoading />;

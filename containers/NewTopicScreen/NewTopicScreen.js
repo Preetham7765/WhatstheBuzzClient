@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dimensions, ScrollView, AsyncStorage, Alert } from 'react-native';
+import { Button, Dimensions, ScrollView, AsyncStorage, Alert, TouchableOpacity, Text } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Styles, { formStyles } from './Styles';
 import t from 'tcomb-form-native';
@@ -67,6 +67,20 @@ var options = {
 class NewTopicScreen extends React.Component {
 
     dimensions = Dimensions.get('window');
+
+
+    static navigationOptions = {
+        title: 'Create Post',
+        headerStyle: {
+            backgroundColor: '#48BBEC',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+    };
+
+
 
     constructor(props) {
         super(props);
@@ -208,8 +222,10 @@ class NewTopicScreen extends React.Component {
                     options={options}
                     value={this.state.value}
                     onChange={this.onChangeHandler}
-                    style={{ flex: 1}} />
-                <Button title="Create New Post" onPress={this.createTopicHandler} />
+                    style={{ flex: 1 }} />
+                <TouchableOpacity style={Styles.button} onPress={this.createTopicHandler}>
+                    <Text style = {Styles.createText}>Create New Post</Text>
+                 </TouchableOpacity>
                 <KeyboardSpacer />
             </ScrollView>
         );
