@@ -26,34 +26,6 @@ MapStack.navigationOptions = {
     )
 };
 
-// const Stack = createStackNavigator({
-//     Links: LinksScreen,
-// });
-//
-// LinksStack.navigationOptions = {
-//     tabBarLabel: 'Links',
-//     tabBarIcon: ({ focused }) => (
-//         <TabBarIcon
-//             focused={focused}
-//             name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
-//         />
-//     ),
-// };
-//
-// const SettingsStack = createStackNavigator({
-//     Settings: SettingsScreen,
-// });
-//
-// SettingsStack.navigationOptions = {
-//     tabBarLabel: 'Settings',
-//     tabBarIcon: ({ focused }) => (
-//         <TabBarIcon
-//             focused={focused}
-//             name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
-//         />
-//     ),
-// };
-
 const UserStack = createStackNavigator({
     User: UserScreen,
 },

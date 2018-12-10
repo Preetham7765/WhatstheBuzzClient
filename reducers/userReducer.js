@@ -2,6 +2,7 @@ import {
     GET_USER,
     ADD_USER,
     DELETE_USER,
+    GET_REP,
     USER_LOADING
 } from '../actions/types';
 
@@ -13,6 +14,12 @@ const initialState = {
 export default function (state = initialState, action) {
     switch (action.type) {
         case GET_USER:
+            return {
+                ...state,
+                user: action.payload,
+                loading: false
+            };
+        case GET_REP:
             return {
                 ...state,
                 user: action.payload,
