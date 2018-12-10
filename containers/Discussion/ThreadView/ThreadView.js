@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, KeyboardAvoidingView, FlatList, Keyboard, AsyncStorage } from 'react-native';
+import { Platform, KeyboardAvoidingView, FlatList, Keyboard, View, AsyncStorage } from 'react-native';
 import { Location } from 'expo';
 import SocketIOClient from 'socket.io-client';
 
@@ -161,12 +161,14 @@ export default class ThreadView extends React.Component {
                         }}
                         onScroll={({ nativeEvent }) => { this.isCloseToBottom(nativeEvent) }}
                     />
+                    <View style={{paddingBottom: 10}}>
                     <InputToolbar
                         style={Styles.flatListStyle}
                         value={this.state.commentText}
                         changed={this.onInputChangeHandler}
                         clicked={this.onSendNewComment}
                     />
+                    </View>
 
                 </KeyboardAvoidingView>
             );

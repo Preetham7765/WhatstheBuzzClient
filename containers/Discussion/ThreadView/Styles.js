@@ -9,11 +9,12 @@ const styles = StyleSheet.create({
         padding: 5
     },
     flatListStyle: {
-        flex: 10
+        flex: 10,
+        padding: 5,
     },
     inputToolBarStyle: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
     }
 });
 

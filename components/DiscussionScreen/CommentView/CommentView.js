@@ -11,13 +11,17 @@ class CommentText extends React.Component {
 
         return (
             <View style={Styles.userInfoContainer}>
+                <Text style={Styles.userInfoText}>{this.capitalize(this.props.authorName)} says:</Text>
                 <Text style={Styles.comment}>{this.props.commentDesc}</Text>
-                <Text style={Styles.userInfoText}>-{this.props.authorName}</Text>
                 {this.props.isOwner ?
                     <OwnerAction enterEditMode={this.props.enterEditMode} delete={this.props.delete} />
                     : null}
             </View>
         );
+    }
+
+    capitalize = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
     }
 }
 
@@ -25,8 +29,8 @@ class OwnerAction extends React.Component {
     render() {
         return (
             <View style={Styles.ownerAction}>
-                <TouchableOpacity onPress = {this.props.enterEditMode}><Text style={{ fontSize: 12 ,textDecorationLine : "underline",color : "#6666ff"}} >Edit</Text></TouchableOpacity>
-                <TouchableOpacity onPress = {this.props.delete}><Text style={{ fontSize: 12 ,textDecorationLine : "underline",color : "#ff0066"}} >Delete</Text></TouchableOpacity>
+                <TouchableOpacity onPress = {this.props.enterEditMode}><Text style={{ fontSize: 12 ,color : "#6666ff"}} >Edit</Text></TouchableOpacity>
+                <TouchableOpacity onPress = {this.props.delete}><Text style={{ fontSize: 12 ,color : "#ff0066"}} >Delete</Text></TouchableOpacity>
             </View>
         );
     }
