@@ -26,7 +26,7 @@ class OwnerAction extends React.Component {
         return (
             <View style={Styles.ownerAction}>
                 <TouchableOpacity onPress = {this.props.enterEditMode}><Text style={{ fontSize: 12 ,textDecorationLine : "underline",color : "#6666ff"}} >Edit</Text></TouchableOpacity>
-                <TouchableOpacity onPress = {this.props.enterEditMode}><Text style={{ fontSize: 12 ,textDecorationLine : "underline",color : "#ff0066"}} >Delete</Text></TouchableOpacity>
+                <TouchableOpacity onPress = {this.props.delete}><Text style={{ fontSize: 12 ,textDecorationLine : "underline",color : "#ff0066"}} >Delete</Text></TouchableOpacity>
             </View>
         );
     }

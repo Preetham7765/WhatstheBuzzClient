@@ -110,7 +110,7 @@ class UsersMap extends React.Component {
 
     _getTopicsDataAsync = async coords => {
         try {
-            console.log("sending response");
+            
             const url = `${SERVER_URL}/api/topics?latitude=${
                 coords.coords.latitude
                 }&longitude=${coords.coords.longitude}`;
@@ -121,6 +121,8 @@ class UsersMap extends React.Component {
                 'Content-Type': 'application/json',
                 'Authorization': this.token
             }
+
+            console.log("sending response", url);
             const response = await fetch(url, { headers: header });
             if (response.status === 401) {
                 Alert.alert("Authorization failed. Please login again");
